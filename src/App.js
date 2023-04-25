@@ -13,7 +13,7 @@ class App extends Component{
   constructor(props){
     super(props);
     //초기화  [state]
-    this.max_question_id = 10;
+    this.max_question_id = 3;
     this.state={
       mode:"welcome",
       current_question_id:1,
@@ -30,7 +30,17 @@ class App extends Component{
       ]
     }
   }
-
+  next = () => {
+    console.log(this.state.current_question_id, " now");
+    console.log(this.max_question_id , " max");
+    if(this.state.current_question_id !== this.max_question_id){
+       this.setState({ current_question_id: this.state.current_question_id+1});
+    }else{
+      //결과페이지로!
+    }
+    
+    
+  };
   getQuestion(){
     var i = 0;
       while(i< this.state.questions.length){
@@ -45,6 +55,7 @@ class App extends Component{
 
   render(){
     var _question = this.getQuestion();
+  
     return (
       <div className='App'>
         <React.Fragment>
@@ -53,7 +64,7 @@ class App extends Component{
             <Box sx={{ bgcolor: 'white', height: '100vh' }} >
             <Header />
               {/* <Router />   */}
-              <Q question = {_question} ></Q>
+              <Q question = {_question} next = {this.next} ></Q>
             <Footer />
             </Box>
           </Container>
