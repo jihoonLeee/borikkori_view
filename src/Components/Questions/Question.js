@@ -18,8 +18,6 @@ class Question extends Component{
       const buttons = [
         <Button key="one" name="a">{this.props.question.a}</Button>,
         <Button key="two" name="b">{this.props.question.b}</Button>,
-        <Button key="three" name="c">{this.props.question.c}</Button>,
-        <Button key="four" name="d">{this.props.question.d}</Button>,
       ];
       return (
         <Container>
@@ -44,6 +42,7 @@ class Question extends Component{
                 {buttons}
             </ButtonGroup>
         </Box>
+        
        </Container>
 
       );
