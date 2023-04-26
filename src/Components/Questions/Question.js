@@ -43,6 +43,7 @@ class Question extends Component{
             aria-label="vertical outlined button group"
             onClick={
                 (e)=>{
+                  e.preventDefault();
                   this.chooseButton();
                   temp.push(e.target.name);
                   console.log(temp);
