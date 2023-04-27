@@ -2,37 +2,32 @@
   text-align: center;
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
-}
-
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
+.question{
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
+}
+.q_content {
+  height: 600px;
+  width: 350px;
+  padding: 1rem;
+  background-color: #ebebeb;
+  border-radius: 20px;
+  box-shadow: 7px 5px 23px -9px rgba(0, 0, 0, 0.75);
+  margin-bottom: 1rem;
+  -webkit-box-shadow: 7px 5px 23px -9px rgba(0, 0, 0, 0.75);
+  -moz-box-shadow: 7px 5px 23px -9px rgba(0, 0, 0, 0.75);
+  
 }
 
-.App-link {
-  color: #61dafb;
+.button{
+  font-size: 10px !important;
+  margin-top: 30px !important;
+  margin-left: 10px !important;
+  border : 1px solid !important;
+  border-radius: 10px !important;
+  width: 50% !important;
 }
-
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+.snsLogo{
+  align-self:flex-start
 }

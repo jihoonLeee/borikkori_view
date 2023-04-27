@@ -5,7 +5,6 @@ import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
 
 function LinearProgressWithLabel(props) {
-  console.log(props.value, " 당당");
   return (
     <Box sx={{ display: 'flex', alignItems: 'center' }}>
       <Box sx={{ width: '100%', mr: 1 }}>
@@ -13,8 +12,8 @@ function LinearProgressWithLabel(props) {
       </Box>
       <Box sx={{ minWidth: 35 }}>
         <Typography variant="body2" color="text.secondary">{`${Math.round(
-          props.value,
-        )}%`}</Typography>
+          props.value/100*12,
+        )}/12`}</Typography>
       </Box>
     </Box>
   );
@@ -28,17 +27,12 @@ LinearProgressWithLabel.propTypes = {
   value: PropTypes.number.isRequired,
 };
 
-export default function LinearWithValueLabel() {
-  const [progress, setProgress] = React.useState(1 );
+export default function LinearWithValueLabel(props) {
+  const [progress, setProgress] = React.useState(0);
 
-//   React.useEffect(() => {
-//     const timer = setInterval(() => {
-//       setProgress((prevProgress) => (prevProgress >= 100 ? 5 : prevProgress + 5));
-//     }, 800);
-//     return () => {
-//       clearInterval(timer);
-//     };
-//   }, []);
+  React.useEffect(() => {
+    setProgress((prevProgress) => (prevProgress >= 100 ? 0 : props.value));
+  }, [props.value]);
 
   return (
     <Box sx={{ width: '100%' }}>
