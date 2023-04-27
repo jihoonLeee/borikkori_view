@@ -13,21 +13,15 @@ const Img = styled('img')({
     maxHeight: '100%',
   });
 var temp =[];
-class Question extends Component{
-    constructor(props) {
-      super(props);
-      this.chooseButton = this.chooseButton.bind(this);
-    }
-    chooseButton() {
-      this.props.next();
-    }
-    
-    render(){
-      const buttons = [
-        <Button key="one" name="a">{this.props.question.a}</Button>,
-        <Button key="two" name="b">{this.props.question.b}</Button>,
-      ];
-      return (
+export default function Question(props){
+  //  const chooseButton = () => {
+  //     props.next();
+  //   }
+    const buttons = [
+      <Button key="one" name="a">{props.question.a}</Button>,
+      <Button key="two" name="b">{props.question.b}</Button>,
+    ];
+    return(
         <Container>
             <Box
             sx={{
@@ -41,17 +35,17 @@ class Question extends Component{
             <ButtonGroup
             orientation="vertical"
             aria-label="vertical outlined button group"
-            onClick={
-                (e)=>{
-                  e.preventDefault();
-                  this.chooseButton();
-                  temp.push(e.target.name);
-                  console.log(temp);
-                }
-                // 배열에 뭐뭐 눌렀는지 저장 
-              }
+            // onClick={
+            //     (e)=>{
+            //       e.preventDefault();
+            //       this.chooseButton;
+            //       temp.push(e.target.name);
+            //       console.log(temp);
+            //     }
+            //     // 배열에 뭐뭐 눌렀는지 저장 
+            //   }
             >
-                <Typography>{this.props.question.title}</Typography>
+                <Typography>{props.question.title}</Typography>
                 <Img alt="complex" src="/images/dog_big_logo.jpg" />
                 {buttons}
             </ButtonGroup>
@@ -60,7 +54,4 @@ class Question extends Component{
        </Container>
 
       );
-      
     }
-  }
-export default Question;  

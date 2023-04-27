@@ -2,7 +2,7 @@ import React from 'react';
 import {Background, LoadingText} from './Style';
 import Spinner from '../assets/loading.gif';
 
-export default () => {
+export default function () {
   return (
     <Background>
       <LoadingText>잠시만 기다려 주세요.</LoadingText>

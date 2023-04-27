@@ -8,11 +8,10 @@ import Container from '@mui/material/Container';
 //     maxWidth: '100%',
 //     maxHeight: '100%',
 //   });
-class Result extends Component{
+export default function Result(){
     // constructor(props) {
     //   super(props);
     // }
-    render(){
       return (
         <Container>
             결과 입니다~
@@ -21,6 +20,4 @@ class Result extends Component{
 
       );
       
-    }
   }
-export default Result;  
