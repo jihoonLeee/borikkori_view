@@ -19,7 +19,6 @@ export default function App (){
 // api 호출 시 로딩 뜨게하기
 // https://anerim.tistory.com/221
 
-    
     let _body;
     const handleClick = () => setCurrent(current + 1);
     if(current===max_question_id){
