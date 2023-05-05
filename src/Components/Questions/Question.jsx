@@ -1,81 +1,69 @@
 import React from 'react';
-import Button from '@mui/material/Button';
 import ButtonGroup from '@mui/material/ButtonGroup';
-import Box from '@mui/material/Box';
-import { Typography } from '@mui/material';
-import Container from '@mui/material/Container';
-import { styled } from '@mui/material/styles';
 
-const Img = styled('img')({
-    margin: 'auto',
-    display: 'block',
-    maxWidth: '60%',
-    maxHeight: '60%',
-  });
 export default function Question(props){
     const buttons = [
-      <Button className='button' key="one" name="a">{questions[props.current].a}</Button>,
-      <Button className='button' key="two" name="b">{questions[props.current].b}</Button>,
+      <button className='button text-gray-950 h-20 font-bold' key="one" name="a">{questions[props.current].a}</button>,
+      <button className='button text-gray-950 h-20 font-bold' key="two" name="b">{questions[props.current].b}</button>,
     ];
     return(
-        <Container>
+        <div>
           <div className='question'>
-          <Box className = 'q_content'>
-          <Typography>{questions[props.current].title}</Typography>
-                <Img alt="complex" src="/images/dog_big_logo.jpg" />
-            <ButtonGroup
-            orientation="horizontal"
-            aria-label="horizontal outlined button group"
-            onClick={ (e) => {
-              props.onClick();
-              console.log(e.target.name);
-              console.log(props.current);
-            }}
-            >
-              
-                {buttons}
-            </ButtonGroup>
-        </Box>
+            <div className = 'q_content'>
+            <span className="font-bold">{questions[props.current].title}</span>
+            <img className='m-auto py-5 block' alt="main_dog" src="/images/dog_big_logo.jpg" />
+                  <ButtonGroup
+                        orientation="horizontal"
+                        aria-label="horizontal outlined button group"
+                        onClick={ (e) => {
+                        props.onClick();
+                        console.log(e.target.name);
+                        console.log(props.current);
+                        }}
+                        >
+                    {buttons}
+                  </ButtonGroup>
+            </div>
         </div>
-       </Container>
+       </div>
 
       );
 }
     const questions = [
-      {id:1,title:"강아지가 다른 강아지나 사람을 만났을 때 어떤 반응을 보이나요?",
-            a:"a) 즉각적으로 다가가며 친근하게 인사한다.",
-            b:"b) 거리를 두며 조용히 지켜본다."},
-      {id:2,title:"강아지가 새로운 장소를 방문했을 때 어떤 모습을 보이나요?",
-            a:"a) 호기심이 많아 새로운 것을 탐험하며 즐긴다.",
-            b:"b) 새로운 것을 보는 것을 좋아하지만, 불안해한다."},
-      {id:3,title:"강아지가 다른 강아지나 사람과 함께 놀이를 할 때, 어떤 행동을 보이나요?",
-            a:"a) 자유롭게 뛰어다니며 장난감을 물고 놀이를 즐긴다.",
-            b:"b) 장난감을 가지고 멀리서 살피는 것을 좋아한다."},
+      {id:1,title:"집에 낯선 인간(멍멍이)이 나타났다!? 이때 강아지의 반응은?! ",
+            a:"누가 내 구역을 침범한거지..! 일단 경계하면서 멀리서 지켜본다...",
+            b:"새로운 친구인가?! 바로 꼬리 프로펠러 작동하고 달려간다"},
+      {id:2,title:"오늘 무슨 날인가!? 주인이 날 새로운 애견카페에 데려갔다. 이때 강아지는?",
+            a:"새로운곳 좋아~ 새로운 친구들아, 나랑 놀자~!",
+            b:"낯선곳은 힘들어... 주인... 옆에서 날 지켜줘..."},
+      {id:3,title:"오늘 생일인가? ㅎㅎ 주인이 새로운 장난감을 사줬다~ 강아지의 반응은?",
+            a:"새로운 장난감은 물고 뜯고 씹고 즐겨야 제맛! 바로 가지고 놀아야지~ ",
+            b:"난 아직 익숙한게 좋아... 천천히 친해지자~"},
       {id:4,title:"네번째 질문",
-            a:"a) 대답 1",
-            b:"b) 대답 2"},
+            a:"대답 1",
+            b:"대답 2"},
       {id:5,title:"다섯번째 질문",
-            a:"a) 대답 1",
-            b:"b) 대답 2"},
+            a:"대답 1",
+            b:"대답 2"},
       {id:6,title:"여섯번째 질문",
-            a:"a) 대답 1",
-            b:"b) 대답 2"},
+            a:"대답 1",
+            b:"대답 2"},
       {id:7,title:"일곱번째 질문",
-            a:"a) 대답 1",
-            b:"b) 대답 2"},
+            a:"대답 1",
+            b:"대답 2"},
       {id:8,title:"여덟번째 질문",
-            a:"a) 대답 1",
-            b:"b) 대답 2"},
+            a:"대답 1",
+            b:"대답 2"},
       {id:9,title:"아홉번째 질문",
-            a:"a) 대답 1",
-            b:"b) 대답 2"},
+            a:"대답 1",
+            b:"대답 2"},
       {id:10,title:"열번째 질문",
-            a:"a) 대답 1",
-            b:"b) 대답 2"},
+            a:"대답 1",
+            b:"대답 2"},
       {id:11,title:"열한번째 질문",
-            a:"a) 대답 1",
-            b:"b) 대답 2"},
+            a:"대답 1",
+            b:"대답 2"},
       {id:12,title:"마지막 질문",
-            a:"a) 대답 1",
-            b:"b) 대답 2"},
+            a:"대답 1",
+            b:"대답 2"},
     ]
