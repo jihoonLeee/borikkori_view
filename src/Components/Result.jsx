@@ -3,7 +3,7 @@ import Loading from './Loading';
 
 export default function Result(){
     const [visible, setVisible] = useState(true);
-    const result = 'istj'
+    const result = 'test'
     useEffect(() => {
       const timer = setTimeout(() => {
         setVisible(false);
