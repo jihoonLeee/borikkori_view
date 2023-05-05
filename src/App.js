@@ -13,6 +13,8 @@ export default function App (){
     const [current,setCurrent] = useState(0);
     const max_question_id = 12;
     const [start, setStart] = useState(false);
+    const [result, setResult] = useState([]);
+
 // api 호출 시 로딩 뜨게하기
 // https://anerim.tistory.com/221
 
@@ -21,12 +23,20 @@ export default function App (){
     let _container;
 
     const startClick = () => setStart((prev) => !prev);
-    const handleClick = () => setCurrent(current + 1);
+    const handleClick = (data) => {
+      setCurrent(current + 1);
+      result.push(data);
+      setResult((result) => result);
+    };
+    // const handleBack = () => setCurrent(current - 1);
 
     if(current===max_question_id){
-      _body = <Result ></Result>;
+      _body = <Result result_data = {result}></Result>;
     }else{
-      _body = <Q current = {current} onClick={handleClick}></Q>;
+      _body = <Q current = {current} onClick={(data) => {
+        handleClick(data);
+        // handleBack();
+      }}></Q>;
       _progress = <ProgressBar  value={current/max_question_id*100} />;
     }
 
