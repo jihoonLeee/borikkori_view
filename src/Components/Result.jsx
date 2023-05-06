@@ -23,7 +23,6 @@ export default function Result(props){
       document.body.removeChild(link);
     };
     const onCopyLink = () => {
-      
       navigator.clipboard.writeText(window.location.href);
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
@@ -94,6 +93,7 @@ export default function Result(props){
           }
           break;
         }
+        default: break;
       }
     }
     
