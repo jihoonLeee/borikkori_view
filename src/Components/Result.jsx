@@ -23,6 +23,9 @@ export default function Result(props){
       document.body.removeChild(link);
     };
     const onCopyLink = () => {
+      if(copied){
+        
+      }
       navigator.clipboard.writeText(window.location.href);
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
