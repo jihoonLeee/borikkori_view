@@ -2,7 +2,6 @@ import * as React from 'react';
 
 function Footer(){
     return(
-  
     <footer className="bg-stone-300 pt-10 sm:mt-10 pt-10">
       <div className="max-w-6xl m-auto text-gray-900 flex flex-wrap justify-left">
         {/* 왼쪽 컬럼 */}
