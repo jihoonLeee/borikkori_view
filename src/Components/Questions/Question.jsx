@@ -13,7 +13,7 @@ export default function Question(props){
             <div className='question'>
             <div className = 'q_content'>
             <span className="font-bold">{questions[props.current].title}</span>
-            <img className='m-auto py-5 block' alt="main_dog" src={'./images/dog_big_logo.jpg'} />
+            <img className='m-auto py-5 block' alt="main_dog" src={`${process.env.PUBLIC_URL}/images/dog_big_logo.jpg`} />
                   <ButtonGroup
                         orientation="horizontal"
                         aria-label="horizontal outlined button group"
