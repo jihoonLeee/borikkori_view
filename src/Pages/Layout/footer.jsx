@@ -9,8 +9,8 @@ function Footer(){
         <div className="p-5 w-1/2 sm:w-4/12 md:w-3/12">
           {/* 로고 */}
           <div className="text-white-900 hover:text-white-700 flex items-center">
-            <a href="/" className="text-xl font-bold mx-auto">
-              <img className="h-16 w-auto " src="/images/dog_freinds_logo.png" alt="" />
+            <a href="/my-dog/" className="text-xl font-bold mx-auto">
+              <img className="h-16 w-auto " src={`${process.env.PUBLIC_URL}/images/dog_freinds_logo.png`} alt="" />
             </a>
           </div>
           <p className="text-white-900 hover:text-white-700 mt-2">
@@ -20,7 +20,7 @@ function Footer(){
             <span className="text-white-900 mx-3 hover:text-white-700">
               <a href="https://www.youtube.com/@jihoon2723">
                 <FaYoutube size="24"/>
-              </a>
+              </a> 
             </span>
             <span className="text-white-900 mx-3 hover:text-white-700">
               <a href="https://www.instagram.com/zzzihooon/">

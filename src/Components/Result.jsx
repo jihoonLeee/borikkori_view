@@ -2,10 +2,15 @@ import React, { useState, useEffect } from 'react';
 import Loading from './Loading';
 import html2canvas from 'html2canvas';
 import {FaSave,FaLink} from 'react-icons/fa';
+import { useLocation } from "react-router-dom";
+
 export default function Result(props){
     const [visible, setVisible] = useState(true);
     const [copied, setCopied] = useState(false);
-    const resultName = getMBTI(props.result_data);
+
+    const location = useLocation();
+    const queryParams = new URLSearchParams(location.search);
+    const resultName = queryParams.get("result"); 
 
     const onCapture= () => {
       console.log("OnCapture");
@@ -54,74 +59,4 @@ export default function Result(props){
       );
   }
  
-  function getMBTI(data){
-    let e = 0;
-    let i = 0;
-    let n = 0;
-    let s = 0;
-    let f = 0;
-    let t = 0;
-    let j = 0;
-    let p = 0;
-    for(var k =0;k<data.length;k++){
-      switch(k){
-        case 0: case 1: case 2: {
-          if(data[k]==='a'){
-            e++;
-          }else{
-            i++;
-          }
-          break;
-        }
-        case 3: case 4 : case 5 : {
-          if(data[k]==='a'){
-            n++;
-          }else{
-            s++;
-          }
-          break;
-        }
-        case 6 : case 7: case 8: {
-          if(data[k]==='a'){
-            f++;
-          }else{
-            t++;
-          }
-          break;
-        }
-        case 9: case 10: case 11: {
-          if(data[k]==='a'){
-            j++;
-          }else{
-            p++;
-          }
-          break;
-        }
-        default: break;
-      }
-    }
-    
-    var result ="";
-    if(i>e){
-      result+="i";
-    }else{
-      result+="e";
-    }
-    if(n>s){
-      result+="n";
-    }else{
-      result+="s";
-    }
-    if(f>t){
-      result+="f";
-    }else{
-      result+="t";
-    }
-    if(j>p){
-      result+="j";
-    }else{
-      result+="p";
-    }
-    console.log(result);
-    return result;
-  }
+  

@@ -1,81 +1,58 @@
 import './App.css';
-// import Router from "./Components/Router";
 import Header from './Pages/Layout/header';
 import Footer from "./Pages/Layout/footer";
 import React, { useState } from 'react';
-import Q from "./Components/Questions/Question";
+import Question from "./Components/Questions/Question";
 import Result from "./Components/Result";
 import ProgressBar from './Components/ProgressBar';
 import Main from './Components/Main';
-// import { RouterProvider, createBrowserRouter } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Navigate, Routes } from "react-router-dom";
+import GetMBTI from './Components/GetMBTI';
 
-// const router = createBrowserRouter([{
-//   path:'/result',
-//   element:<Result></Result>,
-//   errorElement:<p>에러여 에러~ 🤯🤯🤯</p>
-// }]);
+function QuestionHandler({ setCurrent, setResult, current, max_question_id, result }) {
+  const handleClick = (data) => {
+    setCurrent(current + 1);
+    result.push(data);
+    setResult((result) => result);
+  };
 
-export default function App (){
-    //초기화  [state]
-    const [current,setCurrent] = useState(0);
-    const max_question_id = 12;
-    const [start, setStart] = useState(false);
-    const [result, setResult] = useState([]);
+  if (current === max_question_id) {
+    return <Navigate to={`/result?result=${GetMBTI(result)}`} replace />;
+  }
 
-// api 호출 시 로딩 뜨게하기
-// https://anerim.tistory.com/221
-
-    let _body;
-    let _progress;
-    let _container;
-
-    const startClick = () => setStart((prev) => !prev);
-    const handleClick = (data) => {
-      setCurrent(current + 1);
-      result.push(data);
-      setResult((result) => result);
-    };
-    // const handleBack = () => setCurrent(current - 1);
-
-    if(current===max_question_id){
-      _body = <Result result_data = {result}></Result>;
-    }else{
-      _body = <Q current = {current} onClick={(data) => {
-        handleClick(data);
-        // handleBack();
-      }}></Q>;
-      _progress = <ProgressBar  value={current/max_question_id*100} />;
-    }
-
-    if(start === false){
-      _container = readyTest();
-    }else{
-      _container = startTest();
-    }
-    
-    function readyTest(){
-      return (
-        <Main onClick = {startClick}></Main>
-      );
-    }
-
-    function startTest(){
-      return (
-        <div className='w-auto h-auto' >
-          {_progress}
-          <div className='h-auto my-20' ></div>
-          {_body}
-        </div>
-      );
-    }
-
-    return (
-     <div className='App'>
-        <Header />
-          {_container}
-        <Footer />
-      </div>
-
-    );
+  return (
+    <div className='w-auto h-auto' >
+      <ProgressBar  value={current/max_question_id * 100} />
+      <div className='h-auto my-20' ></div>
+      <Question current = {current} onClick={(data) => handleClick(data)} />
+    </div>
+  );
 }
 
+export default function App() {
+  const [current, setCurrent] = useState(0);
+  const max_question_id = 12;
+  const [result, setResult] = useState([]);
+
+  return (
+    <div className='App'>
+      <Header />
+      <Router>
+        <Routes>
+          <Route path="/my-dog/" element={current === 0 
+            ? <Main onClick={() => setCurrent(1)} /> 
+            : <QuestionHandler
+                setCurrent={setCurrent}
+                setResult={setResult}
+                current={current}
+                max_question_id={max_question_id}
+                result={result}
+              />
+          } />
+          <Route path="/result" element={<Result result_data={result} />} />
+        </Routes>
+      </Router>
+      <Footer />
+    </div>
+  );
+}

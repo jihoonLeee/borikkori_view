@@ -34,9 +34,9 @@ export default function Header() {
     <header className="bg-stone-300">
       <nav className="mx-auto flex max-w-7xl items-center justify-between p-6 lg:px-8" aria-label="Global">
         <div className="flex lg:flex-1">
-          <a href="!#" className="-m-1.5 p-1.5">
+          <a href="/my-dog/" className="-m-1.5 p-1.5">
             <span className="sr-only">Your Company</span>
-            <img className="h-16 w-auto" src="/images/dog_freinds_logo.png" alt="" />
+            <img className="h-16 w-auto" src={`${process.env.PUBLIC_URL}/images/dog_freinds_logo.png`} alt="" />
           </a>
         </div>
         {/* <div className="flex lg:hidden">
