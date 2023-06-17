@@ -7,6 +7,13 @@ import Q from "./Components/Questions/Question";
 import Result from "./Components/Result";
 import ProgressBar from './Components/ProgressBar';
 import Main from './Components/Main';
+// import { RouterProvider, createBrowserRouter } from 'react-router-dom';
+
+// const router = createBrowserRouter([{
+//   path:'/result',
+//   element:<Result></Result>,
+//   errorElement:<p>에러여 에러~ 🤯🤯🤯</p>
+// }]);
 
 export default function App (){
     //초기화  [state]
@@ -57,22 +64,18 @@ export default function App (){
         <div className='w-auto h-auto' >
           {_progress}
           <div className='h-auto my-20' ></div>
-          {/* <Router />   */}
           {_body}
         </div>
       );
     }
 
     return (
-      <div className='App'>
-        <React.Fragment>
-          <div className='max-w-full'>
-            <Header />
-              {_container}
-            <Footer />
-          </div>
-        </React.Fragment>
-    </div>
+     <div className='App'>
+        <Header />
+          {_container}
+        <Footer />
+      </div>
+
     );
 }
 

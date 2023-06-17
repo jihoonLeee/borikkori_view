@@ -41,17 +41,16 @@ export default function Result(props){
       return (
         visible ? <Loading></Loading> :
         <div>
-            <img id="result" className='m-auto block pb-10' alt="result" src={`/images/results/${resultName}_result.gif`} />
-            <button onClick={onCapture}> 
-              <FaSave size="24"/>
-              <span className='pr-10 pl-2 font-bold'>결과 저장하기</span>
-            </button>
-            <button onClick={onCopyLink}>
-              <FaLink size="24"/>
-              <span className='pr-10 pl-2 font-bold' >링크 복사하기 </span>
-            </button>
-            
-          
+          <img className='m-auto block w-80' alt="charactor" src={`/images/gifs/${resultName}.gif`} />
+          <img id="result" className='m-auto block pb-10' alt="result" src={`/images/results/${resultName}_result.png`} />
+          <button onClick={onCapture}> 
+            <FaSave size="24"/>
+            <span className='pr-10 pl-2 font-bold'>결과 저장하기</span>
+          </button>
+          <button onClick={onCopyLink}>
+            <FaLink size="24"/>
+            <span className='pr-10 pl-2 font-bold' >링크 복사하기 </span>
+          </button>
        </div>
       );
   }
