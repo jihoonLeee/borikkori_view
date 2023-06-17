@@ -41,8 +41,8 @@ export default function Result(props){
       return (
         visible ? <Loading></Loading> :
         <div>
-          <img className='m-auto block w-80' alt="charactor" src={`/images/gifs/${resultName}.gif`} />
-          <img id="result" className='m-auto block pb-10' alt="result" src={`/images/results/${resultName}_result.png`} />
+          <img className='m-auto block w-80' alt="charactor" src={process.env.PUBLIC_URL +`/images/gifs/${resultName}.gif`} />
+          <img id="result" className='m-auto block pb-10' alt="result" src={process.env.PUBLIC_URL +`/images/results/${resultName}_result.png`} />
           <button onClick={onCapture}> 
             <FaSave size="24"/>
             <span className='pr-10 pl-2 font-bold'>결과 저장하기</span>
