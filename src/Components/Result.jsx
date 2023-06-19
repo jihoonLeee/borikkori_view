@@ -54,6 +54,7 @@ export default function Result(props){
           </button>
           <button onClick={onCopyLink}>
             <FaLink size="24"/>
+            <span className='pr-10 pl-2 font-bold'>링크 복사하기</span>
           </button>
        </div>
       );

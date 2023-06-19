@@ -35,7 +35,7 @@ export default function Header() {
       <nav className="mx-auto flex max-w-7xl items-center justify-between p-6 lg:px-8" aria-label="Global">
         <div className="flex lg:flex-1">
           <a href="/my-dog/" className="-m-1.5 p-1.5">
-            <span className="sr-only">Your Company</span>
+            <span className="sr-only">Happppy DOg</span>
             <img className="h-16 w-auto" src={`${process.env.PUBLIC_URL}/images/dog_freinds_logo.png`} alt="" />
           </a>
         </div>
@@ -112,9 +112,9 @@ export default function Header() {
           </a> */}
         </Popover.Group>  
         <div className="flex flex-1 justify-end">
-          <a href="!#" className="text-sm font-semibold leading-6 text-gray-900">
+          {/* <a href="!#" className="text-sm font-semibold leading-6 text-gray-900">
             Log in <span aria-hidden="true">&rarr;</span>
-          </a>
+          </a> */}
         </div>
       </nav>
       <Dialog as="div" className="lg:hidden" open={mobileMenuOpen} onClose={setMobileMenuOpen}>
@@ -122,7 +122,7 @@ export default function Header() {
         <Dialog.Panel className="fixed inset-y-0 right-0 z-10 w-full overflow-y-auto bg-white px-6 py-6 sm:max-w-sm sm:ring-1 sm:ring-gray-900/10">
           <div className="flex items-center justify-between">
             <a href="!#" className="-m-1.5 p-1.5">
-              <span className="sr-only">Your Company</span>
+              <span className="sr-only">HappPPY DOg</span>
               <img
                 className="h-8 w-auto"
                 src="/images/dog_freinds_logo.png"
