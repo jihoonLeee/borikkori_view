@@ -9,7 +9,7 @@ function Footer(){
         <div className="p-5 w-1/2 sm:w-4/12 md:w-3/12">
           {/* 로고 */}
           <div className="text-white-900 hover:text-white-700 flex items-center">
-            <a href="/my-dog/" className="text-xl font-bold mx-auto">
+            <a href="/" className="text-xl font-bold mx-auto">
               <img className="h-16 w-auto " src={`${process.env.PUBLIC_URL}/images/dog_freinds_logo.png`} alt="" />
             </a>
           </div>

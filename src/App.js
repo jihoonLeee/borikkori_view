@@ -39,7 +39,7 @@ export default function App() {
       <Header />
       <Router>
         <Routes>
-          <Route path="/my-dog/" element={current === 0 
+          <Route path="/" element={current === 0 
             ? <Main onClick={() => setCurrent(1)} /> 
             : <QuestionHandler
                 setCurrent={setCurrent}
