@@ -2,6 +2,9 @@
   text-align: center;
   background-color: #FFD1D8;
 }
+.header,.footer{
+  background-color: #C0A5E1;
+}
 
 .question{
   display: flex;

@@ -3,7 +3,7 @@ import {FaYoutube,FaInstagram,FaGithub} from 'react-icons/fa';
 import {SiTistory} from 'react-icons/si'; 
 function Footer(){
     return(
-    <footer className="bg-stone-300 pt-10 sm:mt-10 pt-10">
+    <footer className="footer pt-10 sm:mt-10 pt-10">
       <div className="max-w-6xl m-auto text-gray-900 flex flex-wrap justify-left">
         {/* 왼쪽 컬럼 */}
         <div className="p-5 w-1/2 sm:w-4/12 md:w-3/12">
