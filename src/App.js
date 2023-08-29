@@ -10,7 +10,6 @@ import { BrowserRouter as Router, Route, Navigate, Routes } from "react-router-d
 import GetMBTI from './Components/GetMBTI';
 import ReactGA from "react-ga4";
 
-
 ReactGA.initialize("G-2G1F6RJ26H");
 
 
