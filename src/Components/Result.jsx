@@ -46,7 +46,7 @@ export default function Result(props){
       return (
         visible ? <Loading></Loading> :
         <div>
-          <img className='m-auto block w-80' alt="charactor" src={`${process.env.PUBLIC_URL}/images/gifs/${resultName}.gif`} />
+          <br/><br/><br/><p className='uppercase text-4xl font-sans font-bold '>우리 강아지는 {resultName}야~</p><br/><br/><br/>
           <img id="result" className='m-auto block pb-10' alt="result" src={`${process.env.PUBLIC_URL}/images/results/${resultName}_result.PNG`} />
           <button onClick={onCapture}> 
             <FaSave size="24"/>
