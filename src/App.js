@@ -8,7 +8,17 @@ import ProgressBar from './Components/ProgressBar';
 import Main from './Components/Main';
 import { BrowserRouter as Router, Route, Navigate, Routes } from "react-router-dom";
 import GetMBTI from './Components/GetMBTI';
+import ReactGA from "react-ga4";
 
+
+ReactGA.initialize("G-2G1F6RJ26H");
+
+
+ReactGA.send({ 
+  hitType: "pageview", 
+  page: window.location.pathname, 
+ });
+ 
 function QuestionHandler({ setCurrent, setResult, current, max_question_id, result }) {
   const handleClick = (data) => {
     setCurrent(current + 1);
