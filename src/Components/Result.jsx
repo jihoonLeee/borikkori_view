@@ -10,7 +10,7 @@ export default function Result(props){
 
     const location = useLocation();
     const queryParams = new URLSearchParams(location.search);
-    const resultName = queryParams.get("result"); 
+    const resultName = queryParams.get("result");
 
     const onCapture= () => {
       console.log("OnCapture");
@@ -47,7 +47,7 @@ export default function Result(props){
         visible ? <Loading></Loading> :
         <div>
           <br/><br/><br/><p className='uppercase text-4xl font-sans font-bold '>우리 강아지는 {resultName}야~</p><br/><br/><br/>
-          <img id="result" className='m-auto block pb-10' alt="result" src={`./images/results/${resultName}_result.png`} />
+          <img id="result" className='m-auto block pb-10' alt="result" src={`../images/results/${resultName}_result.png`} />
           <button onClick={onCapture}> 
             <FaSave size="24"/>
             <span className='pr-10 pl-2 font-bold'>결과 저장하기</span>

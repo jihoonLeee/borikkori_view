@@ -101,20 +101,17 @@ export default function Header() {
             </Transition>
           </Popover> */}
 
-          {/* <a href="#" className="text-sm font-semibold leading-6 text-gray-900">
-            Features
+           <a href="/dogBoard" className="text-sm font-semibold leading-6 text-gray-900">
+            게시판
           </a>
-          <a href="#" className="text-sm font-semibold leading-6 text-gray-900">
-            Marketplace
+          <a href="/dogBTI" className="text-sm font-semibold leading-6 text-gray-900">
+            개BTI
           </a>
-          <a href="#" className="text-sm font-semibold leading-6 text-gray-900">
-            Company
-          </a> */}
         </Popover.Group>  
         <div className="flex flex-1 justify-end">
-          {/* <a href="!#" className="text-sm font-semibold leading-6 text-gray-900">
+          { <a href="#" className="text-sm font-semibold leading-6 text-gray-900">
             Log in <span aria-hidden="true">&rarr;</span>
-          </a> */}
+          </a> }
         </div>
       </nav>
       <Dialog as="div" className="lg:hidden" open={mobileMenuOpen} onClose={setMobileMenuOpen}>

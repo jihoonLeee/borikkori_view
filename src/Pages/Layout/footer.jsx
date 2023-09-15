@@ -46,7 +46,7 @@ function Footer(){
             <h3 className="text-xl mb-2 font-bold">Support</h3>
             <ul className="list-none">
               <li className="mb-2">
-                <a href="!#" className="text-white-600 hover:text-white-700">
+                <a href="mailto:ljh2723@gmail.com" className="text-white-600 hover:text-white-700">
                   문의
                 </a>
               </li>
