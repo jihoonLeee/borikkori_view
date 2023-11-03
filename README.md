@@ -12,9 +12,8 @@
 * 백엔드(예정): Spring Boot, JPA
 
 ## 사이트 링크
-
+[https://deploy-preview-5--funny-heliotrope-d08506.netlify.app](https://deploy-preview-5--funny-heliotrope-d08506.netlify.app)
 [https://wagwagt.world](https://wagwagt.world)
-
 ## 사이트 스크린샷
 
 (사진 넣을 공간)
