@@ -120,7 +120,7 @@ function Footer(){
         </div>
         <div className="pt-2">
           <p className="text-center text-gray-700 hover:text-black pb-6">
-            © {new Date().getFullYear()} 개BTI
+            © {new Date().getFullYear()} wagwagT
           </p>
         </div>
       </div>

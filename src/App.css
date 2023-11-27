@@ -1,9 +1,9 @@
 .App {
   text-align: center;
-  background-color: #FFD1D8;
+  background-color: #FFFF;
 }
 .header,.footer{
-  background-color: #C0A5E1;
+  background-color: #FECDD3;
 }
 
 .question{
@@ -15,7 +15,7 @@
   height: 600px;
   width: 350px;
   padding: 1rem;
-  background-color: #ebebeb;
+  background-color: #F8EDEB    ; /*52B788 , F8EDEB */
   border-radius: 20px;
   box-shadow: 7px 5px 23px -9px rgba(0, 0, 0, 0.75);
   margin-bottom: 1rem;

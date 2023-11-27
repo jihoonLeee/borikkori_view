@@ -6,9 +6,10 @@ import DogBTI from './Pages/Dog_Test/dog_mbti';
 import DBTI_Result from './Pages/Dog_Test/dog_mbti_result';
 import DogBoard from './Pages/Board/DogBoard';
 import DogHouse from './Pages/Home/DogHouse';
+import Footer from './Pages/Layout/footer';
+import Header from './Pages/Layout/header';
 
 ReactGA.initialize("G-2G1F6RJ26H");
-
 
 ReactGA.send({ 
   hitType: "pageview", 
@@ -20,6 +21,7 @@ export default function App() {
 
   return (
     <div className='App'>
+      <Header/>
       <Router>
         <Routes>
           <Route path="/" element={<DogHouse />} />
@@ -28,6 +30,7 @@ export default function App() {
           <Route path="/dogBoard" element={<DogBoard />} />
         </Routes>
       </Router>
+      <Footer/>
     </div>
   );
 }

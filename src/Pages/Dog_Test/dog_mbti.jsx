@@ -1,11 +1,9 @@
 import React, {useState, useEffect} from "react";
-import Header from '../Layout/header';
-import Footer from "../Layout/footer";
 import Question from "../../Components/Questions/Question";
 import ProgressBar from '../../Components/ProgressBar';
-import Main from '../../Components/Main';
 import { BrowserRouter as Router, Route, Navigate, Routes } from "react-router-dom";
 import GetMBTI from '../../Components/GetMBTI';
+import GbtiHome from "../../Components/GbtiHome";
 
 export default function DogBTI() {
     function QuestionHandler({ setCurrent, setResult, current, max_question_id, result }) {
@@ -33,14 +31,12 @@ export default function DogBTI() {
     
   return (
     <div>
-        <Header />
         {current === 0 
-            ? <Main onClick={() => setCurrent(1)} /> 
+            ? <GbtiHome onClick={() => setCurrent(1)} /> 
             : (current === max_question_id)
             ? <Navigate to={`/dogBTI/result?result=${GetMBTI(result)}`} replace />
             : <QuestionHandler setCurrent={setCurrent} setResult={setResult} current={current} max_question_id={max_question_id} result={result}/>
         }
-        <Footer />
     </div>
   );
 }
