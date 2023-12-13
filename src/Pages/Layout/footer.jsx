@@ -46,7 +46,7 @@ function Footer(){
             <h3 className="text-xl mb-2 font-bold">Support</h3>
             <ul className="list-none">
               <li className="mb-2">
-                <a href="!#" className="text-white-600 hover:text-white-700">
+                <a href="mailto:ljh2723@gmail.com" className="text-white-600 hover:text-white-700">
                   문의
                 </a>
               </li>
@@ -120,7 +120,7 @@ function Footer(){
         </div>
         <div className="pt-2">
           <p className="text-center text-gray-700 hover:text-black pb-6">
-            © {new Date().getFullYear()} 개BTI
+            © {new Date().getFullYear()} wagwagT
           </p>
         </div>
       </div>

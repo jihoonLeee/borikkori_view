@@ -66,7 +66,6 @@ export default function GetMBTI(data) {
     }else{
         result+="p";
     }
-    console.log(result);
     return result;
 }
 

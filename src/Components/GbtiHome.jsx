@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-export default function Main({onClick}) {
+export default function GbtiHome({onClick}) {
     const [start, setStart] = useState(false);
     return (
         <div className="w-full h-screen flex flex-col justify-center items-center pb-24">
