@@ -1,5 +1,19 @@
 import React, { useState, useEffect } from 'react';
-import Button from "../../Components/UI/button";
+// import Button from "../../Components/UI/button";
+import Button from '@mui/material/Button';
+import { createTheme, ThemeProvider } from '@mui/material/styles';
+import { lime } from '@mui/material/colors';
+import ButtonGroup from '@mui/material/ButtonGroup';
+
+
+const theme = createTheme({
+    palette: {
+      primary: lime,
+      secondary: {
+        main:'#F43F5E'
+      },
+    },
+  });
 
 export default function DogBoard() {
     const [posts, setPosts] = useState([]);
@@ -19,7 +33,9 @@ export default function DogBoard() {
           <div className="p-6">
             <div className="flex justify-between items-center mb-4">
               <h2 className="text-2xl font-semibold text-rose-900 dark:text-rose-50">정보 공유</h2>
-              <Button className="bg-rose-500 text-white rounded-md">Write a Post</Button>
+              <ThemeProvider theme={theme}>
+                 <Button variant="contained" color="secondary">글쓰기</Button>
+              </ThemeProvider>
             </div>
             <div className="flex items-center mb-4">
               <input
@@ -27,7 +43,10 @@ export default function DogBoard() {
                 placeholder="Search..."
                 type="text"
               />
-              <Button className="ml-2 bg-rose-500 text-white rounded-md">Search</Button>
+              
+              <ThemeProvider theme={theme}>
+                 <Button variant="contained" color="secondary">검색</Button>
+              </ThemeProvider>
             </div>
             <hr className="my-4 border-rose-200 dark:border-rose-800" />
           
@@ -42,11 +61,16 @@ export default function DogBoard() {
             </div>
           ))}
             <div className="flex justify-center mt-4">
-              <Button className="mx-1 bg-rose-500 text-white rounded-md">Previous</Button>
-              <Button className="mx-1 bg-rose-500 text-white rounded-md">1</Button>
-              <Button className="mx-1 bg-rose-500 text-white rounded-md">2</Button>
-              <Button className="mx-1 bg-rose-500 text-white rounded-md">3</Button>
-              <Button className="mx-1 bg-rose-500 text-white rounded-md">Next</Button>
+            <ThemeProvider theme={theme}>
+                <ButtonGroup variant="contained" color="secondary" aria-label="outlined primary button group">
+                <Button variant="contained" color="secondary">이전</Button>
+                <Button variant="contained" color="secondary">1</Button>
+                <Button variant="contained" color="secondary">2</Button>
+                <Button variant="contained" color="secondary">3</Button>
+                <Button variant="contained" color="secondary">다음</Button>
+                </ButtonGroup>
+            </ThemeProvider>
+              
             </div>
           </div>
         </section>

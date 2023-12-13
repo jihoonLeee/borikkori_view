@@ -1,9 +1,11 @@
-import React, {useState, useEffect} from "react";
-import axios from "axios";
+import React from "react";
+
 
 export default function DogHouse() {
   const api_url = process.env.REACT_APP_API_URL + process.env.REACT_APP_API_PORT;
+  console.log(api_url);
   // axios.get(api_url+"/test");
+  
 
   return (
     <main className="flex flex-col items-center px-4 md:px-6  dark:bg-rose-900 min-h-screen">
@@ -14,21 +16,20 @@ export default function DogHouse() {
           <article className="mb-8">
             <h3 className="text-xl font-bold text-rose-900 dark:text-rose-50">Popular Post 1</h3>
             <p className="text-gray-600 dark:text-rose-300 mt-2">
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et
-              dolore magna aliqua.
+              1
             </p>
+            
           </article>
           <article className="mb-8">
             <h3 className="text-xl font-bold text-rose-900 dark:text-rose-50">Popular Post 2</h3>
             <p className="text-gray-600 dark:text-rose-300 mt-2">
-              Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
-              consequat.
+              2
             </p>
           </article>
           <article className="mb-8">
             <h3 className="text-xl font-bold text-rose-900 dark:text-rose-50">Popular Post 3</h3>
             <p className="text-gray-600 dark:text-rose-300 mt-2">
-              Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.
+             3 eu fugiat nulla pariatur.
             </p>
           </article>
         </div>
@@ -39,21 +40,19 @@ export default function DogHouse() {
           <article className="mb-8">
             <h3 className="text-xl font-bold text-rose-900 dark:text-rose-50">Recent Post 1</h3>
             <p className="text-gray-600 dark:text-rose-300 mt-2">
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et
-              dolore magna aliqua.
+              L1
             </p>
           </article>
           <article className="mb-8">
             <h3 className="text-xl font-bold text-rose-900 dark:text-rose-50">Recent Post 2</h3>
             <p className="text-gray-600 dark:text-rose-300 mt-2">
-              Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
-              consequat.
+              3
             </p>
           </article>
           <article className="mb-8">
             <h3 className="text-xl font-bold text-rose-900 dark:text-rose-50">Recent Post 3</h3>
             <p className="text-gray-600 dark:text-rose-300 mt-2">
-              Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.
+              2
             </p>
           </article>
         </div>

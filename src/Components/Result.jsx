@@ -3,15 +3,17 @@ import Loading from './Loading';
 import html2canvas from 'html2canvas';
 import {FaSave,FaLink} from 'react-icons/fa';
 import { useLocation } from "react-router-dom";
+import { firestore }  from '../Modules/Firebase.js';
+
 
 export default function Result(props){
     const [visible, setVisible] = useState(true);
     const [copied, setCopied] = useState(false);
-
+    console.log(props , "프롬");
     const location = useLocation();
     const queryParams = new URLSearchParams(location.search);
     const resultName = queryParams.get("result");
-
+    
     const onCapture= () => {
       console.log("OnCapture");
       html2canvas(document.getElementById("result")).then(canvas=>{
@@ -38,6 +40,8 @@ export default function Result(props){
     };
 
     useEffect(() => {
+      console.log('Result component mounted');
+      addData(resultName);
       const timer = setTimeout(() => {
         setVisible(false);
       }, 2000);
@@ -60,4 +64,15 @@ export default function Result(props){
       );
   }
  
-  
+  const addData = async (result) => {
+    
+    const data = {
+      mbti_result: result
+    };
+    try {
+      const docRef = await firestore.collection('wagwagt').add(data);
+      console.log(`Document written with ID: ${docRef.id}`);
+    } catch (e) {
+      console.error("Error adding document: ", e);
+    }
+  };
