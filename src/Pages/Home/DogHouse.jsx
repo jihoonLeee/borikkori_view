@@ -9,8 +9,8 @@ export default function DogHouse() {
 
   return (
     <main className="flex flex-col items-center px-4 md:px-6  dark:bg-rose-900 min-h-screen">
-    <div className="flex flex-wrap justify-center w-full max-w-6xl mt-8 flex-row">
-      <section className="w-full md:w-1/3 bg-white dark:bg-rose-950 rounded-lg shadow-md overflow-hidden md:mr-2 mb-8 md:mb-0">
+      *보수중*
+      {/* <section className="w-full md:w-1/3 bg-white dark:bg-rose-950 rounded-lg shadow-md overflow-hidden md:mr-2 mb-8 md:mb-0">
         <div className="p-6">
           <h2 className="text-2xl font-semibold text-rose-900 dark:text-rose-50 mb-4">인기 게시글</h2>
           <article className="mb-8">
@@ -56,9 +56,8 @@ export default function DogHouse() {
             </p>
           </article>
         </div>
-      </section>
-    </div>
-    <section className="w-full max-w-2xl mt-8 bg-white dark:bg-rose-950 rounded-lg shadow-md overflow-hidden">
+      </section> */}
+    <section className="w-full max-w-5xl mt-8 bg-white dark:bg-rose-950 rounded-lg shadow-md overflow-hidden">
       <div className="p-6">
         <h2 className="text-2xl font-semibold text-rose-900 dark:text-rose-50 mb-4">Top 3 MBTI Results</h2>
         <div className="relative h-64 w-full mb-8 flex justify-between">
