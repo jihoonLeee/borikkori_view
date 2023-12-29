@@ -11,7 +11,7 @@ import Header from './Pages/Layout/header';
 import Join from './Pages/User/join';
 import Login from './Pages/User/login';
 import BoardWrite from './Pages/Board/BoardWrite';
-
+import { AuthProvider } from './Modules/AuthProvider';
 ReactGA.initialize("G-2G1F6RJ26H");
 
 ReactGA.send({ 
@@ -23,8 +23,8 @@ export default function App() {
   const [result, setResult] = useState([]);
 
   return (
+    <AuthProvider>
     <div className='App'>
-     
       <Router>
         <Header/>
         <Routes>
@@ -38,7 +38,7 @@ export default function App() {
         </Routes>
         <Footer/>
       </Router>
-      
     </div>
+    </AuthProvider>
   );
 }

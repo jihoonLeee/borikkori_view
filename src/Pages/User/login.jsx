@@ -1,5 +1,4 @@
 import * as React from 'react';
-import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import CssBaseline from '@mui/material/CssBaseline';
 import TextField from '@mui/material/TextField';
@@ -8,28 +7,41 @@ import Checkbox from '@mui/material/Checkbox';
 import Link from '@mui/material/Link';
 import Grid from '@mui/material/Grid';
 import Box from '@mui/material/Box';
-import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import axios from 'axios';
-
+import { useNavigate } from "react-router-dom";
 
 // TODO remove, this demo shouldn't need to reset the theme.
 
 const defaultTheme = createTheme();
 
 export default function SignIn() {
+  const navigate = useNavigate();
+
+  const loginUser = async (credentials) => {
+    const api_url = process.env.REACT_APP_API_URL + process.env.REACT_APP_API_PORT;
+
+    return axios.post(
+      'http://localhost:8080/users/login', 
+      credentials, 
+      {withCredentials: true}
+    )
+    .then(response => {
+      navigate("/");
+      window.location.reload();
+      return response.data;
+    })
+    .catch(error => console.error(`Error: ${error}`));
+  }
+
   const handleSubmit = (event) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
-    console.log({
+    loginUser({
       email: data.get('email'),
       password: data.get('password'),
-    });
-    loginUser({
-        email: data.get('email'),
-        password: data.get('password'),
     }).then(data => console.log(data));
   };
   
@@ -100,9 +112,17 @@ export default function SignIn() {
     </ThemeProvider>
   );
 }
-async function loginUser(credentials) {
-  const api_url = process.env.REACT_APP_API_URL + process.env.REACT_APP_API_PORT;
-    return axios.post(api_url+'/users/login', credentials)
-        .then(response => response.data)
-        .catch(error => console.error(`Error: ${error}`));
-}
+// async function loginUser(credentials) {
+//   const api_url = process.env.REACT_APP_API_URL + process.env.REACT_APP_API_PORT;
+//   const history = useHistory();
+//   return axios.post(
+//       'http://localhost:8080/users/login', 
+//       credentials, 
+//       {withCredentials: true}
+//         )
+//         .then(response => {
+//           history.push("/");
+//           return response.data;
+//         })
+//         .catch(error => console.error(`Error: ${error}`));
+// }
