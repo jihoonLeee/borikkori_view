@@ -101,7 +101,8 @@ export default function SignIn() {
   );
 }
 async function loginUser(credentials) {
-    return axios.post('http://localhost:8080/users/login', credentials)
+  const api_url = process.env.REACT_APP_API_URL + process.env.REACT_APP_API_PORT;
+    return axios.post(api_url+'/users/login', credentials)
         .then(response => response.data)
         .catch(error => console.error(`Error: ${error}`));
 }
