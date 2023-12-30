@@ -1,30 +1,12 @@
 import {  useState ,useContext} from 'react' // Fragment,
-import { Dialog, Disclosure, Popover } from '@headlessui/react' //, Transition
+import { Dialog, Popover } from '@headlessui/react' //, Transition
 import {
-  ArrowPathIcon,
-  // Bars3Icon,
-  ChartPieIcon,
-  CursorArrowRaysIcon,
-  FingerPrintIcon,
-  SquaresPlusIcon,
   XMarkIcon,
   Bars3Icon
 } from '@heroicons/react/24/outline'
-import { ChevronDownIcon, PhoneIcon, PlayCircleIcon } from '@heroicons/react/20/solid'
 import { Link } from "react-router-dom";
 import { AuthContext } from '../../Modules/AuthProvider';
-
-const products = [
-  { name: 'Analytics', description: 'Get a better understanding of your traffic', href: '#', icon: ChartPieIcon },
-  { name: 'Engagement', description: 'Speak directly to your customers', href: '#', icon: CursorArrowRaysIcon },
-  { name: 'Security', description: 'Your customers’ data will be safe and secure', href: '#', icon: FingerPrintIcon },
-  { name: 'Integrations', description: 'Connect with third-party tools', href: '#', icon: SquaresPlusIcon },
-  { name: 'Automations', description: 'Build strategic funnels that will convert', href: '#', icon: ArrowPathIcon },
-]
-const callsToAction = [
-  { name: 'Watch demo', href: '!#', icon: PlayCircleIcon },
-  { name: 'Contact sales', href: '!#', icon: PhoneIcon },
-]
+import axios from 'axios';
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(' ')
@@ -33,6 +15,7 @@ function classNames(...classes) {
 export default function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const { authenticated, setAuthenticated } = useContext(AuthContext);
+  
   return (
     <header className="header">
       <nav className="mx-auto flex max-w-7xl items-center justify-between p-6 lg:px-8" aria-label="Global">
@@ -72,8 +55,11 @@ export default function Header() {
         </button>
         }
         { authenticated &&
-        <button className="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 h-10 px-4 py-2 text-rose-600 hover:bg-rose-100 hover:text-rose-900 focus:bg-rose-100 focus:text-rose-900 dark:text-rose-300 dark:hover:bg-rose-800 dark:hover:text-rose-50 dark:focus:bg-rose-800 dark:focus:text-rose-50">
-            <Link to="/logout" className="text-sm font-semibold leading-6 text-gray-900">로그아웃</Link>
+       <button 
+          onClick={logout} 
+          className="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 h-10 px-4 py-2 text-rose-600 hover:bg-rose-100 hover:text-rose-900 focus:bg-rose-100 focus:text-rose-900 dark:text-rose-300 dark:hover:bg-rose-800 dark:hover:text-rose-50 text-sm font-semibold leading-6 text-gray-900"
+        >
+          로그아웃
         </button>
         }
         </div>
@@ -133,8 +119,20 @@ export default function Header() {
                   <Link to="/dogBTI" className="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50" onClick={() => setMobileMenuOpen(false)}>개BTI</Link>
               </div>
               <div className="py-6">
+              {!authenticated &&
                 <Link to="/login" className="text-sm font-semibold leading-6 text-gray-900">로그인</Link>
-                <Link to="/join" className="text-sm font-semibold leading-6 text-gray-900">회원가입</Link>
+               } 
+                {!authenticated &&
+                 <Link to="/join" className="text-sm font-semibold leading-6 text-gray-900">회원가입</Link>
+                }
+              { authenticated &&
+                  <button 
+                      onClick={logout} 
+                      className="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 h-10 px-4 py-2 text-rose-600 hover:bg-rose-100 hover:text-rose-900 focus:bg-rose-100 focus:text-rose-900 dark:text-rose-300 dark:hover:bg-rose-800 dark:hover:text-rose-50 text-sm font-semibold leading-6 text-gray-900"
+                    >
+                      로그아웃
+                    </button>
+                    }
               </div>
             </div>
           </div>
@@ -142,4 +140,19 @@ export default function Header() {
       </Dialog>
     </header>
   )
+}
+function logout() {
+  axios({
+    method: 'post',
+    url: 'http://localhost:8080/logout',
+    withCredentials: true
+  })
+  .then((response) => {
+    console.log(response);
+    window.location.reload();
+    // 로그아웃 성공 시 처리
+  })
+  .catch((error) => {
+    console.log(error);
+  });
 }

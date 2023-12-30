@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import Loading from './Loading';
+import Loading from './Loadings/Loading.jsx';
 import html2canvas from 'html2canvas';
 import {FaSave,FaLink} from 'react-icons/fa';
 import { useLocation } from "react-router-dom";

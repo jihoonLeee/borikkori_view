@@ -1,10 +1,11 @@
 import React, { createContext, useState, useEffect } from 'react';
 import axios from 'axios';
+import Spinner from '../Components/Loadings/Spinner';
 
 export const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
-    const [authenticated, setAuthenticated] = useState(false);
+    const [authenticated, setAuthenticated] = useState(null);
     const api_url = process.env.REACT_APP_API_URL + process.env.REACT_APP_API_PORT;
     // 컴포넌트가 마운트될 때 사용자의 로그인 상태를 체크
     useEffect(() => {
@@ -22,7 +23,9 @@ export const AuthProvider = ({ children }) => {
         };
         checkUserStatus();
     }, []);
-
+    if (authenticated === null) {
+        return <Spinner />;
+    }
     return (
         <AuthContext.Provider value={{ authenticated, setAuthenticated }}>
             {children}

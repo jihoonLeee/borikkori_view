@@ -1,6 +1,6 @@
 import React from 'react';
-import {Background, LoadingText} from '../Modules/Style.js';
-import Spinner from '../assets/loading.gif';
+import {Background, LoadingText} from '../../Modules/Style.js';
+import Spinner from '../../assets/loading.gif';
 
 export default function Loading() {
   return (

@@ -1,12 +1,12 @@
 import React, {useState, useEffect} from "react";
-import Question from "../../Components/Questions/Question";
-import ProgressBar from '../../Components/ProgressBar';
+import Question from "../../Components/Questions/Question.jsx";
+import ProgressBar from '../../Components/ProgressBar.jsx';
 import { Navigate  } from "react-router-dom";
-import GetMBTI from '../../Modules/GetMBTI';
-import GbtiHome from "../../Components/GbtiHome";
+import GetMBTI from '../../Modules/GetMBTI.js';
+import GbtiHome from "../../Components/GbtiHome.jsx";
 import { firestore }  from '../../Modules/Firebase.js';
 
-export default function DogBTI() {
+export default function DogMbtiTest() {
   const [current, setCurrent] = useState(0);
   const max_question_id = 12;
   const [result, setResult] = useState([]);
