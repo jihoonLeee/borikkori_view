@@ -1,7 +1,15 @@
+import React from 'react';
+import {Background, LoadingText} from '../../Modules/Style.js';
+
 const Spinner = () => {
     return (
-      <div className="w-16 h-16 border-4 border-t-4 border-gray-200 border-blue-500 rounded-full animate-spin"></div>
+      <Background>
+      <LoadingText><p className='text-4xl font-bold'>로딩...</p></LoadingText>
+      <br/>
+      {/* <img src={Spinner} alt="로딩중" width="5%" /> */}
+    </Background>
     );
   }
   
   export default Spinner;
+  

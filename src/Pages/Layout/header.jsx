@@ -8,13 +8,11 @@ import { Link } from "react-router-dom";
 import { AuthContext } from '../../Modules/AuthProvider';
 import axios from 'axios';
 
-function classNames(...classes) {
-  return classes.filter(Boolean).join(' ')
-}
+const api_url = process.env.REACT_APP_API_URL + process.env.REACT_APP_API_PORT;
 
 export default function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
-  const { authenticated, setAuthenticated } = useContext(AuthContext);
+  const { authenticated } = useContext(AuthContext);
   
   return (
     <header className="header">
@@ -90,31 +88,6 @@ export default function Header() {
           <div className="mt-6 flow-root">
             <div className="-my-6 divide-y divide-gray-500/10">
               <div className="space-y-2 py-6">
-                {/* <Disclosure as="div" className="-mx-3">
-                  {({ open }) => (
-                    <>
-                      <Disclosure.Button className="flex w-full items-center justify-between rounded-lg py-2 pl-3 pr-3.5 text-base font-semibold leading-7 hover:bg-gray-50">
-                        Product
-                        <ChevronDownIcon
-                          className={classNames(open ? 'rotate-180' : '', 'h-5 w-5 flex-none')}
-                          aria-hidden="true"
-                        />
-                      </Disclosure.Button>
-                      <Disclosure.Panel className="mt-2 space-y-2">
-                        {[...products, ...callsToAction].map((item) => (
-                          <Disclosure.Button
-                            key={item.name}
-                            as="a"
-                            href={item.href}
-                            className="block rounded-lg py-2 pl-6 pr-3 text-sm font-semibold leading-7 text-gray-900 hover:bg-gray-50"
-                          >
-                            {item.name}
-                          </Disclosure.Button>
-                        ))}
-                      </Disclosure.Panel>
-                    </>
-                  )}
-                </Disclosure> */}
                   <Link to="/dogBoard" className="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50" onClick={() => setMobileMenuOpen(false)}>게시판</Link>
                   <Link to="/dogBTI" className="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50" onClick={() => setMobileMenuOpen(false)}>개BTI</Link>
               </div>
@@ -144,13 +117,12 @@ export default function Header() {
 function logout() {
   axios({
     method: 'post',
-    url: 'http://localhost:8080/logout',
+    url: api_url+'/logout',
     withCredentials: true
   })
   .then((response) => {
     console.log(response);
     window.location.reload();
-    // 로그아웃 성공 시 처리
   })
   .catch((error) => {
     console.log(error);

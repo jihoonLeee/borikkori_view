@@ -11,10 +11,13 @@ export const AuthProvider = ({ children }) => {
     useEffect(() => {
         const checkUserStatus = async () => {
             try {
-                const response = await axios.get('http://localhost:8080/users/userInfo', 
+                const response = await axios.post(
+                    api_url+'/users/userInfo', 
+                    {},
                     { withCredentials: true }  // 쿠키를 함께 보내도록 설정
                 );
                 if (response.status === 200) {
+                    console.log(response.data);
                     setAuthenticated(true);
                 }
             } catch (error) {

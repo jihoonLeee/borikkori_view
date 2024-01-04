@@ -7,7 +7,7 @@ import axios from 'axios';
 
 const defaultTheme = createTheme();
 
-const LoginUser = async (credentials, navigate, api_url) => {
+const loginUser = async (credentials, navigate, api_url) => {
   return axios.post(
     `${api_url}/users/login`, 
     credentials, 
@@ -19,21 +19,20 @@ const LoginUser = async (credentials, navigate, api_url) => {
     return response.data;
   })
   .catch(error => {
-    console.error(`Error: ${error}`);
-    alert(`로그인에 실패했습니다: ${error}`);
+    alert(`로그인에 실패했습니다`);
   });
 }
 
 const handleSubmit = (event, loginUser, navigate, api_url) => {
   event.preventDefault();
   const data = new FormData(event.currentTarget);
-  LoginUser({
+  loginUser({
     email: data.get('email'),
     password: data.get('password'),
   }, navigate, api_url);
 };
 
-export default function Login() {
+export default function SignIn() {
   const navigate = useNavigate();
   const { authenticated } = useContext(AuthContext);
   const api_url = process.env.REACT_APP_API_URL + process.env.REACT_APP_API_PORT;
@@ -47,7 +46,7 @@ export default function Login() {
 
   return (
     <ThemeProvider theme={defaultTheme}>
-      <LoginForm handleSubmit={(event) => handleSubmit(event, LoginUser, navigate, api_url)} />
+      <LoginForm handleSubmit={(event) => handleSubmit(event, loginUser, navigate, api_url)} />
     </ThemeProvider>
   );
 }

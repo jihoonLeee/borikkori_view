@@ -2,7 +2,7 @@ import React from "react";
 
 
 export default function DogHouse() {
-  const api_url = process.env.REACT_APP_API_URL + process.env.REACT_APP_API_PORT;
+  // const api_url = process.env.REACT_APP_API_URL + process.env.REACT_APP_API_PORT;
   // axios.get(api_url+"/test");
   
 
