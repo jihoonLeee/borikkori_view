@@ -6,8 +6,8 @@ export const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
     const [authenticated, setAuthenticated] = useState(null);
+    const [userInfo, setUserInfo] = useState(null);
     const api_url = process.env.REACT_APP_API_URL + process.env.REACT_APP_API_PORT;
-    // 컴포넌트가 마운트될 때 사용자의 로그인 상태를 체크
     useEffect(() => {
         const checkUserStatus = async () => {
             try {
@@ -17,7 +17,7 @@ export const AuthProvider = ({ children }) => {
                     { withCredentials: true }  // 쿠키를 함께 보내도록 설정
                 );
                 if (response.status === 200) {
-                    console.log(response.data);
+                    setUserInfo(response.data);
                     setAuthenticated(true);
                 }
             } catch (error) {
@@ -30,7 +30,7 @@ export const AuthProvider = ({ children }) => {
         return <Spinner />;
     }
     return (
-        <AuthContext.Provider value={{ authenticated, setAuthenticated }}>
+        <AuthContext.Provider value={{ authenticated, setAuthenticated ,userInfo}}>
             {children}
         </AuthContext.Provider>
     );

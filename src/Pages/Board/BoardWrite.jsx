@@ -13,13 +13,33 @@ import KeyboardArrowDown from '@mui/icons-material/KeyboardArrowDown';
 import Check from '@mui/icons-material/Check';
 import { useNavigate } from "react-router-dom";
 import { AuthContext } from '../../Modules/AuthProvider';
+import axios from 'axios';
 
-export default function ExampleTextareaComment() {
-  const [italic, setItalic] = React.useState(false);
-  const [fontWeight, setFontWeight] = React.useState('normal');
-  const [anchorEl, setAnchorEl] = React.useState(null);
-  const { authenticated } = useContext(AuthContext);
+export default function BoardWrite() {
+  const [italic, setItalic] = useState(false);
+  const [fontWeight, setFontWeight] = useState('normal');
+  const [anchorEl, setAnchorEl] = useState(null);
+  const { userInfo,authenticated } = useContext(AuthContext);
   const navigate = useNavigate();
+  const handleSubmit = async () => {
+    try {
+      const response = await axios.post('/posts/register', {
+        title: document.getElementsByName('Primary')[0].value,
+        contents: document.getElementsByName('Secondary')[0].value,
+        email:userInfo.email,
+      },
+      {withCredentials: true}
+      );
+      if (response.status === 201) {
+        alert('글이 성공적으로 등록되었습니다.');
+        navigate("/");
+        window.location.reload();
+      }
+    } catch (error) {
+      console.error('글 등록에 실패했습니다.', error);
+      alert('글 등록에 실패했습니다.');
+    }
+  }
 
   useEffect(() => {
     if (!authenticated) {
@@ -44,7 +64,7 @@ export default function ExampleTextareaComment() {
           >
             <Textarea
               name="Primary"
-              placeholder="제목"
+              placeholder="제목을 입력해주세요."
               variant="outlined"
             />
           </Box>
@@ -52,7 +72,8 @@ export default function ExampleTextareaComment() {
 
         <FormControl>
           <Textarea
-            placeholder="Type something here…"
+            name="Secondary"
+            placeholder="내용을 작성해주세요..."
             minRows={20}
             endDecorator={ <Box
               sx={{
@@ -105,7 +126,7 @@ export default function ExampleTextareaComment() {
               >
                 <FormatItalic />
               </IconButton>
-              <Button sx={{ ml: 'auto' }}>글쓰기</Button>
+              <Button sx={{ ml: 'auto' }} onClick={handleSubmit}>글쓰기</Button>
               </Box>}
             sx={{
               minWidth: 300,

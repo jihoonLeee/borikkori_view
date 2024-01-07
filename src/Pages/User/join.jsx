@@ -7,7 +7,6 @@ import axios from 'axios';
 import BasicAlert from '../../Components/BasicAlert';
 
 const defaultTheme = createTheme();
-const api_url = process.env.REACT_APP_API_URL + process.env.REACT_APP_API_PORT;
 
 const Join = () => {
   
@@ -17,7 +16,7 @@ const Join = () => {
  
   const joinUser = async (credentials, navigate) => {
     return axios.post(
-      `${api_url}/users/join`,
+      `/users/join`,
       credentials,
       { withCredentials: true }
     )
@@ -34,7 +33,7 @@ const Join = () => {
     console.log(email+  "    이메일");
     try {
       const response = await axios.post(
-        `${api_url}/users/sendEmail`,
+        `/users/sendEmail`,
         { email },
         { headers: { 'Content-Type': 'application/json' } }
       );

@@ -12,6 +12,7 @@ import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import Pagination from '@mui/material/Pagination';
 import { Link } from 'react-router-dom'; 
+import axios from 'axios'; 
 
 const theme = createTheme({
     palette: {
@@ -22,15 +23,31 @@ const theme = createTheme({
       },
     },
   });
-
 export default function DogBoard() {
   const StyledTableCell = styled(TableCell)(() => ({
     [`&.${tableCellClasses.head}`]: {
       backgroundColor: theme.palette.secondary.head,
       color: theme.palette.common.black,
+      textAlign: 'center',
     },
     [`&.${tableCellClasses.body}`]: {
-      fontSize: 14,
+      fontSize: 13,
+      
+    },
+    '&:nth-of-type(1)': {
+      width: '67%',
+    },
+    '&:nth-of-type(2)': {
+      width: '13%',
+    },
+    '&:nth-of-type(3)': {
+      width: '10%',
+    },
+    '&:nth-of-type(4)': {
+      width: '5%',
+    },
+    '&:nth-of-type(5)': {
+      width: '5%',
     },
   }));
   
@@ -44,15 +61,15 @@ export default function DogBoard() {
     },
   }));
     const [posts, setPosts] = useState([]);
-    const initialPosts = [
-        { id: 1, title: '첫 번째 게시글', nickName: '강형욱' ,regDttm : '2023.10.11',visit:10,like:1},
-        { id: 2, title: '두 번째 게시글', nickName: '손흥민' ,regDttm : '2023.10.11',visit:3,like:1},
-        { id: 3, title: '세 번째 게시글', nickName: '뽀삐' ,regDttm : '2023.10.11',visit:2,like:1},
-      ];
       
     useEffect(() => {
-       // API 호출을 통해 게시물 데이터 가져오기
-        setPosts(initialPosts);
+      axios.get('/posts/list') 
+            .then(response => {
+                setPosts(response.data);
+            })
+            .catch(error => {
+                console.error('There was an error!', error);
+            });
     }, []);
     return (
         <main className="flex flex-col items-center px-4 md:px-6 dark:bg-rose-900 min-h-screen">
@@ -83,21 +100,23 @@ export default function DogBoard() {
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  {posts.map((post) => (
-                    <StyledTableRow key={post.id}>
-                      <StyledTableCell component="th" scope="row">
+                {posts.map((post) => (
+                  <StyledTableRow key={post.postId}>
+                  
+                    <StyledTableCell component="th" scope="row">
+                      <Link to={`/post/${post.postId}`}>
                         {post.title}
-                      </StyledTableCell>
-                      <StyledTableCell align="right">{post.nickName}</StyledTableCell>
-                      <StyledTableCell align="right">{post.regDttm}</StyledTableCell>
-                      <StyledTableCell align="right">{post.visit}</StyledTableCell>
-                      <StyledTableCell align="right">{post.like}</StyledTableCell>
-                    </StyledTableRow>
-                  ))}
+                      </Link>
+                    </StyledTableCell>
+                    <StyledTableCell align="right">{post.nickName}</StyledTableCell>
+                    <StyledTableCell align="right">{formatDate(post.regDate)}</StyledTableCell>
+                    <StyledTableCell align="right">{post.visitCnt}</StyledTableCell>
+                    <StyledTableCell align="right">{post.likeCnt}</StyledTableCell>
+                  </StyledTableRow>
+                ))}
                 </TableBody>
               </Table>
             </TableContainer>
-           
             <div className="flex justify-between mt-4">
             {/* <ThemeProvider theme={theme}>
                 <ButtonGroup variant="contained" color="secondary" aria-label="outlined primary button group">
@@ -125,4 +144,23 @@ export default function DogBoard() {
         </section>
       </main>
     );
+}
+
+function formatDate(dateString) {
+  const inputDate = new Date(dateString);
+  const today = new Date();
+
+  let formattedDate;
+
+  if (inputDate.getDate() === today.getDate() &&
+      inputDate.getMonth() === today.getMonth() &&
+      inputDate.getFullYear() === today.getFullYear()) {
+    // 같은 날짜인 경우
+    formattedDate = `${inputDate.getHours()}:${inputDate.getMinutes()}`;
+  } else {
+    // 다른 날짜인 경우
+    formattedDate = `${inputDate.getFullYear()}.${inputDate.getMonth()+1}.${inputDate.getDate()} ${inputDate.getHours()}:${inputDate.getMinutes()}`;
+  }
+
+  return formattedDate;
 }

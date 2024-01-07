@@ -10,6 +10,7 @@ import Header from './Pages/Layout/Header';
 import Join from './Pages/User/Join';
 import Login from './Pages/User/Login';
 import BoardWrite from './Pages/Board/BoardWrite';
+import Game from './Pages/Game/Game';
 
 import { AuthProvider } from './Modules/AuthProvider';
 
@@ -35,6 +36,7 @@ export default function App() {
             <Route path="/join" element={<Join />} />
             <Route path="/login" element={<Login />} />
             <Route path="/boardWrite" element={<BoardWrite />} />  {/**게시판 아이디 넘기기 / 게시판 종류별로 아이디 지정 */}
+            <Route path="/game" element={<Game />} />
           </Routes>
           <Footer />
         </Router>

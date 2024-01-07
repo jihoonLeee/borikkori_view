@@ -7,9 +7,9 @@ import axios from 'axios';
 
 const defaultTheme = createTheme();
 
-const loginUser = async (credentials, navigate, api_url) => {
+const loginUser = async (credentials, navigate) => {
   return axios.post(
-    `${api_url}/users/login`, 
+    `/users/login`, 
     credentials, 
     {withCredentials: true}
   )
@@ -23,19 +23,18 @@ const loginUser = async (credentials, navigate, api_url) => {
   });
 }
 
-const handleSubmit = (event, loginUser, navigate, api_url) => {
+const handleSubmit = (event, loginUser, navigate) => {
   event.preventDefault();
   const data = new FormData(event.currentTarget);
   loginUser({
     email: data.get('email'),
     password: data.get('password'),
-  }, navigate, api_url);
+  }, navigate);
 };
 
 export default function SignIn() {
   const navigate = useNavigate();
   const { authenticated } = useContext(AuthContext);
-  const api_url = process.env.REACT_APP_API_URL + process.env.REACT_APP_API_PORT;
 
   useEffect(() => {
     if (authenticated) {
@@ -46,7 +45,7 @@ export default function SignIn() {
 
   return (
     <ThemeProvider theme={defaultTheme}>
-      <LoginForm handleSubmit={(event) => handleSubmit(event, loginUser, navigate, api_url)} />
+      <LoginForm handleSubmit={(event) => handleSubmit(event, loginUser, navigate)} />
     </ThemeProvider>
   );
 }

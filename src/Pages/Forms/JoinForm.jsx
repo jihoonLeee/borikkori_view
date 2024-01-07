@@ -1,6 +1,6 @@
 import React, { useState, useRef } from 'react';
 import { TextField, Button, Grid, Link, Box } from '@mui/material';
-import { CSSTransition } from 'react-transition-group';
+import Fade from '@mui/material/Fade';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
 
@@ -52,7 +52,7 @@ const JoinForm = ({ onSubmit, onVerify }) => {
       <Grid container spacing={2}>
         <Grid item xs={12}>
           <TextField required fullWidth id="nickName" label="닉네임" name="nickName" autoComplete="family-name" onChange={formik.handleChange} value={formik.values.nickName}/>
-          {formik.touched.nickName &&formik.errors.nickName ? <div style={{ color: 'red', textAlign: 'left' }}>{formik.errors.nickName}</div> : null}
+          {formik.touched.nickName &&formik.errors.nickName ? <div style={{ color: 'red', textAlign: 'left',fontSize:'12px' }}>{formik.errors.nickName}</div> : null}
         </Grid>
         <Grid item xs={10}>
           <TextField 
@@ -64,39 +64,35 @@ const JoinForm = ({ onSubmit, onVerify }) => {
             autoComplete="email" 
             value={formik.values.email} 
             onChange={(event) => {
-              formik.handleChange(event); // formik의 handleChange를 호출하여 formik 내부 상태를 업데이트
-              setEmail(event.target.value); // setEmail을 호출하여 email 상태를 업데이트
+              formik.handleChange(event); 
+              setEmail(event.target.value);
             }} 
           />
-          {formik.touched.nickName &&formik.errors.email ? <div style={{ color: 'red', textAlign: 'left' }}>{formik.errors.email}</div> : null}
+          {formik.touched.nickName &&formik.errors.email ? <div style={{ color: 'red', textAlign: 'left',fontSize:'12px' }}>{formik.errors.email}</div> : null}
         </Grid>
         <Grid item xs={2}>
           <Button onClick={handleVerify} type="button" fullWidth variant="contained" sx={{ height:55 ,mt: 0, ml: -1, backgroundColor: '#936e79', '&:hover': { backgroundColor: '#56434c' } }}> 인증</Button>
         </Grid>
-        <CSSTransition
-          nodeRef={nodeRef}
-          in={isVerified}
-          timeout={300}
-          classNames="item"
-          unmountOnExit
-        >
+        {isVerified &&
+        <Fade  in={isVerified}>
           <Grid item xs={12} ref={nodeRef}>
             <TextField required fullWidth id="verificationNumber" label="인증번호" name="verificationNumber" onChange={formik.handleChange} value={formik.values.verificationNumber}/>
           </Grid>
-        </CSSTransition>
+        </Fade>
+        }
         <Grid item xs={12}>
           <TextField required fullWidth name="password" label="비밀번호" type="password" id="password" autoComplete="new-password" 
             onChange={formik.handleChange} 
             value={formik.values.password}
           />
-          {formik.touched.nickName &&formik.errors.password ? <div style={{ color: 'red', textAlign: 'left' }}>{formik.errors.password}</div> : null}
+          {formik.touched.nickName &&formik.errors.password ? <div style={{ color: 'red', textAlign: 'left' ,fontSize:'12px'}}>{formik.errors.password}</div> : null}
         </Grid>
         <Grid item xs={12}>
           <TextField required fullWidth name="passwordCheck" label="비밀번호 확인" type="password" id="passwordCheck" autoComplete="passwordCheck" 
             onChange={formik.handleChange} 
             value={formik.values.passwordCheck}
           />
-          {formik.touched.nickName &&formik.errors.passwordCheck ? <div style={{ color: 'red', textAlign: 'left' }}>{formik.errors.passwordCheck}</div> : null}
+          {formik.touched.nickName &&formik.errors.passwordCheck ? <div style={{ color: 'red', textAlign: 'left',fontSize:'12px' }}>{formik.errors.passwordCheck}</div> : null}
         </Grid>
       </Grid>
       <Button type="submit" fullWidth variant="contained" sx={{ mt: 3, mb: 2, backgroundColor: '#fa7477', '&:hover': { backgroundColor: '#a52921' } }}>회원가입</Button>
