@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import Loading from '../../Components/Loading';
+import Loading from '../../Components/Loadings/Loading';
 import html2canvas from 'html2canvas';
 import {FaSave,FaLink} from 'react-icons/fa';
 import { useLocation } from "react-router-dom";
 
 
 
-export default function DogBTI_Result(props){
+export default function DogMbtiResult(props){
     const [visible, setVisible] = useState(true);
     const [copied, setCopied] = useState(false);
 

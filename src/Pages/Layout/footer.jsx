@@ -1,9 +1,26 @@
 import * as React from 'react';
 import {FaYoutube,FaInstagram,FaGithub} from 'react-icons/fa';
 import {SiTistory} from 'react-icons/si'; 
+import Link from '@mui/material/Link';
+import Typography from '@mui/material/Typography';
+import Container from '@mui/material/Container';
+
+function Copyright(props) {
+  return (
+    <Typography variant="body2" color="text.secondary" align="center" {...props}>
+      {'Copyright © '}
+      <Link color="inherit" href="https://mui.com/">
+        WagWagt
+      </Link>{' '}
+      {new Date().getFullYear()}
+      {'.'}
+    </Typography>
+  );
+}
 function Footer(){
     return(
     <footer className="footer pt-10 sm:mt-10 pt-10">
+      <Container component="main" maxWidth="lg">
       <div className="max-w-6xl m-auto text-gray-900 flex flex-wrap justify-left">
         {/* 왼쪽 컬럼 */}
         <div className="p-5 w-1/2 sm:w-4/12 md:w-3/12">
@@ -119,11 +136,10 @@ function Footer(){
           </a>
         </div>
         <div className="pt-2">
-          <p className="text-center text-gray-700 hover:text-black pb-6">
-            © {new Date().getFullYear()} wagwagT
-          </p>
+          <Copyright sx={{ mt: 8, mb: 4 }} />
         </div>
       </div>
+      </Container>
     </footer>
     );
 }
