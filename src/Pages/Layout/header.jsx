@@ -61,7 +61,7 @@ export default function Header() {
         <Popover.Group className="hidden lg:flex lg:gap-x-12">
           <StyledButton to="/mainBoard">게시판</StyledButton>
           <StyledButton to="/dogBTI">개BTI</StyledButton>
-          <StyledButton to="/game">게임</StyledButton>
+          {/* <StyledButton to="/game">게임</StyledButton> */}
           <div className="flex flex-1 justify-end">
             { !authenticated ? (
               <>
