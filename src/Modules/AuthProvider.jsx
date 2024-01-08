@@ -7,12 +7,11 @@ export const AuthContext = createContext();
 export const AuthProvider = ({ children }) => {
     const [authenticated, setAuthenticated] = useState(null);
     const [userInfo, setUserInfo] = useState(null);
-    const api_url = process.env.REACT_APP_API_URL + process.env.REACT_APP_API_PORT;
     useEffect(() => {
         const checkUserStatus = async () => {
             try {
                 const response = await axios.post(
-                    api_url+'/users/userInfo', 
+                    '/users/userInfo', 
                     {},
                     { withCredentials: true }  // 쿠키를 함께 보내도록 설정
                 );

@@ -21,11 +21,11 @@ ReactGA.initialize(trackingId);
 ReactGA.send({ hitType: "pageview", page: window.location.pathname });
 
 export default function App() {
-  const [result, setResult] = useState([]);
+  const [result] = useState([]);
 
   return (
     <AuthProvider>
-      <div className='App'>
+      <div className='App' style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
         <Router>
           <Header />
           <Routes>
@@ -36,7 +36,7 @@ export default function App() {
             <Route path="/join" element={<Join />} />
             <Route path="/login" element={<Login />} />
             <Route path="/boardWrite" element={<BoardWrite />} />  {/**게시판 아이디 넘기기 / 게시판 종류별로 아이디 지정 */}
-            <Route path="/game" element={<Game />} />
+            <Route path="/game" element={<Game />} /> 
           </Routes>
           <Footer />
         </Router>

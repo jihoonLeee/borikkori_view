@@ -27,7 +27,7 @@ function Footer(){
           {/* 로고 */}
           <div className="text-white-900 hover:text-white-700 flex items-center">
             <a href="/" className="text-xl font-bold mx-auto">
-              <img className="h-16 w-auto " src={`${process.env.PUBLIC_URL}/images/wagwagt_logo.png`} alt="" />
+              <img className="h-16 w-auto " src={`/images/wagwagt_logo.png`} alt="" />
             </a>
           </div>
           <p className="text-white-900 hover:text-white-700 mt-2">
