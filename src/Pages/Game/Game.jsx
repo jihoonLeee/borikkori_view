@@ -1,7 +1,8 @@
 import React, { useState,useEffect, useRef } from 'react';
 import { Engine, Render, Runner ,Bodies,Body,World,Events,Vertices } from 'matter-js';
 import { DOGS } from './Dogs';
-
+import Button from '@mui/material/Button';
+import Stack from '@mui/material/Stack';
 let disableAction = false;
 let interval = null;
 let currentBody = null;
@@ -73,8 +74,8 @@ export default function Game() {
             maxL =50;
         } else {
             startDog = 300;
-            width = window.innerWidth-50;
-            height = window.innerHeight-250;
+            width = 600;
+            height = 750;
             maxR = 570;
             maxL = 20;
         }
@@ -298,25 +299,22 @@ export default function Game() {
             <canvas ref={canvasRef} className="rounded-lg"/>
         </div>
         <div className="flex justify-center mt-4">
-            <button className="btn" 
+        <Stack direction="row" spacing={3}>
+            <Button variant="contained" className="btn" 
                     onTouchStart={() => handleKeyDown({ code: 'KeyA' })} 
                     onTouchEnd={() => handleKeyUp({ code: 'KeyA' })}
                     onMouseDown={() => handleKeyDown({ code: 'KeyA' })} 
-                    onMouseUp={() => handleKeyUp({ code: 'KeyA' })}>
-                왼쪽
-            </button>
-            <button className="btn" 
+                    onMouseUp={() => handleKeyUp({ code: 'KeyA' })}>왼쪽</Button>
+            <Button variant="contained" className="btn" 
+                    onTouchStart={() => handleKeyDown({ code: 'KeyS' })}
+                    onMouseDown={() => handleKeyDown({ code: 'KeyS' })}
+                    style={{ backgroundColor: 'red' }}>내려</Button>
+            <Button variant="contained" className="btn" 
                     onTouchStart={() => handleKeyDown({ code: 'KeyD' })} 
                     onTouchEnd={() => handleKeyUp({ code: 'KeyD' })}
                     onMouseDown={() => handleKeyDown({ code: 'KeyD' })} 
-                    onMouseUp={() => handleKeyUp({ code: 'KeyD' })}>
-                오른쪽
-            </button>
-            <button className="btn" 
-                    onTouchStart={() => handleKeyDown({ code: 'KeyS' })}
-                    onMouseDown={() => handleKeyDown({ code: 'KeyS' })}>
-                Drop
-            </button>
+                    onMouseUp={() => handleKeyUp({ code: 'KeyD' })}>오른쪽</Button>
+        </Stack>
         </div>
     </div>
       
