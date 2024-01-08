@@ -74,7 +74,7 @@ export default function Game() {
         } else {
             startDog = 300;
             width = window.innerWidth-50;
-            height = window.innerHeight-150;
+            height = window.innerHeight-250;
             maxR = 570;
             maxL = 20;
         }
@@ -300,16 +300,21 @@ export default function Game() {
         <div className="flex justify-center mt-4">
             <button className="btn" 
                     onTouchStart={() => handleKeyDown({ code: 'KeyA' })} 
-                    onTouchEnd={() => handleKeyUp({ code: 'KeyA' })}>
+                    onTouchEnd={() => handleKeyUp({ code: 'KeyA' })}
+                    onMouseDown={() => handleKeyDown({ code: 'KeyA' })} 
+                    onMouseUp={() => handleKeyUp({ code: 'KeyA' })}>
                 왼쪽
             </button>
             <button className="btn" 
                     onTouchStart={() => handleKeyDown({ code: 'KeyD' })} 
-                    onTouchEnd={() => handleKeyUp({ code: 'KeyD' })}>
+                    onTouchEnd={() => handleKeyUp({ code: 'KeyD' })}
+                    onMouseDown={() => handleKeyDown({ code: 'KeyD' })} 
+                    onMouseUp={() => handleKeyUp({ code: 'KeyD' })}>
                 오른쪽
             </button>
             <button className="btn" 
-                    onTouchStart={() => handleKeyDown({ code: 'KeyS' })}>
+                    onTouchStart={() => handleKeyDown({ code: 'KeyS' })}
+                    onMouseDown={() => handleKeyDown({ code: 'KeyS' })}>
                 Drop
             </button>
         </div>
