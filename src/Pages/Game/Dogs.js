@@ -43,6 +43,10 @@ const DOGS = [
     name: "images/game/sanggun",
     radius: 261 / 2,
   },
+  {
+    name: "images/game/bori",
+    radius: 300 / 2,
+  },
 ];
 
 

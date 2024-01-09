@@ -17,10 +17,8 @@ export default function Game() {
     const scoreRef = useRef(0);
     const [score, setScore] = useState(0);
     useEffect(() => {
-        window.addEventListener('resize', handleResize);
         handleResize();  
-        return () => window.removeEventListener('resize', handleResize);
-    }, []);
+    }, [window.innerWidth]);
 
     const handleResize = () => {
         let outL,outR,wallLX,wallRX,wallY,floorX,floorY,wallWidth, wallHeight, floorWidth, floorHeight;
@@ -182,13 +180,13 @@ export default function Game() {
 
     const startInterval = (moveFunction) => {
         if(interval) return;
-        interval = setInterval(moveFunction,7);
+        interval = setInterval(moveFunction,8);
     }
 
     const moveLeft = () => {
         if(currentBody.position.x - currentDog.radius>maxL){
             Body.setPosition(currentBody,{
-                x:currentBody.position.x -2,
+                x:currentBody.position.x - 3,
                 y:currentBody.position.y,
             });
         }
@@ -197,7 +195,7 @@ export default function Game() {
     const moveRight = () => {
         if(currentBody.position.x + currentDog.radius<maxR){
             Body.setPosition(currentBody,{
-                x:currentBody.position.x + 2,
+                x:currentBody.position.x + 3,
                 y:currentBody.position.y,
             });
         }
@@ -242,12 +240,13 @@ export default function Game() {
             {
                 render:{sprite:{texture:`${newDog.name}.png`}},
                 index : index+1,
-                density:(index+2)/100
+                density:(10-index)/10,
+                friction: 0.05,
+                frictionAir: 0.05,
             }
             
         );
         World.add(engine.world,newBody);
-
         
         return  Math.pow(index+1, 2);
     }
@@ -255,15 +254,16 @@ export default function Game() {
     const addDog = (engine) => {
         const index = Math.floor(Math.random()*5);
         const dog = DOGS[index];
-
         const body = Bodies.circle(startDog,50,dog.radius,{
             index : index,
             isSleeping : true, // 준비상태
             render:{
-                sprite:{texture:`${dog.name}.png`}
+                sprite:{texture:`${dog.name}.png`,}
             },
-            restitution:0.6,  //통통 튀는 정도
-            density:(index+1)/100
+            restitution:0.3,  //통통 튀는 정도
+            density:(10-index)/10,
+            friction: 0.05,
+            frictionAir: 0.05,
         });
         currentBody=body;
         currentDog=dog;
