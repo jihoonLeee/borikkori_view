@@ -38,12 +38,12 @@ export default function Game() {
             outR=400;
         } else {
             wallLX=60;
-            wallRX=580;
-            wallY=560;
+            wallRX=550;
+            wallY=550;
             floorX=400;
             floorY=750;
             wallWidth = 130;
-            wallHeight = 900; 
+            wallHeight = 1200; 
             floorWidth = 900; 
             floorHeight = 30;
             outL=40;
@@ -276,46 +276,48 @@ export default function Game() {
       ]);
       
     return (
-    <div className="flex flex-col lg:flex-row justify-center lg:mt-0 lg:mb-0 mt-44 mb-44 items-center h-screen">
-        <div className="flex flex-col w-full lg:w-1/4 xl:w-1/6 lg:ml-20 mt-20 justify-center bg-gray-200 rounded-lg p-5 mb-4 lg:mb-0">
-            <div className="flex flex-col items-center justify-center mb-4">
-            <h2 className="text-lg font-bold mb-4">점수판</h2>
-            <p className="text-2xl">{score}</p>
+    <div className="max-w-8xl mx-auto flex flex-col lg:flex-row lg:mt-0 lg:mb-0 mt-44 mb-80 items-center h-screen">
+        <div className="flex flex-col mr-10 w-1/2 lg:w-1/4 xl:w-1/6 lg:ml-20 mt-20 justify-center bg-gray-200 rounded-lg p-5 mb-4 lg:mb-0">
+                <div className="flex flex-col items-center justify-center mb-4">
+                <h2 className="text-lg font-bold mb-4">점수판</h2>
+                <p className="text-2xl">{score}</p>
+                </div>
+                
+                <div className="flex flex-col items-center justify-center bg-gray-300 rounded-lg p-5">
+                <h3 className="text-lg font-bold mb-2">순위판</h3>
+                <ul>
+                    {rankings.slice(0, 5).map((ranking, index) => (
+                    <li key={index}>
+                        {index + 1}등: {ranking.nickname}, {ranking.score}점
+                    </li>
+                    ))}
+                </ul>
+                </div>
             </div>
             
-            <div className="flex flex-col items-center justify-center bg-gray-300 rounded-lg p-5">
-            <h3 className="text-lg font-bold mb-2">순위판</h3>
-            <ul>
-                {rankings.slice(0, 5).map((ranking, index) => (
-                <li key={index}>
-                    {index + 1}등: {ranking.nickname}, {ranking.score}점
-                </li>
-                ))}
-            </ul>
+        <div className="flex-grow">
+            <div ref={containerRef} className="w-full lg:w-3/4 xl:w-1/2 mx-auto flex flex-col items-center justify-center rounded-lg">
+                <canvas ref={canvasRef} className="rounded-lg"/>
+                <div className="flex justify-center mt-4 mb-4">
+                    <Stack direction="row" spacing={3}>
+                        <Button variant="contained" className="btn" 
+                                onTouchStart={() => handleKeyDown({ code: 'KeyA' })} 
+                                onTouchEnd={() => handleKeyUp({ code: 'KeyA' })}
+                                onMouseDown={() => handleKeyDown({ code: 'KeyA' })} 
+                                onMouseUp={() => handleKeyUp({ code: 'KeyA' })}>왼쪽</Button>
+                        <Button variant="contained" className="btn" 
+                                onTouchStart={() => handleKeyDown({ code: 'KeyS' })}
+                                onMouseDown={() => handleKeyDown({ code: 'KeyS' })}
+                                style={{ backgroundColor: 'red' }}>내려</Button>
+                        <Button variant="contained" className="btn" 
+                                onTouchStart={() => handleKeyDown({ code: 'KeyD' })} 
+                                onTouchEnd={() => handleKeyUp({ code: 'KeyD' })}
+                                onMouseDown={() => handleKeyDown({ code: 'KeyD' })} 
+                                onMouseUp={() => handleKeyUp({ code: 'KeyD' })}>오른쪽</Button>
+                    </Stack>
+                </div>
             </div>
-        </div>
-        
-        <div ref={containerRef} className="w-full ml-12 lg:w-3/4 xl:w-1/2 mx-5 lg:mx-0 lg:ml-20 flex-grow rounded-lg">
-            <canvas ref={canvasRef} className="rounded-lg"/>
-        </div>
-        <div className="flex justify-center mt-4">
-        <Stack direction="row" spacing={3}>
-            <Button variant="contained" className="btn" 
-                    onTouchStart={() => handleKeyDown({ code: 'KeyA' })} 
-                    onTouchEnd={() => handleKeyUp({ code: 'KeyA' })}
-                    onMouseDown={() => handleKeyDown({ code: 'KeyA' })} 
-                    onMouseUp={() => handleKeyUp({ code: 'KeyA' })}>왼쪽</Button>
-            <Button variant="contained" className="btn" 
-                    onTouchStart={() => handleKeyDown({ code: 'KeyS' })}
-                    onMouseDown={() => handleKeyDown({ code: 'KeyS' })}
-                    style={{ backgroundColor: 'red' }}>내려</Button>
-            <Button variant="contained" className="btn" 
-                    onTouchStart={() => handleKeyDown({ code: 'KeyD' })} 
-                    onTouchEnd={() => handleKeyUp({ code: 'KeyD' })}
-                    onMouseDown={() => handleKeyDown({ code: 'KeyD' })} 
-                    onMouseUp={() => handleKeyUp({ code: 'KeyD' })}>오른쪽</Button>
-        </Stack>
-        </div>
+       </div>
     </div>
       
     )
