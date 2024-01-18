@@ -32,7 +32,7 @@ export default function BoardWrite() {
       );
       if (response.status === 201) {
         alert('글이 성공적으로 등록되었습니다.');
-        navigate("/");
+        navigate("/mainBoard");
         window.location.reload();
       }
     } catch (error) {

@@ -10,8 +10,9 @@ import Header from './Pages/Layout/Header';
 import Join from './Pages/User/Join';
 import Login from './Pages/User/Login';
 import BoardWrite from './Pages/Board/BoardWrite';
+import GameList from './Pages/Game/GameList';
 import Game from './Pages/Game/Game';
-
+import Post from './Pages/Board/Post';
 import { AuthProvider } from './Modules/AuthProvider';
 
 import './App.css';
@@ -36,7 +37,9 @@ export default function App() {
             <Route path="/join" element={<Join />} />
             <Route path="/login" element={<Login />} />
             <Route path="/boardWrite" element={<BoardWrite />} />  {/**게시판 아이디 넘기기 / 게시판 종류별로 아이디 지정 */}
-            <Route path="/game" element={<Game />} /> 
+            <Route path="/games" element={<GameList />} /> 
+            <Route path="/boriGame" element={<Game />} /> 
+            <Route path="/post/:postId" element={<Post />} />
           </Routes>
           <Footer />
         </Router>

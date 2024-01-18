@@ -60,8 +60,8 @@ export default function Header() {
         </div>
         <Popover.Group className="hidden lg:flex lg:gap-x-12">
           <StyledButton to="/mainBoard">게시판</StyledButton>
-          <StyledButton to="/dogBTI">개BTI</StyledButton>
-          <StyledButton to="/game">게임</StyledButton>
+          {/* <StyledButton to="/dogBTI">개BTI</StyledButton> */}
+          <StyledButton to="/games">게임</StyledButton>
           <div className="flex flex-1 justify-end">
             { !authenticated ? (
               <>
@@ -94,7 +94,8 @@ export default function Header() {
             <div className="-my-6 divide-y divide-gray-500/10">
               <div className="space-y-2 py-6">
                 <NavLink to="/dogBoard">게시판</NavLink>
-                <NavLink to="/dogBTI">개BTI</NavLink>
+                <NavLink to="/games">게임</NavLink>
+                {/* <NavLink to="/dogBTI">개BTI</NavLink> */}
               </div>
               <div className="py-6">
                 {!authenticated ? (
