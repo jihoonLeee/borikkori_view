@@ -8,9 +8,9 @@ import axios from 'axios';
 const root = ReactDOM.createRoot(document.getElementById('root'));
 axios.defaults.baseURL = process.env.REACT_APP_API_URL + process.env.REACT_APP_API_PORT;
 root.render(
-  <React.StrictMode>
+  // <React.StrictMode>
     <App />
-  </React.StrictMode>
+  // </React.StrictMode>
 );
 
 reportWebVitals();
