@@ -23,7 +23,7 @@ export default function BoardWrite() {
   const navigate = useNavigate();
   const handleSubmit = async () => {
     try {
-      const response = await axios.post('/posts/register', {
+      const response = await axios.post('/posts/write', {
         title: document.getElementsByName('Primary')[0].value,
         contents: document.getElementsByName('Secondary')[0].value,
         email:userInfo.email,
