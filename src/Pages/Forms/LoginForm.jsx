@@ -21,7 +21,7 @@ const LoginForm = ({ handleSubmit }) => (
         alignItems: 'center',
       }}
     >
-      <img className="h-16 w-auto" src={`/images/wagwagt_logo.png`} alt="" />
+      <img className="h-16 w-auto" src={`/images/borikkori_brown.svg`} alt="" />
       <Typography component="h1" variant="h5">
         로그인
       </Typography>

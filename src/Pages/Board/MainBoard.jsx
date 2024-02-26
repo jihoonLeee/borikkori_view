@@ -63,7 +63,7 @@ export default function DogBoard() {
     const [page, setPage] = useState(1); 
     
     useEffect(() => {
-      axios.get('/posts/list', {
+      axios.get('/post', {
         params: {
           page: page 
         },

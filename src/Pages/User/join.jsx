@@ -16,7 +16,7 @@ const Join = () => {
  
   const joinUser = async (credentials, navigate) => {
     return axios.post(
-      `/users/join`,
+      `/user/join`,
       credentials,
       { withCredentials: true }
     )
@@ -33,7 +33,7 @@ const Join = () => {
     console.log(email+  "    이메일");
     try {
       const response = await axios.post(
-        `/users/sendEmail`,
+        `/user/sendEmail`,
         { email },
         { headers: { 'Content-Type': 'application/json' } }
       );
@@ -62,7 +62,7 @@ const Join = () => {
         <CssBaseline />
         <Box sx={{ marginTop: 8, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
           {showAlert && <BasicAlert msg="이메일이 전송되었습니다." />} 
-          <img className="h-16 w-auto" src={`${process.env.PUBLIC_URL}/images/wagwagt_logo.png`} alt="" />
+          <img className="h-16 w-auto" src={`${process.env.PUBLIC_URL}/images/borikkori_brown.svg`} alt="" />
           <Typography component="h1" variant="h5">회원가입</Typography>
           <JoinForm onSubmit={handleSubmit} onVerify={emailVerify} />
         </Box>

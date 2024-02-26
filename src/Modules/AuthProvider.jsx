@@ -11,7 +11,7 @@ export const AuthProvider = ({ children }) => {
         const checkUserStatus = async () => {
             try {
                 const response = await axios.post(
-                    '/users/userInfo', 
+                    '/user/userInfo',
                     {},
                     { withCredentials: true }  // 쿠키를 함께 보내도록 설정
                 );
@@ -29,7 +29,7 @@ export const AuthProvider = ({ children }) => {
         return <Spinner />;
     }
     return (
-        <AuthContext.Provider value={{ authenticated, setAuthenticated ,userInfo}}>
+        <AuthContext.Provider value={{ authenticated, setAuthenticated, userInfo }}>
             {children}
         </AuthContext.Provider>
     );

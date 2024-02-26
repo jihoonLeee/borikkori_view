@@ -45,7 +45,8 @@ export default function Header() {
         <div className="flex lg:flex-1">
           <Link to="/" className="-m-1.5 p-1.5">
             <span className="sr-only">WagWagT</span>
-            <img className="h-16 w-auto" src={`${process.env.PUBLIC_URL}/images/wagwagt_logo.png`} alt="" />
+            
+            <img className="h-16 w-auto" src={`${process.env.PUBLIC_URL}/images/borikkori_brown.svg`} alt="" />
           </Link>
         </div>
         <div className="flex lg:hidden">
@@ -59,6 +60,7 @@ export default function Header() {
           </button>
         </div>
         <Popover.Group className="hidden lg:flex lg:gap-x-12">
+         <StyledButton to="/">애견동반</StyledButton>
           <StyledButton to="/mainBoard">게시판</StyledButton>
           {/* <StyledButton to="/dogBTI">개BTI</StyledButton> */}
           <StyledButton to="/games">게임</StyledButton>

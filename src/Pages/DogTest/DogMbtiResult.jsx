@@ -1,15 +1,15 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect,useContext } from 'react';
 import Loading from '../../Components/Loadings/Loading';
 import html2canvas from 'html2canvas';
 import {FaSave,FaLink} from 'react-icons/fa';
 import { useLocation } from "react-router-dom";
-
-
+import { AuthContext } from '../../Modules/AuthProvider';
+import axios from 'axios';
 
 export default function DogMbtiResult(props){
     const [visible, setVisible] = useState(true);
     const [copied, setCopied] = useState(false);
-
+    const { userInfo } = useContext(AuthContext);
 
     const location = useLocation();
     const queryParams = new URLSearchParams(location.search);
@@ -41,8 +41,19 @@ export default function DogMbtiResult(props){
     };
 
    
-
     useEffect(() => {
+      axios.post('/mbti', {
+        email:userInfo ? userInfo.email : null,
+        result: resultName.toUpperCase(),
+      },
+      {withCredentials: true}) 
+      .then(response => {
+        console.log(response);
+      })
+      .catch(error => {
+        console.error('에러', error);
+      });
+
       const timer = setTimeout(() => {
         setVisible(false);
       }, 2000);

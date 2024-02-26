@@ -1,8 +1,19 @@
-import React from "react";
-
+import React, { useState,useEffect } from 'react';
+import axios from 'axios'; 
 
 export default function DogHouse() {
-  
+  const [mbtiResults, setMbtiResults] = useState([]);
+  useEffect(() => {
+    axios.get('/mbti', {
+      withCredentials: true
+    }) 
+    .then(response => {
+      setMbtiResults(response.data);
+    })
+    .catch(error => {
+      console.error('에러', error);
+    });
+  }, []);
 
   return (
     <main className="flex flex-col items-center px-4 md:px-6  dark:bg-rose-900 min-h-screen">
@@ -55,27 +66,24 @@ export default function DogHouse() {
         </div>
       </section> */}
     <section className="w-full max-w-5xl mt-8 bg-white dark:bg-rose-950 rounded-lg shadow-md overflow-hidden">
-      <div className="p-6">
-        <h2 className="text-2xl font-semibold text-rose-900 dark:text-rose-50 mb-4">Top 3 MBTI Results</h2>
-        <div className="relative h-64 w-full mb-8 flex justify-between">
-          <img
-            alt="MBTI Chart"
-            className="w-48 h-48 object-cover"
-            src={`${process.env.PUBLIC_URL}/images/face_results/istj.png`}
-          />
-          <img
-            alt="MBTI Chart"
-            className="w-48 h-48 object-cover"
-            src={`${process.env.PUBLIC_URL}/images/face_results/estj.png`}
-          />
-          <img
-            alt="MBTI Chart"
-            className="w-48 h-48 object-cover"
-            src={`${process.env.PUBLIC_URL}/images/face_results/intj.png`}
-          />
+  <div className="p-6">
+    <h2 className="text-2xl font-semibold text-rose-900 dark:text-rose-50 mb-4">개비티아이 TOP 3</h2>
+    <div className="relative h-64 w-full mb-8 flex justify-between">
+      {mbtiResults.map((result, index) => (
+        <div><img
+          key={index}
+          alt="MBTI TOP3"
+          className="w-48 h-48 object-cover"
+          src={`${process.env.PUBLIC_URL}/images/face_results/${result.type}.png`}
+        />
+        {result.type}   :  {result.count}명   
         </div>
-      </div>
-    </section>
+        ))
+      }
+     
+    </div>
+  </div>
+</section>
   </main>
   );
 }

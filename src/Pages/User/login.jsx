@@ -9,7 +9,7 @@ const defaultTheme = createTheme();
 
 const loginUser = async (credentials, navigate) => {
   return axios.post(
-    `/users/login`, 
+    `/user/login`, 
     credentials, 
     {withCredentials: true}
   )

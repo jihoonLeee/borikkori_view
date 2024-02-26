@@ -9,7 +9,6 @@ import Button from '@mui/joy/Button';
 import FormControl from '@mui/joy/FormControl';
 import FormLabel from '@mui/joy/FormLabel';
 import Textarea from '@mui/joy/Textarea';
-import KeyboardArrowDown from '@mui/icons-material/KeyboardArrowDown';
 import Sheet from '@mui/joy/Sheet';
 import PetsIcon from '@mui/icons-material/Pets';
 import { AuthContext } from '../../Modules/AuthProvider';
@@ -17,6 +16,7 @@ import Grid from '@mui/material/Grid';
 
 export default function Post() {
   let { postId } = useParams();
+  let { commentId } = useParams();
   const [posts, setPosts] = useState([]);
   const [italic, setItalic] = useState(false);
   const [fontWeight, setFontWeight] = useState('normal');
@@ -30,8 +30,7 @@ export default function Post() {
       alert('로그인을 해주세요!');
     }else{
       try {
-        const response = await axios.post('/posts/like', {
-          postId: postId,
+        const response = await axios.post('/post/'+postId+'/like', {
           email: userInfo.email,
         },
         {withCredentials: true}
@@ -51,8 +50,7 @@ export default function Post() {
       alert('로그인을 해주세요!');
     }else{
       try {
-        const response = await axios.post('/comment/like', {
-          commentId: "",
+        const response = await axios.post('/comment'+commentId+'/like', {
           email: userInfo.email,
         },
         {withCredentials: true}
@@ -73,10 +71,7 @@ export default function Post() {
     return Math.ceil(pages);
   }
   useEffect(() => {
-    axios.get('/posts/post', {
-      params: {
-        id: postId 
-      },
+    axios.get('/post/'+postId , {
       withCredentials: true
     }) 
     .then(response => {
@@ -86,7 +81,7 @@ export default function Post() {
       console.error("에러", error);
     });
 
-    axios.get('/comments/list', {
+    axios.get('/comment', {
       params: {
         id : postId,
         page: page
@@ -108,7 +103,7 @@ export default function Post() {
       alert('로그인을 해주세요!');
     }else{
       try {
-        const response = await axios.post('/comments/write', {
+        const response = await axios.post('/comment', {
           postId: postId,
           email: userInfo.email,
           comment : content
