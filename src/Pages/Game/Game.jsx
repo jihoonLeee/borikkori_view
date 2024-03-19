@@ -1,5 +1,5 @@
 import React, { useState,useEffect, useRef } from 'react';
-import { Engine, Render, Runner ,Bodies,Body,World,Events,Vertices } from 'matter-js';
+import Matter,{ Engine, Render, Runner ,Bodies,Body,World,Events,Vertices} from 'matter-js';
 import { DOGS } from './Dogs';
 import Button from '@mui/material/Button';
 import Stack from '@mui/material/Stack';
@@ -21,41 +21,39 @@ export default function Game() {
     }, [window.innerWidth]);
 
     const handleResize = () => {
-        let outL,outR,wallLX,wallRX,wallY,floorX,floorY,wallWidth, wallHeight, floorWidth, floorHeight;
+        let outTop,wallLX,wallRX,wallY,floorX,floorY,wallWidth, wallHeight, floorWidth, floorHeight;
         if (window.innerWidth >= 1024) {
-            wallLX=150;
-            wallRX=950;
+            wallLX=-93;
+            wallRX=653;
             wallY=480;
             floorX=500;
-            floorY=700;
+            floorY=800;
             wallWidth = 300;
-            wallHeight = 1200; 
-            floorWidth = 1200; 
+            wallHeight = 1000; 
+            floorWidth = 1000; 
             floorHeight = 60;
-            outL=400;
-            outR=400;
+            outTop= 100;
         } else {
-            wallLX=60;
-            wallRX=550;
+            wallLX=-40;
+            wallRX=420;
             wallY=550;
-            floorX=400;
-            floorY=750;
+            floorX=200;
+            floorY=550;
             wallWidth = 130;
             wallHeight = 1200; 
             floorWidth = 900; 
             floorHeight = 30;
-            outL=40;
-            outR=1240;
+            outTop=100;
             
         }
-        initializeGame(outL,outR,wallLX,wallRX,wallY,floorX,floorY,wallWidth, wallHeight, floorWidth, floorHeight);
+        initializeGame(outTop,wallLX,wallRX,wallY,floorX,floorY,wallWidth, wallHeight, floorWidth, floorHeight);
     }
-    const initializeGame = (outL,outR,wallLX,wallRX,wallY,floorX,floorY,wallWidth, wallHeight, floorWidth, floorHeight) => {
+    const initializeGame = (outTop,wallLX,wallRX,wallY,floorX,floorY,wallWidth, wallHeight, floorWidth, floorHeight) => {
         engine = Engine.create(); 
         const render = createRender(engine);
-        const {floor, leftWall, rightWall, outLineLeft,outLineRight} = createBoundaries(outL,outR,wallLX,wallRX,wallY,floorX,floorY,wallWidth, wallHeight, floorWidth, floorHeight);
+        const {floor, leftWall, rightWall, outLine} = createBoundaries(outTop,wallLX,wallRX,wallY,floorX,floorY,wallWidth, wallHeight, floorWidth, floorHeight);
         addDog(engine);
-        World.add(engine.world, [floor, leftWall,rightWall,outLineLeft,outLineRight]);
+        World.add(engine.world, [floor, leftWall,rightWall,outLine]);
         Runner.run(engine);
         Render.run(render);
         handleEventListeners(engine);
@@ -65,16 +63,16 @@ export default function Game() {
         let width, height;
 
         if (window.innerWidth >= 1024) {
-            startDog = 550;
-            width = 1100;
-            height = 700;
-            maxR = 1050;
+            startDog = 280;
+            width = 553;
+            height = 800;
+            maxR = 800;
             maxL =50;
         } else {
-            startDog = 300;
-            width = 600;
-            height = 750;
-            maxR = 570;
+            startDog = 190;
+            width = 380;
+            height = 550;
+            maxR = 400;
             maxL = 20;
         }
         return Render.create({
@@ -89,36 +87,29 @@ export default function Game() {
             }
         });
     }
-    const createCurvedWall = (centerX, centerY, width, height, direction) => {
-        let path = "";
     
-        if (direction === 'left') {
-            for (let i = 0; i <= width; i++) {
-                const y = height - (height/2 * Math.sin((Math.PI * i) / width));
-                path += `L ${i} ${y} `;
-            }
-        } else {
-            for (let i = 0; i <= width; i++) {
-                const y = height - (height/2 * Math.sin((Math.PI * i) / width));
-                path += `L ${i} ${y} `;
-            }
-        }
+    const createBoundaries = (outTop, wallLX, wallRX, wallY, floorX, floorY, wallWidth, wallHeight, floorWidth, floorHeight) => {
+        const { Body, Bodies } = Matter;
     
-        path = path.trim();
-        const vertices = Vertices.fromPath(path);
-        return Bodies.fromVertices(centerX, centerY, vertices, createWallOptions(), true);
-    }
+        // 옵션 함수를 통해 옵션 객체 가져오기
+        const wallOptions = createWallOptions();
+        const floorOptions = createFloorOptions();
+        const outlineOptions = createOutLineOptions();
     
+        // 바닥 생성, 바닥 옵션 적용
+        const floor = Bodies.rectangle(floorX, floorY, floorWidth, floorHeight, floorOptions);
     
-    const createBoundaries = (outL,outR,wallLX,wallRX,wallY,floorX,floorY,wallWidth, wallHeight, floorWidth, floorHeight) => {
-        const leftWall = createCurvedWall(wallLX, wallY, wallWidth, wallHeight, 'left', 30);
-        const rightWall = createCurvedWall(wallRX, wallY, wallWidth, wallHeight, 'right', 30);
-        const floor = Bodies.rectangle(floorX, floorY, floorWidth, floorHeight, createFloorOptions());
-        const outLineLeft = Bodies.rectangle(0,500,outL,1, createOutLineOptions());
-        const outLineRight = Bodies.rectangle(1200,500,outR,1, createOutLineOptions());
-        return {floor, leftWall, rightWall, outLineLeft,outLineRight};
-    }
-
+        // 왼쪽 벽 생성, 벽 옵션 적용
+        const leftWall = Bodies.rectangle(wallLX, wallY, wallWidth, wallHeight, wallOptions);
+    
+        // 오른쪽 벽 생성, 벽 옵션 적용
+        const rightWall = Bodies.rectangle(wallRX, wallY, wallWidth, wallHeight, wallOptions);
+    
+        // 경계선(바깥쪽) 생성 - 게임 영역 밖으로 나가지 못하게 하는 추가적인 벽, 경계선 옵션 적용
+        const outLine = Bodies.rectangle((wallRX+wallLX)/2, outTop, 600, 3, outlineOptions);
+    
+        return { floor, leftWall, rightWall, outLine };
+    };
     const createWallOptions = () => {
         return {
             isStatic:true,
@@ -254,6 +245,7 @@ export default function Game() {
     const addDog = (engine) => {
         const index = Math.floor(Math.random()*5);
         const dog = DOGS[index];
+        
         const body = Bodies.circle(startDog,50,dog.radius,{
             index : index,
             isSleeping : true, // 준비상태
@@ -262,8 +254,8 @@ export default function Game() {
             },
             restitution:0.3,  //통통 튀는 정도
             density:(10-index)/10,
-            friction: 0.05,
-            frictionAir: 0.05,
+            friction: 0.5,
+            frictionAir: 0.01,
         });
         currentBody=body;
         currentDog=dog;
@@ -276,49 +268,40 @@ export default function Game() {
       ]);
       
     return (
-    <div className="max-w-8xl mx-auto flex flex-col lg:flex-row lg:mt-0 lg:mb-0 mt-44 mb-80 items-center h-screen">
-        <div className="flex flex-col mr-10 w-1/2 lg:w-1/4 xl:w-1/6 lg:ml-20 mt-20 justify-center bg-gray-200 rounded-lg p-5 mb-4 lg:mb-0">
-                <div className="flex flex-col items-center justify-center mb-4">
-                <h2 className="text-lg font-bold mb-4">점수판</h2>
-                <p className="text-2xl">{score}</p>
+        <div className="game-container max-w-8xl mx-auto flex flex-col lg:flex-row items-center h-screen ">
+            <div className="gameplay-container flex-grow">
+                <div ref={containerRef} className="w-full lg:w-3/4 xl:w-1/2 mx-auto flex flex-col items-center justify-center rounded-lg">
+                    <canvas ref={canvasRef} className="rounded-lg"/>
+                    {/* 점수판과 점수를 가로로 나란히 배열합니다. */}
+                    <div className="flex flex-row justify-center items-center space-x-4 mt-12 mb-3">
+                        <div className="rank-panel flex flex-col items-center justify-center bg-gray-300 rounded-lg p-5">
+                            <h3 className="text-lg font-bold mb-2">순위판</h3>
+                            <ul>
+                                {rankings.slice(0, 5).map((ranking, index) => (
+                                    <li key={index}>
+                                        {index + 1}등: {ranking.nickname}, {ranking.score}점
+                                    </li>
+                                ))}
+                            </ul>
+                        </div>
+                        {/* 점수 표시 부분 */}
+                        <div className="score-display flex flex-col items-center justify-center rounded-lg p-5">
+                            <h2 className="text-lg font-bold mb-4">점수</h2>
+                            <p className="text-2xl">{score}</p>
+                        </div>
+                    </div>
                 </div>
-                
-                <div className="flex flex-col items-center justify-center bg-gray-300 rounded-lg p-5">
-                <h3 className="text-lg font-bold mb-2">순위판</h3>
-                <ul>
-                    {rankings.slice(0, 5).map((ranking, index) => (
-                    <li key={index}>
-                        {index + 1}등: {ranking.nickname}, {ranking.score}점
-                    </li>
-                    ))}
-                </ul>
-                </div>
-            </div>
-            
-        <div className="flex-grow">
-            <div ref={containerRef} className="w-full lg:w-3/4 xl:w-1/2 mx-auto flex flex-col items-center justify-center rounded-lg">
-                <canvas ref={canvasRef} className="rounded-lg"/>
+                {/* 버튼들을 canvas 바로 아래에 위치시킵니다. */}
                 <div className="flex justify-center mt-4 mb-4">
-                    <Stack direction="row" spacing={3}>
-                        <Button variant="contained" className="btn" 
-                                onTouchStart={() => handleKeyDown({ code: 'KeyA' })} 
-                                onTouchEnd={() => handleKeyUp({ code: 'KeyA' })}
-                                onMouseDown={() => handleKeyDown({ code: 'KeyA' })} 
-                                onMouseUp={() => handleKeyUp({ code: 'KeyA' })}>왼쪽</Button>
-                        <Button variant="contained" className="btn" 
-                                onTouchStart={() => handleKeyDown({ code: 'KeyS' })}
-                                onMouseDown={() => handleKeyDown({ code: 'KeyS' })}
-                                style={{ backgroundColor: 'red' }}>내려</Button>
-                        <Button variant="contained" className="btn" 
-                                onTouchStart={() => handleKeyDown({ code: 'KeyD' })} 
-                                onTouchEnd={() => handleKeyUp({ code: 'KeyD' })}
-                                onMouseDown={() => handleKeyDown({ code: 'KeyD' })} 
-                                onMouseUp={() => handleKeyUp({ code: 'KeyD' })}>오른쪽</Button>
-                    </Stack>
-                </div>
+                        <Stack direction="row" spacing={3}>
+                            <Button variant="contained" className="btn" onTouchStart={() => handleKeyDown({ code: 'KeyA' })} onTouchEnd={() => handleKeyUp({ code: 'KeyA' })} onMouseDown={() => handleKeyDown({ code: 'KeyA' })} onMouseUp={() => handleKeyUp({ code: 'KeyA' })}>왼쪽</Button>
+                            <Button variant="contained" className="btn" onTouchStart={() => handleKeyDown({ code: 'KeyS' })} onMouseDown={() => handleKeyDown({ code: 'KeyS' })} style={{ backgroundColor: 'red' }}>내려</Button>
+                            <Button variant="contained" className="btn" onTouchStart={() => handleKeyDown({ code: 'KeyD' })} onTouchEnd={() => handleKeyUp({ code: 'KeyD' })} onMouseDown={() => handleKeyDown({ code: 'KeyD' })} onMouseUp={() => handleKeyUp({ code: 'KeyD' })}>오른쪽</Button>
+                        </Stack>
+                    </div>
             </div>
-       </div>
-    </div>
+        </div>
+
       
     )
 }
