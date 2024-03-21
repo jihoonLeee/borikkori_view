@@ -13,7 +13,9 @@ import BoardWrite from './Pages/Board/BoardWrite';
 import GameList from './Pages/Game/GameList';
 import Game from './Pages/Game/Game';
 import Post from './Pages/Board/Post';
+import Chat from './Pages/Chat/ChatRoom'
 import { AuthProvider } from './Modules/AuthProvider';
+
 
 import './App.css';
 
@@ -39,7 +41,8 @@ export default function App() {
             <Route path="/boardWrite" element={<BoardWrite />} />  {/**게시판 아이디 넘기기 / 게시판 종류별로 아이디 지정 */}
             <Route path="/games" element={<GameList />} /> 
             <Route path="/boriGame" element={<Game />} /> 
-            <Route path="/post/:postId" element={<Post />} />
+            <Route path="/post/:postId" element={<Post />} />\
+            <Route path="/chat" element={<Chat />} />
           </Routes>
           <Footer />
         </Router>

@@ -61,6 +61,7 @@ export default function Header() {
         </div>
         <Popover.Group className="hidden lg:flex lg:gap-x-12">
          <StyledButton to="/">애견동반</StyledButton>
+         <StyledButton to="/chat">채팅</StyledButton>
           <StyledButton to="/mainBoard">게시판</StyledButton>
           {/* <StyledButton to="/dogBTI">개BTI</StyledButton> */}
           <StyledButton to="/games">게임</StyledButton>
@@ -95,7 +96,7 @@ export default function Header() {
           <div className="mt-6 flow-root">
             <div className="-my-6 divide-y divide-gray-500/10">
               <div className="space-y-2 py-6">
-                <NavLink to="/dogBoard">게시판</NavLink>
+                <NavLink to="/mainBoard">게시판</NavLink>
                 <NavLink to="/games">게임</NavLink>
                 {/* <NavLink to="/dogBTI">개BTI</NavLink> */}
               </div>
