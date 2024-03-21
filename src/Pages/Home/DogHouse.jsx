@@ -17,7 +17,6 @@ export default function DogHouse() {
 
   return (
     <main className="flex flex-col items-center px-4 md:px-6  dark:bg-rose-900 min-h-screen">
-      *보수중*
       {/* <section className="w-full md:w-1/3 bg-white dark:bg-rose-950 rounded-lg shadow-md overflow-hidden md:mr-2 mb-8 md:mb-0">
         <div className="p-6">
           <h2 className="text-2xl font-semibold text-rose-900 dark:text-rose-50 mb-4">인기 게시글</h2>

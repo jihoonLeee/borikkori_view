@@ -31,7 +31,6 @@ export default function Post() {
     }else{
       try {
         const response = await axios.post('/post/'+postId+'/like', {
-          email: userInfo.email,
         },
         {withCredentials: true}
         );
@@ -51,7 +50,6 @@ export default function Post() {
     }else{
       try {
         const response = await axios.post('/comment'+commentId+'/like', {
-          email: userInfo.email,
         },
         {withCredentials: true}
         );
@@ -159,7 +157,7 @@ export default function Post() {
               </Box>
               <hr className="my-4 border-rose-900 dark:border-rose-200" />
               <Typography align="left" mb={5}>
-              {posts.contents}
+              <div dangerouslySetInnerHTML={{ __html: posts.contents }} />
               </Typography>
               <Box
                 sx={{
