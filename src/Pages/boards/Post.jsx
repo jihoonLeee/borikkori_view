@@ -3,7 +3,7 @@ import React, { useState, useEffect,useContext} from 'react';
 import axios from 'axios'; 
 import Typography from '@mui/joy/Typography';
 import Card from '@mui/joy/Card';
-import DateFormat from '../../Modules/DateFormat';
+import DateFormat from '../../modules/DateFormat';
 import Box from '@mui/joy/Box';
 import Button from '@mui/joy/Button';
 import FormControl from '@mui/joy/FormControl';
@@ -11,7 +11,7 @@ import FormLabel from '@mui/joy/FormLabel';
 import Textarea from '@mui/joy/Textarea';
 import Sheet from '@mui/joy/Sheet';
 import PetsIcon from '@mui/icons-material/Pets';
-import { AuthContext } from '../../Modules/AuthProvider';
+import { AuthContext } from '../../modules/AuthProvider';
 import Grid from '@mui/material/Grid';
 
 export default function Post() {
@@ -104,7 +104,7 @@ export default function Post() {
         const response = await axios.post('/comment', {
           postId: postId,
           email: userInfo.email,
-          comment : content
+          contents : content
         },
         {withCredentials: true}
         );
@@ -189,7 +189,7 @@ export default function Post() {
                         {comment.nickName}
                     </Grid>
                     <Grid item xs={8} container alignItems="flex-start">
-                        {comment.status === "OPEN" && comment.content}
+                        {comment.status === "OPEN" && comment.contents}
                     </Grid>
                     <Grid item xs={2}>
                         <Grid container direction="column">

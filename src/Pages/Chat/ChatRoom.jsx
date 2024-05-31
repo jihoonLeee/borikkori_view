@@ -1,43 +1,47 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
+import { AuthContext } from '../../modules/AuthProvider';
+import { useParams } from "react-router-dom";
 
-const Chat = () => {
+const ChatRoom = () => {
+  const { roomId } = useParams(); // URL 파라미터로부터 roomId를 가져옵니다.
   const [ws, setWs] = useState(null);
   const [messages, setMessages] = useState([]);
   const [inputMessage, setInputMessage] = useState('');
-  const [messageType, setMessageType] = useState('ENTER'); // 메시지 유형 상태 추가
+  const [messageType, setMessageType] = useState('ENTER');
+  const { userInfo } = useContext(AuthContext);
 
   useEffect(() => {
-    const websocket = new WebSocket('ws://localhost:8080/ws/chat/message');
-    websocket.onopen = () => {
-      console.log('WebSocket 연결 성공');
-      sendMessage('ENTER');
-    };
-    websocket.onmessage = (event) => {
-      const data = JSON.parse(event.data);
-      setMessages((prevMessages) => [...prevMessages, data]);
-    };
-    websocket.onclose = () => console.log('WebSocket 연결 종료');
+    const websocket = new WebSocket(`ws://localhost:8080/ws/chat/message/${roomId}`);
     setWs(websocket);
 
     return () => {
       websocket.close();
     };
-  }, []);
+  }, [roomId]);
 
-  const sendMessage = (type) => {
-    if (ws && inputMessage) {
+  useEffect(() => {
+    if (ws) {
+      ws.onopen = () => {
+        console.log('WebSocket 연결 성공');
+        sendMessage('ENTER', true);
+      };
+      ws.onmessage = (event) => {
+        const data = JSON.parse(event.data);
+        setMessages((prevMessages) => [...prevMessages, data]);
+      };
+      ws.onclose = () => console.log('WebSocket 연결 종료');
+    }
+  }, [ws]);
+
+  const sendMessage = (type, initial = false) => {
+    if (ws && (inputMessage || initial)) {
       const messageData = {
-        messageType: type, 
-        chatRoomId: 1,
-        senderId: 101,
+        messageType: type,
         message: inputMessage,
       };
-      console.log(JSON.stringify(messageData));
       ws.send(JSON.stringify(messageData));
       setInputMessage('');
-      if (type === 'ENTER') {
-        setMessageType('TALK'); 
-      }
+      setMessageType('TALK');
     }
   };
 
@@ -45,31 +49,105 @@ const Chat = () => {
     setInputMessage(event.target.value);
   };
 
-  // 사용자가 '보내기' 버튼 클릭 시 현재 메시지 유형으로 메시지 전송
   const handleSendMessage = () => {
     sendMessage(messageType);
   };
 
+  const styles = {
+    messageContainer: (isCurrentUser) => ({
+      display: 'flex',
+      justifyContent: isCurrentUser ? 'flex-end' : 'flex-start',
+      margin: '5px 0',
+    }),
+    message: (isCurrentUser) => ({
+      maxWidth: '60%',
+      padding: '10px',
+      borderRadius: '10px',
+      backgroundColor: isCurrentUser ? '#D1FFC6' : '#F1F0F0',
+      color: 'black',
+    }),
+    chatContainer: {
+      display: 'flex',
+      flexDirection: 'column',
+      justifyContent: 'space-between',
+      height: '80vh',
+      width: '100%',
+      border: '1px solid #ccc',
+      borderRadius: '10px',
+      padding: '10px',
+      backgroundColor: '#fff',
+    },
+    inputArea: {
+      display: 'flex',
+      marginTop: '10px',
+    },
+    input: {
+      flex: 1,
+      padding: '10px',
+      borderRadius: '20px',
+      border: '1px solid #ccc',
+      marginRight: '10px',
+    },
+    button: {
+      padding: '10px 20px',
+      borderRadius: '20px',
+      border: 'none',
+      backgroundColor: '#fec107',
+      color: 'white',
+      cursor: 'pointer',
+    },
+    messageArea: {
+      flexGrow: 1,
+      overflowY: 'auto',
+      marginBottom: '10px',
+    },
+    enterMessageContainer: {
+      textAlign: 'center',
+      width: '100%',
+      margin: '10px 0',
+    },
+    enterMessage: {
+      display: 'inline-block',
+      padding: '10px',
+      borderRadius: '20px',
+      fontWeight: 'bold',
+      backgroundColor: '#AED581',
+      color: 'white',
+    },
+  };
+
   return (
-    <div>
-      <h2>WebSocket Chat</h2>
-      <input
-        type="text"
-        value={inputMessage}
-        onChange={handleInputChange}
-        placeholder="메시지 입력"
-      />
-      <button onClick={handleSendMessage}>보내기</button>
-      <div>
+    <div style={styles.chatContainer}>
+      <h2>채팅하기</h2>
+      <div style={styles.messageArea}>
         {messages.map((msg, index) => (
-          <div key={index}>
-            <strong>{msg.messageType === "ENTER" ? "[입장] "+ msg.senderId +" 가 입장하였습니다.": ""}</strong>
-            <span>{msg.senderId} : {msg.message}</span>
-          </div>
+          msg.messageType === "ENTER" ? (
+            <div key={index} style={styles.enterMessageContainer}>
+              <div style={styles.enterMessage}>
+                <strong>{msg.sender} 님이 입장하였습니다.</strong>
+              </div>
+            </div>
+          ) : (
+            <div key={index} style={styles.messageContainer(userInfo && msg.sender === userInfo.nickName)}>
+              <div style={styles.message(userInfo && msg.sender === userInfo.nickName)}>
+                <span>{msg.sender}: {msg.message}</span>
+              </div>
+            </div>
+          )
         ))}
+      </div>
+      <div style={styles.inputArea}>
+        <input
+          type="text"
+          value={inputMessage}
+          onChange={handleInputChange}
+          placeholder="메시지 입력"
+          style={styles.input}
+        />
+        <button onClick={handleSendMessage} style={styles.button}>보내기</button>
       </div>
     </div>
   );
 };
 
-export default Chat;
+export default ChatRoom;

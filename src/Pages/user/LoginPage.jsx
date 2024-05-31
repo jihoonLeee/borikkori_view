@@ -1,8 +1,8 @@
 import React, { useContext, useEffect } from 'react';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { useNavigate } from 'react-router-dom';
-import { AuthContext } from '../../Modules/AuthProvider';
-import LoginForm from '../Forms/LoginForm';
+import { AuthContext } from '../../modules/AuthProvider';
+import LoginForm from '../../components/user/LoginForm';
 import axios from 'axios';
 
 const defaultTheme = createTheme();
@@ -11,7 +11,7 @@ const loginUser = async (credentials, navigate) => {
   return axios.post(
     `/user/login`, 
     credentials, 
-    {withCredentials: true}
+    { withCredentials: true }
   )
   .then(response => {
     navigate("/");
@@ -32,7 +32,7 @@ const handleSubmit = (event, loginUser, navigate) => {
   }, navigate);
 };
 
-export default function SignIn() {
+export default function LoginPage() {
   const navigate = useNavigate();
   const { authenticated } = useContext(AuthContext);
 

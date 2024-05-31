@@ -6,9 +6,9 @@ import Box from '@mui/joy/Box';
 import Button from '@mui/joy/Button';
 import FormControl from '@mui/joy/FormControl';
 import { useNavigate } from "react-router-dom";
-import { AuthContext } from '../../Modules/AuthProvider';
+import { AuthContext } from '../../modules/AuthProvider';
 import { useDropzone } from 'react-dropzone';
-import '../../Styles/BoardWrite.css'
+import '../../styles/BoardWrite.css'
 import axios from 'axios';
 
 export default function BoardWrite() {

@@ -1,0 +1,14 @@
+@keyframes merge {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.2); }
+    100% { transform: scale(0); }
+}
+
+.dog {
+    background-size: contain;
+    background-repeat: no-repeat;
+}
+
+.merge-animation {
+    animation: merge 1s forwards;
+}

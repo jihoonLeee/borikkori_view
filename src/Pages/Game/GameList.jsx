@@ -10,13 +10,13 @@ import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { Link } from "react-router-dom";
+import useMediaQuery from '@mui/material/useMediaQuery';
 
-const cards = [1, 2, 3, 4, 5, 6, 7, 8, 9];
-
-// TODO remove, this demo shouldn't need to reset the theme.
 const defaultTheme = createTheme();
 
 export default function Album() {
+  const isMobile = useMediaQuery('(max-width: 768px)');
+
   return (
     <ThemeProvider theme={defaultTheme}>
       <CssBaseline />
@@ -37,62 +37,65 @@ export default function Album() {
               color="text.primary"
               gutterBottom
             >
-              WagWagT Games
+              보리꼬리 게임
             </Typography>
-         
           </Container>
         </Box>
         <Container sx={{ py: 8 }} maxWidth="md">
           <Grid container spacing={4}>
             <Grid item key="boriGame" xs={12} sm={6} md={4}>
-                <Link to='/boriGame'>
-                <Button>
-                    <Card
-                    sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}
-                    >
-                    <CardMedia
-                        component="div"
-                        sx={{
-                            pt: '56.25%',
-                        }}
-                        image="/images/game/bori.png"
-                    />
-                    <CardContent sx={{ flexGrow: 1, height: 150, width:250,overflow: 'hidden' }}>
-                        <Typography gutterBottom variant="h5" component="h2">
-                        보리게임
-                        </Typography>
-                        <Typography>
-                        수박게임을 따라한 보리게임입니다 ㅎ ㅎ
-                        </Typography>
-                    </CardContent>
-                    </Card>
-                </Button>
-                </Link>
+              <Link to='/boriGame' style={{ textDecoration: 'none', display: 'block', height: '100%' }}>
+                <Card
+                  sx={{
+                    height: '100%',
+                    display: 'flex',
+                    flexDirection: 'column',
+                  }}
+                >
+                  <CardMedia
+                    component="div"
+                    sx={{
+                      pt: '56.25%', // 16:9 비율
+                    }}
+                    image="/images/game/bori.png"
+                  />
+                  <CardContent sx={{ flexGrow: 1, overflow: 'hidden' }}>
+                    <Typography gutterBottom variant="h5" component="h2">
+                      보리게임
+                    </Typography>
+                    <Typography>
+                      수박게임을 따라한 보리게임입니다 ㅎ ㅎ
+                    </Typography>
+                  </CardContent>
+                </Card>
+              </Link>
             </Grid>
             <Grid item key="mbti" xs={12} sm={6} md={4}>
-                <Link to='/dogBTI'>
-                <Button>
-                    <Card
-                    sx={{ height: '100%', display: 'flex', width:250, flexDirection: 'column' }}
-                    >
-                    <CardMedia
-                        component="div"
-                        sx={{
-                            pt: '56.25%',
-                        }}
-                        image="/images/dog_big_logo.jpg"
-                    />
-                    <CardContent sx={{ flexGrow: 1, height: 150, overflow: 'hidden' }}>
-                        <Typography gutterBottom variant="h5" component="h2">
-                         댕BTI
-                        </Typography>
-                        <Typography>
-                        우리 강아지가 사람이라면?
-                        </Typography>
-                    </CardContent>
-                    </Card>
-                </Button>
-                </Link>
+              <Link to='/dogBTI' style={{ textDecoration: 'none', display: 'block', height: '100%' }}>
+                <Card
+                  sx={{
+                    height: '100%',
+                    display: 'flex',
+                    flexDirection: 'column',
+                  }}
+                >
+                  <CardMedia
+                    component="div"
+                    sx={{
+                      pt: '56.25%', // 16:9 비율
+                    }}
+                    image="/images/dog_big_logo.jpg"
+                  />
+                  <CardContent sx={{ flexGrow: 1, overflow: 'hidden' }}>
+                    <Typography gutterBottom variant="h5" component="h2">
+                      댕BTI
+                    </Typography>
+                    <Typography>
+                      우리 강아지가 사람이라면?
+                    </Typography>
+                  </CardContent>
+                </Card>
+              </Link>
             </Grid>
           </Grid>
         </Container>

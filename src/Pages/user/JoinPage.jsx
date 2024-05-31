@@ -1,19 +1,18 @@
-import React, { useState,useContext, useEffect } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import { CssBaseline, Typography, Container, Box, createTheme, ThemeProvider } from '@mui/material';
 import { useNavigate } from "react-router-dom";
-import { AuthContext } from '../../Modules/AuthProvider';
-import JoinForm from '../Forms/JoinForm';
+import { AuthContext } from '../../modules/AuthProvider';
+import JoinForm from '../../components/user/JoinForm';
 import axios from 'axios';
-import BasicAlert from '../../Components/BasicAlert';
+import BasicAlert from '../../components/common/BasicAlert';
 
 const defaultTheme = createTheme();
 
-const Join = () => {
-  
+const JoinPage = () => {
   const navigate = useNavigate();
   const { authenticated } = useContext(AuthContext);
   const [showAlert, setShowAlert] = useState(false);
- 
+
   const joinUser = async (credentials, navigate) => {
     return axios.post(
       `/user/join`,
@@ -29,8 +28,8 @@ const Join = () => {
       alert(`회원가입에 실패했습니다: ${error}`);
     });
   };
+
   const emailVerify = async (email) => {
-    console.log(email+  "    이메일");
     try {
       const response = await axios.post(
         `/user/sendEmail`,
@@ -49,6 +48,7 @@ const Join = () => {
   const handleSubmit = (formData) => {
     joinUser(formData, navigate);
   };
+
   useEffect(() => {
     if (authenticated) {
       alert("접근할 수 없습니다.");
@@ -71,4 +71,4 @@ const Join = () => {
   );
 };
 
-export default Join;
+export default JoinPage;

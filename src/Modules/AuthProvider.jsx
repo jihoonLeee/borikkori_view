@@ -1,6 +1,6 @@
 import React, { createContext, useState, useEffect } from 'react';
 import axios from 'axios';
-import Spinner from '../Components/Loadings/Spinner';
+import Spinner from '../components/common/Spinner';
 
 export const AuthContext = createContext();
 
