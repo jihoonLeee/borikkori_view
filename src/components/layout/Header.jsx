@@ -1,47 +1,19 @@
 import React, { useState, useContext } from 'react';
-import { Dialog, Popover } from '@headlessui/react';
-import {
-  XMarkIcon,
-  Bars3Icon
-} from '@heroicons/react/24/outline';
+import { Dialog ,Popover} from '@headlessui/react';
+import { XMarkIcon, Bars3Icon } from '@heroicons/react/24/outline';
 import { Link } from "react-router-dom";
 import { AuthContext } from '../../modules/AuthProvider';
 import axios from 'axios';
 import UserAvatar from '../common/UserAvatar';
 import useMediaQuery from '@mui/material/useMediaQuery';
+import NavLink from './NavLink';
+import StyledButton from './StyledButton';
+import DialogPanel from './DialogPanel';
 
 export default function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const { authenticated, userInfo } = useContext(AuthContext);
   const isMobile = useMediaQuery('(max-width: 1024px)');
-
-  const StyledButton = ({ to, children, onClick }) => (
-    <button 
-      className="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 h-10 px-4 py-2 text-rose-600 hover:bg-rose-100 hover:text-rose-900 focus:bg-rose-100 focus:text-rose-900 dark:text-rose-300 dark:hover:bg-rose-800 dark:hover:text-rose-50 dark:focus:bg-rose-800 dark:focus:text-rose-50"
-      onClick={onClick}
-    >
-      <Link to={to} className="text-sm font-semibold leading-6 text-gray-900">{children}</Link>
-    </button>
-  );
-
-  const DialogPanel = ({ children, ...props }) => (
-    <Dialog.Panel 
-      className="fixed inset-y-0 right-0 z-10 w-full overflow-y-auto bg-white px-6 py-6 sm:max-w-sm sm:ring-1 sm:ring-gray-900/10" 
-      {...props}
-    >
-      {children}
-    </Dialog.Panel>
-  );
-
-  const NavLink = ({ to, children }) => (
-    <Link 
-      to={to} 
-      className="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50" 
-      onClick={() => setMobileMenuOpen(false)}
-    >
-      {children}
-    </Link>
-  );
 
   const logout = () => {
     axios({
@@ -64,7 +36,7 @@ export default function Header() {
         <div className="flex lg:flex-1">
           <Link to="/" className="-m-1.5 p-1.5">
             <span className="sr-only">WagWagT</span>
-            <img className="h-16 w-auto" src={`${process.env.PUBLIC_URL}/images/borikkori_brown.svg`} alt="" />
+            <img className="h-16 w-auto" src={`${process.env.PUBLIC_URL}/images/borikkori_brown.svg`} alt="WagWagT Logo" />
           </Link>
         </div>
         {isMobile ? (
@@ -83,7 +55,6 @@ export default function Header() {
             <StyledButton to="/map">애견동반</StyledButton>
             <StyledButton to="/chat">채팅</StyledButton>
             <StyledButton to="/mainBoard">게시판</StyledButton>
-            {/* <StyledButton to="/dogBTI">개BTI</StyledButton> */}
             <StyledButton to="/games">게임</StyledButton>
             <div className="flex flex-1 justify-end">
               { !authenticated ? (
@@ -107,7 +78,7 @@ export default function Header() {
           <div className="flex items-center justify-between">
             <Link to="/" className="-m-1.5 p-1.5">
               <span className="sr-only">WagWagT</span>
-              <img className="h-8 w-auto" src="/images/dog_freinds_logo.png" alt="" />
+              <img className="h-8 w-auto" src="/images/dog_freinds_logo.png" alt="WagWagT Logo" />
             </Link>
             <button type="button" className="-m-2.5 rounded-md p-2.5 text-gray-700" onClick={() => setMobileMenuOpen(false)}>
               <span className="sr-only">Close menu</span>
@@ -119,7 +90,6 @@ export default function Header() {
               <div className="space-y-2 py-6">
                 <NavLink to="/mainBoard">게시판</NavLink>
                 <NavLink to="/games">게임</NavLink>
-                {/* <NavLink to="/dogBTI">개BTI</NavLink> */}
               </div>
               <div className="py-6">
                 {!authenticated ? (
