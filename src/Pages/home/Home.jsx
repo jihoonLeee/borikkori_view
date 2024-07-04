@@ -45,23 +45,23 @@ export default function DogHouse() {
       <section className="w-full max-w-5xl mt-8 bg-white dark:bg-rose-950 rounded-lg shadow-md overflow-hidden">
         <div className="p-6">
           <h2 className="text-2xl font-semibold text-rose-900 dark:text-rose-50 mb-4">개비티아이 TOP 3</h2>
-          <div className="relative h-64 w-full mb-8 flex justify-between">
+          <div className="relative h-64 w-full mb-8 flex justify-around flex-wrap">
             {mbtiResults.map((result, index) => (
-              <div key={index}>
+              <div key={index} className="w-1/3 sm:w-1/4 md:w-1/5 p-2 flex flex-col items-center">
                 <img
                   alt="MBTI TOP3"
-                  className="w-48 h-48 object-cover"
+                  className="w-full h-auto object-contain"
                   src={`${process.env.PUBLIC_URL}/images/face_results/${result.type}.png`}
                 />
-                <p className="text-center">{result.type} : {result.count}명</p>
+                <p className="text-center mt-2">{result.type} : {result.count}명</p>
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      <section className="w-full max-w-5xl mt-8 bg-white dark:bg-rose-950 rounded-lg shadow-md overflow-hidden flex">
-        <div className="w-1/2 p-6">
+      <section className="w-full max-w-5xl mt-8 bg-white dark:bg-rose-950 rounded-lg shadow-md overflow-hidden flex flex-col md:flex-row">
+        <div className="w-full md:w-1/2 p-6">
           <h2 className="text-2xl font-semibold text-rose-900 dark:text-rose-50 mb-4">최신 게시글</h2>
           <div className="grid grid-cols-1 gap-4">
             {latestPosts.slice(0, 6).map((post, index) => (
@@ -73,7 +73,7 @@ export default function DogHouse() {
           </div>
         </div>
 
-        <div className="w-1/2 p-6 border-l border-gray-200 dark:border-gray-700">
+        <div className="w-full md:w-1/2 p-6 border-t md:border-t-0 md:border-l border-gray-200 dark:border-gray-700">
           <h2 className="text-2xl font-semibold text-rose-900 dark:text-rose-50 mb-4">인기 게시글</h2>
           <div className="grid grid-cols-1 gap-4">
             {popularPosts.slice(0, 6).map((post, index) => (

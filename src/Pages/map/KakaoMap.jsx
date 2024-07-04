@@ -1,13 +1,21 @@
 import React, { useEffect, useRef, useState } from 'react';
 import '../../styles/KakaoMap.css'; // Importing CSS for styling
 
+const categories = {
+  petShop: '애견샵',
+  animalHospital: '동물병원',
+  petCafe: '애견카페'
+};
+
 const KakaoMap = () => {
   const mapContainer = useRef(null); // Reference for map container
   const [locations, setLocations] = useState([]); // State for locations within 1km
   const [selectedPlace, setSelectedPlace] = useState(null); // State for selected place info
   const [currentLocation, setCurrentLocation] = useState(null); // State for current location
+  const [selectedCategory, setSelectedCategory] = useState(categories.petShop); // State for selected category
   const mapRef = useRef(null); // Store the map instance
   const currentLocationMarker = useRef(null); // Reference for the current location marker
+  const markersRef = useRef([]); // Reference for markers
 
   useEffect(() => {
     const loadScript = (src) => {
@@ -58,21 +66,27 @@ const KakaoMap = () => {
           const map = new window.kakao.maps.Map(mapContainer.current, mapOption);
           mapRef.current = map;
 
-          // Create a marker for the current location
-          const marker = new window.kakao.maps.Marker({
-            map: map,
-            position: new window.kakao.maps.LatLng(latitude, longitude),
-            title: "현재 위치",
-            image: new window.kakao.maps.MarkerImage(
-              "http://t1.daumcdn.net/localimg/localimages/07/mapapidoc/marker_red.png", 
-              new window.kakao.maps.Size(24, 35),
-              { offset: new window.kakao.maps.Point(12, 35) }
-            ),
-          });
+          if (isMobile()) {
+            // Create a marker for the current location on mobile
+            const marker = new window.kakao.maps.Marker({
+              map: map,
+              position: new window.kakao.maps.LatLng(latitude, longitude),
+              title: "현재 위치",
+              image: new window.kakao.maps.MarkerImage(
+                "http://t1.daumcdn.net/localimg/localimages/07/mapapidoc/marker_red.png",
+                new window.kakao.maps.Size(24, 35),
+                { offset: new window.kakao.maps.Point(12, 35) }
+              ),
+            });
 
-          currentLocationMarker.current = marker;
+            currentLocationMarker.current = marker;
 
-          fetchLocations(map, latitude, longitude);
+            // Add event listener for device orientation
+            window.addEventListener('deviceorientation', handleOrientation, true);
+          }
+
+          // Fetch initial locations
+          fetchLocations(map, latitude, longitude, selectedCategory);
         },
         (error) => {
           console.error('Geolocation error:', error);
@@ -85,12 +99,27 @@ const KakaoMap = () => {
     }
   };
 
-  const fetchLocations = (map, latitude, longitude) => {
+  const handleOrientation = (event) => {
+    const { alpha, beta, gamma } = event;
+    const rotation = 360 - alpha;
+    if (currentLocationMarker.current) {
+      currentLocationMarker.current.setAngle(rotation * Math.PI / 180);
+    }
+  };
+
+  const isMobile = () => {
+    return /Mobi|Android/i.test(navigator.userAgent);
+  };
+
+  const fetchLocations = (map, latitude, longitude, keyword) => {
+    clearMarkers(); // Clear existing markers
+    setLocations([]); // Clear existing locations
+
     const places = new window.kakao.maps.services.Places();
     const callback = (result, status) => {
       if (status === window.kakao.maps.services.Status.OK) {
         setLocations(result);
-        result.forEach((place) => {
+        const newMarkers = result.map((place) => {
           const marker = new window.kakao.maps.Marker({
             map: map,
             position: new window.kakao.maps.LatLng(place.y, place.x),
@@ -103,13 +132,31 @@ const KakaoMap = () => {
               longitude: place.x,
             });
           });
+
+          return marker;
         });
+
+        markersRef.current = newMarkers; // Store new markers
       }
     };
-    places.categorySearch('CE7', callback, {
+    places.keywordSearch(keyword, callback, {
       location: new window.kakao.maps.LatLng(latitude, longitude),
       radius: 1000,
     });
+  };
+
+  const clearMarkers = () => {
+    if (markersRef.current) {
+      markersRef.current.forEach((marker) => marker.setMap(null));
+    }
+    markersRef.current = [];
+  };
+
+  const handleKeywordChange = (keyword) => {
+    setSelectedCategory(keyword);
+    if (currentLocation) {
+      fetchLocations(mapRef.current, currentLocation.latitude, currentLocation.longitude, keyword);
+    }
   };
 
   const handleLocationClick = (place) => {
@@ -126,7 +173,9 @@ const KakaoMap = () => {
     if (currentLocation) {
       const moveLatLon = new window.kakao.maps.LatLng(currentLocation.latitude, currentLocation.longitude);
       mapRef.current.setCenter(moveLatLon);
-      currentLocationMarker.current.setPosition(moveLatLon);
+      if (currentLocationMarker.current) {
+        currentLocationMarker.current.setPosition(moveLatLon);
+      }
     }
   };
 
@@ -134,13 +183,21 @@ const KakaoMap = () => {
     <div className="container">
       <div className="content">
         <div className="list-section">
-          <h3>1km 이내의 카페 목록</h3>
+          <div className="category-buttons">
+            <button onClick={() => handleKeywordChange(categories.petShop)} className={selectedCategory === categories.petShop ? 'active' : ''}>애견샵</button>
+            <button onClick={() => handleKeywordChange(categories.animalHospital)} className={selectedCategory === categories.animalHospital ? 'active' : ''}>동물병원</button>
+            <button onClick={() => handleKeywordChange(categories.petCafe)} className={selectedCategory === categories.petCafe ? 'active' : ''}>애견카페</button>
+          </div>
           <ul>
-            {locations.map((place) => (
-              <li key={place.id} onClick={() => handleLocationClick(place)}>
-                {place.place_name}
-              </li>
-            ))}
+            {locations.length > 0 ? (
+              locations.map((place) => (
+                <li key={place.id} onClick={() => handleLocationClick(place)}>
+                  {place.place_name}
+                </li>
+              ))
+            ) : (
+              <li>근처에 해당 장소가 없습니다.</li>
+            )}
           </ul>
           {selectedPlace && (
             <div>
