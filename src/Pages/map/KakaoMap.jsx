@@ -13,6 +13,7 @@ const KakaoMap = () => {
   const [selectedPlace, setSelectedPlace] = useState(null); // State for selected place info
   const [currentLocation, setCurrentLocation] = useState(null); // State for current location
   const [selectedCategory, setSelectedCategory] = useState(categories.petShop); // State for selected category
+  const [isDetailOpen, setIsDetailOpen] = useState(false); // State for detail section visibility
   const mapRef = useRef(null); // Store the map instance
   const currentLocationMarker = useRef(null); // Reference for the current location marker
   const markersRef = useRef([]); // Reference for markers
@@ -100,10 +101,13 @@ const KakaoMap = () => {
   };
 
   const handleOrientation = (event) => {
-    const { alpha, beta, gamma } = event;
+    const { alpha } = event;
     const rotation = 360 - alpha;
     if (currentLocationMarker.current) {
-      currentLocationMarker.current.setAngle(rotation * Math.PI / 180);
+      const markerElement = document.querySelector('.current-location-marker');
+      if (markerElement) {
+        markerElement.style.transform = `rotate(${rotation}deg)`;
+      }
     }
   };
 
@@ -127,10 +131,16 @@ const KakaoMap = () => {
 
           window.kakao.maps.event.addListener(marker, 'click', () => {
             setSelectedPlace({
+              name: place.place_name,
               address: place.address_name,
-              latitude: place.y,
-              longitude: place.x,
+              image: place.image_url,
+              reviews: place.reviews,
+              position: {
+                lat: place.y,
+                lng: place.x,
+              },
             });
+            setIsDetailOpen(true);
           });
 
           return marker;
@@ -161,12 +171,21 @@ const KakaoMap = () => {
 
   const handleLocationClick = (place) => {
     setSelectedPlace({
+      name: place.place_name,
       address: place.address_name,
-      latitude: place.y,
-      longitude: place.x,
+      image: place.image_url,
+      reviews: place.reviews,
+      position: {
+        lat: place.y,
+        lng: place.x,
+      },
     });
-    const moveLatLon = new window.kakao.maps.LatLng(place.y, place.x);
-    mapRef.current.setCenter(moveLatLon);
+    mapRef.current.setCenter(new window.kakao.maps.LatLng(place.y, place.x));
+    setIsDetailOpen(true);
+  };
+
+  const closeDetailSection = () => {
+    setIsDetailOpen(false);
   };
 
   const recenterMap = () => {
@@ -180,7 +199,7 @@ const KakaoMap = () => {
   };
 
   return (
-    <div className="container">
+    <div className={`container ${isDetailOpen ? 'detail-open' : ''}`}>
       <div className="content">
         <div className="list-section">
           <div className="category-buttons">
@@ -192,26 +211,46 @@ const KakaoMap = () => {
             {locations.length > 0 ? (
               locations.map((place) => (
                 <li key={place.id} onClick={() => handleLocationClick(place)}>
-                  {place.place_name}
+                  <img src={place.imageUrl || `${process.env.PUBLIC_URL}/images/borikkori_brown.png`} alt={place.place_name} />
+                  <div className="place-item">
+                    <div className="place-info">
+                      <h4>{place.place_name}</h4>
+                      <p>{place.address_name}</p>
+                    </div>
+                  </div>
                 </li>
               ))
             ) : (
               <li>근처에 해당 장소가 없습니다.</li>
             )}
           </ul>
-          {selectedPlace && (
-            <div>
-              <h3>선택한 장소 정보</h3>
-              <p><strong>주소:</strong> {selectedPlace.address}</p>
-              <p><strong>위도:</strong> {selectedPlace.latitude}</p>
-              <p><strong>경도:</strong> {selectedPlace.longitude}</p>
-            </div>
-          )}
         </div>
         <div className="map-section" ref={mapContainer}>
           <button className="recenter-button" onClick={recenterMap}>
             <img src={`${process.env.PUBLIC_URL}/icons/borikkori_brown.png`} alt="현재 위치" />
           </button>
+        </div>
+        <div className={`detail-section ${isDetailOpen ? 'open' : ''}`}>
+          <button className="close-button" onClick={closeDetailSection}>닫기</button>
+          {selectedPlace && (
+            <div>
+              <h2>{selectedPlace.name}</h2>
+              <img src={selectedPlace.image || `${process.env.PUBLIC_URL}/images/borikkori_brown.png`} alt={selectedPlace.name} />
+              <p><strong>주소:</strong> {selectedPlace.address}</p>
+              <div className="reviews">
+                <h3>리뷰</h3>
+                <ul>
+                  {selectedPlace.reviews && selectedPlace.reviews.length > 0 ? (
+                    selectedPlace.reviews.map((review, index) => (
+                      <li key={index}>{review}</li>
+                    ))
+                  ) : (
+                    <li>리뷰가 없습니다.</li>
+                  )}
+                </ul>
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </div>
