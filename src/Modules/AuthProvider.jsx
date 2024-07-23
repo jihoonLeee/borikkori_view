@@ -1,18 +1,17 @@
 import React, { createContext, useState, useEffect } from 'react';
 import axios from 'axios';
-import Spinner from '../Components/Loadings/Spinner';
+import Spinner from '../components/common/Spinner';
 
 export const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
     const [authenticated, setAuthenticated] = useState(null);
     const [userInfo, setUserInfo] = useState(null);
-    const api_url = process.env.REACT_APP_API_URL + process.env.REACT_APP_API_PORT;
     useEffect(() => {
         const checkUserStatus = async () => {
             try {
                 const response = await axios.post(
-                    api_url+'/users/userInfo', 
+                    '/user/userInfo',
                     {},
                     { withCredentials: true }  // 쿠키를 함께 보내도록 설정
                 );
@@ -30,7 +29,7 @@ export const AuthProvider = ({ children }) => {
         return <Spinner />;
     }
     return (
-        <AuthContext.Provider value={{ authenticated, setAuthenticated ,userInfo}}>
+        <AuthContext.Provider value={{ authenticated, setAuthenticated, userInfo }}>
             {children}
         </AuthContext.Provider>
     );
