@@ -64,7 +64,7 @@ export default function DogBoard() {
       .then(response => {
         totalPosts = response.data.totalCount;
         console.log(response.data);
-        setPosts(response.data.posts);
+        setPosts(response.data.posts || []);
       })
       .catch(error => {
         console.error('에러', error);
