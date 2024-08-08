@@ -11,7 +11,7 @@ export default function DogHouse() {
       withCredentials: true
     }) 
     .then(response => {
-      setMbtiResults(response.data);
+      setMbtiResults(Array.isArray(response.data) ? response.data : []);
     })
     .catch(error => {
       console.error('에러', error);
@@ -22,7 +22,7 @@ export default function DogHouse() {
       withCredentials: true
     })
     .then(response => {
-      setLatestPosts(response.data);
+      setLatestPosts(Array.isArray(response.data) ? response.data : []);
     })
     .catch(error => {
       console.error('에러', error);
@@ -33,7 +33,7 @@ export default function DogHouse() {
       withCredentials: true
     })
     .then(response => {
-      setPopularPosts(response.data);
+      setPopularPosts(Array.isArray(response.data) ? response.data : []);
     })
     .catch(error => {
       console.error('에러', error);
