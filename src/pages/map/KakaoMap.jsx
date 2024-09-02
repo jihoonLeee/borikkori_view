@@ -54,51 +54,58 @@ const KakaoMap = () => {
   }, []);
 
   const initializeMap = () => {
+    const defaultLocation = { latitude: 37.476559, longitude: 126.981633 }; // 사당역 좌표
+  
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
         (position) => {
           const { latitude, longitude } = position.coords;
           setCurrentLocation({ latitude, longitude });
-
-          const mapOption = {
-            center: new window.kakao.maps.LatLng(latitude, longitude),
-            level: 3,
-          };
-          const map = new window.kakao.maps.Map(mapContainer.current, mapOption);
-          mapRef.current = map;
-
-          if (isMobile()) {
-            // Create a marker for the current location on mobile
-            const marker = new window.kakao.maps.Marker({
-              map: map,
-              position: new window.kakao.maps.LatLng(latitude, longitude),
-              title: "현재 위치",
-              image: new window.kakao.maps.MarkerImage(
-                "http://t1.daumcdn.net/localimg/localimages/07/mapapidoc/marker_red.png",
-                new window.kakao.maps.Size(24, 35),
-                { offset: new window.kakao.maps.Point(12, 35) }
-              ),
-            });
-
-            currentLocationMarker.current = marker;
-
-            // Add event listener for device orientation
-            window.addEventListener('deviceorientation', handleOrientation, true);
-          }
-
-          // Fetch initial locations
-          fetchLocations(map, latitude, longitude, selectedCategory);
+          loadMap(latitude, longitude);
         },
         (error) => {
-          console.error('Geolocation error:', error);
-          alert('현재 위치를 불러올 수 없습니다.');
+          console.error('위치 정보를 사용할 수 없습니다:', error);
+          alert('현재 위치를 불러올 수 없어 기본 위치(사당역)로 설정합니다.');
+          setCurrentLocation(defaultLocation);
+          loadMap(defaultLocation.latitude, defaultLocation.longitude);
         }
       );
     } else {
-      console.error('Geolocation not supported');
-      alert('Geolocation을 지원하지 않는 브라우저입니다.');
+      console.error('Geolocation을 지원하지 않는 브라우저입니다.');
+      alert('Geolocation을 지원하지 않아 기본 위치(사당역)로 설정합니다.');
+      setCurrentLocation(defaultLocation);
+      loadMap(defaultLocation.latitude, defaultLocation.longitude);
     }
   };
+  
+  const loadMap = (latitude, longitude) => {
+    const mapOption = {
+      center: new window.kakao.maps.LatLng(latitude, longitude),
+      level: 3,
+    };
+    const map = new window.kakao.maps.Map(mapContainer.current, mapOption);
+    mapRef.current = map;
+  
+    if (isMobile()) {
+      const marker = new window.kakao.maps.Marker({
+        map: map,
+        position: new window.kakao.maps.LatLng(latitude, longitude),
+        title: "현재 위치",
+        image: new window.kakao.maps.MarkerImage(
+          "http://t1.daumcdn.net/localimg/localimages/07/mapapidoc/marker_red.png",
+          new window.kakao.maps.Size(24, 35),
+          { offset: new window.kakao.maps.Point(12, 35) }
+        ),
+      });
+  
+      currentLocationMarker.current = marker;
+      window.addEventListener('deviceorientation', handleOrientation, true);
+    }
+  
+    fetchLocations(map, latitude, longitude, selectedCategory);
+  };
+  
+  
 
   const handleOrientation = (event) => {
     const { alpha } = event;

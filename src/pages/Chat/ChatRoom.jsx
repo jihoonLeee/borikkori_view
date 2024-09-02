@@ -11,7 +11,7 @@ const ChatRoom = () => {
   const { userInfo } = useContext(AuthContext);
 
   useEffect(() => {
-    const websocket = new WebSocket(`ws://localhost:8080/ws/chat/message/${roomId}`);
+    const websocket = new WebSocket(`wss://api.bokko.kr/ws/chat/message/${roomId}`);
     setWs(websocket);
 
     return () => {
