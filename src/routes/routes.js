@@ -19,7 +19,7 @@ const routes = [
   { path: "/", element: <DogHouse /> },
   { path: "/dogBTI/*", element: <DogMbtiTest /> },
   { path: "/dogBTI/result", element: <DogMbtiResult /> },
-  { path: "/mainBoard", element: <MainBoard /> },
+  { path: "/board", element: <MainBoard /> },
   { path: "/join", element: <Join /> },
   { path: "/login", element: <Login /> },
   { path: "/boardWrite", element: <BoardWrite /> },

@@ -25,22 +25,24 @@ const theme = createTheme({
   },
 });
 
-var totalPosts = 0;
-
 export default function DogBoard() {
   const isMobile = useMediaQuery('(max-width: 768px)');
+  const [posts, setPosts] = useState([]);
+  const [page, setPage] = useState(1);
+  const [totalPosts, setTotalPosts] = useState(0);
+  const [searchQuery, setSearchQuery] = useState('');
 
   const StyledTableCell = styled(TableCell)(({ theme }) => ({
     [`&.${tableCellClasses.head}`]: {
       backgroundColor: theme.palette.secondary.head,
       color: theme.palette.common.black,
       textAlign: 'center',
-      fontSize: isMobile ? '0.75rem' : '1rem', // 폰트 크기 조정
+      fontSize: isMobile ? '0.75rem' : '1rem', 
     },
     [`&.${tableCellClasses.body}`]: {
-      fontSize: isMobile ? '0.75rem' : '1rem', // 폰트 크기 조정
+      fontSize: isMobile ? '0.75rem' : '1rem', 
       textAlign: 'center',
-      padding: isMobile ? '4px' : '8px', // 패딩 조정
+      padding: isMobile ? '4px' : '8px',
     },
   }));
 
@@ -53,23 +55,28 @@ export default function DogBoard() {
     },
   }));
 
-  const [posts, setPosts] = useState([]);
-  const [page, setPage] = useState(1);
-
   useEffect(() => {
-    axios.get('/post', {
-      params: { page: page },
-      withCredentials: true
-    })
-      .then(response => {
-        totalPosts = response.data.totalCount;
-        console.log(response.data);
+    const fetchPosts = async () => {
+      try {
+        const response = await axios.get('/post', {
+          params: { page: page, search: searchQuery },
+          withCredentials: true,
+        });
+        setTotalPosts(response.data.totalCount || 0);
         setPosts(response.data.posts || []);
-      })
-      .catch(error => {
+      } catch (error) {
         console.error('에러', error);
-      });
-  }, [page]);
+      }
+    };
+
+    fetchPosts();
+  }, [page, searchQuery]);
+
+  const handleSearch = () => {
+    setPage(1); // 새로운 검색 시 페이지를 1로 리셋
+  };
+
+  const totalPages = Math.ceil(totalPosts / 10);
 
   return (
     <main className="flex flex-col items-center px-4 md:px-6 dark:bg-rose-900 min-h-screen">
@@ -115,26 +122,36 @@ export default function DogBoard() {
           <div className="flex justify-between mt-4">
             <ThemeProvider theme={theme}>
               <div className="flex border rounded h-9">
-                <input className="p-2 flex-grow w-28" type="text" placeholder="검색하세요" />
-                <Button className="bg-blue-500 text-white p-2 rounded-r" color="secondary">검색</Button>
+                <input 
+                  className="p-2 flex-grow w-28" 
+                  type="text" 
+                  placeholder="검색하세요" 
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                />
+                <Button 
+                  className="bg-blue-500 text-white p-2 rounded-r" 
+                  color="secondary"
+                  onClick={handleSearch}
+                >
+                  검색
+                </Button>
               </div>
             </ThemeProvider>
           </div>
-          <div className="flex justify-between mt-4">
-            <div className="flex justify-center flex-grow">
-              <Pagination count={totalPage()} variant="outlined" shape="rounded"
-                onChange={(event, value) => setPage(value)} />
-            </div>
+          <div className="flex justify-center mt-4">
+            <Pagination 
+              count={totalPages} 
+              variant="outlined" 
+              shape="rounded"
+              page={page}
+              onChange={(event, value) => setPage(value)} 
+            />
           </div>
         </div>
       </section>
     </main>
   );
-}
-
-function totalPage() {
-  let pages = totalPosts / 10;
-  return Math.ceil(pages);
 }
 
 function formatDate(dateString) {
@@ -146,11 +163,9 @@ function formatDate(dateString) {
   if (inputDate.getDate() === today.getDate() &&
     inputDate.getMonth() === today.getMonth() &&
     inputDate.getFullYear() === today.getFullYear()) {
-    // 같은 날짜인 경우
-    formattedDate = `${inputDate.getHours()}:${inputDate.getMinutes()}`;
+    formattedDate = `${String(inputDate.getHours()).padStart(2, '0')}:${String(inputDate.getMinutes()).padStart(2, '0')}`;
   } else {
-    // 다른 날짜인 경우
-    formattedDate = `${inputDate.getFullYear()}.${inputDate.getMonth() + 1}.${inputDate.getDate()}`;
+    formattedDate = `${inputDate.getFullYear()}.${String(inputDate.getMonth() + 1).padStart(2, '0')}.${String(inputDate.getDate()).padStart(2, '0')}`;
   }
   return formattedDate;
 }

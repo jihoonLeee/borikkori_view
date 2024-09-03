@@ -1,3 +1,4 @@
+// Footer.js
 import React from 'react';
 import { FaYoutube, FaInstagram, FaGithub } from 'react-icons/fa';
 import { SiTistory } from 'react-icons/si'; 
@@ -11,7 +12,7 @@ function Copyright(props) {
     <Typography variant="body2" color="text.secondary" align="center" {...props}>
       {'Copyright © '}
       <Link color="inherit" href="https://mui.com/">
-         보리꼬리
+        보리꼬리
       </Link>{' '}
       {new Date().getFullYear()}
       {'.'}
@@ -23,34 +24,34 @@ function Footer() {
   const isMobile = useMediaQuery('(max-width: 768px)');
 
   return (
-    <footer className="footer pt-10 sm:mt-10 pt-10">
+    <footer className="footer bg-beige-50 pt-10 sm:mt-10 pt-10">
       <Container component="main" maxWidth="lg">
         <div className="max-w-6xl m-auto text-gray-900 flex flex-wrap justify-left">
           {/* 왼쪽 컬럼 */}
           <div className={`p-5 ${isMobile ? 'w-full' : 'w-1/2 sm:w-4/12 md:w-3/12'}`}>
             {/* 로고 */}
-            <div className="text-white-900 hover:text-white-700 flex items-center">
+            <div className="text-gray-900 hover:text-gray-700 flex items-center">
               <a href="/" className="text-xl font-bold mx-auto">
-                <img className="h-16 w-auto" src={`/images/borikkori_brown.svg`} alt="" />
+                <img className="h-16 w-auto" src={`/images/borikkori_brown.svg`} alt="보리꼬리 로고" />
               </a>
             </div>
             <div className="mt-4 flex items-center justify-center">
-              <span className="text-white-900 mx-3 hover:text-white-700">
+              <span className="text-gray-900 mx-3 hover:text-gray-700">
                 <a href="https://www.youtube.com/@jihoon2723">
                   <FaYoutube size="24" />
                 </a>
               </span>
-              <span className="text-white-900 mx-3 hover:text-white-700">
+              <span className="text-gray-900 mx-3 hover:text-gray-700">
                 <a href="https://www.instagram.com/zzzihooon/">
                   <FaInstagram size="24" />
                 </a>
               </span>
-              <span className="text-white-900 mx-3 hover:text-white-700">
+              <span className="text-gray-900 mx-3 hover:text-gray-700">
                 <a href="https://jihoon2723.tistory.com/">
                   <SiTistory size="24" />
                 </a>
               </span>
-              <span className="text-white-900 mx-3 hover:text-white-700">
+              <span className="text-gray-900 mx-3 hover:text-gray-700">
                 <a href="https://github.com/jihoonLeee">
                   <FaGithub size="24" />
                 </a>
@@ -60,11 +61,11 @@ function Footer() {
 
           {/* 중앙 컬럼 */}
           <div className={`p-5 ${isMobile ? 'w-full' : 'w-1/2 sm:w-4/12 md:w-3/12'}`}>
-            <div className="text-white-900 hover:text-white-700 mt-2">
+            <div className="text-gray-900 hover:text-gray-700 mt-2">
               <h3 className="text-xl mb-2 font-bold">Support</h3>
               <ul className="list-none">
                 <li className="mb-2">
-                  <a href="mailto:ljh2723@gmail.com" className="text-white-600 hover:text-white-700">
+                  <a href="mailto:ljh2723@gmail.com" className="text-gray-600 hover:text-gray-700">
                     문의
                   </a>
                 </li>
@@ -77,16 +78,16 @@ function Footer() {
           </div>
           <div className="flex justify-center">
             <a href="!#" className="w-6 mx-1">
-              <i className="fab fa-twitter text-white"></i>
+              <i className="fab fa-twitter text-gray"></i>
             </a>
             <a href="!#" className="w-6 mx-1">
-              <i className="fab fa-instagram text-white"></i>
+              <i className="fab fa-instagram text-gray"></i>
             </a>
             <a href="!#" className="w-6 mx-1">
-              <i className="fab fa-linkedin text-white"></i>
+              <i className="fab fa-linkedin text-gray"></i>
             </a>
             <a href="!#" className="w-6 mx-1">
-              <i className="fab fa-github text-white"></i>
+              <i className="fab fa-github text-gray"></i>
             </a>
           </div>
           <div className="pt-2">

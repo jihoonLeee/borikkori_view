@@ -1,5 +1,6 @@
+// Header.js
 import React, { useState, useContext } from 'react';
-import { Dialog ,Popover} from '@headlessui/react';
+import { Dialog, Popover } from '@headlessui/react';
 import { XMarkIcon, Bars3Icon } from '@heroicons/react/24/outline';
 import { Link } from "react-router-dom";
 import { AuthContext } from '../../modules/AuthProvider';
@@ -22,7 +23,7 @@ export default function Header() {
       withCredentials: true
     })
     .then((response) => {
-      alert("로그아웃");
+      alert("로그아웃되었습니다.");
       window.location.reload();
     })
     .catch((error) => {
@@ -31,12 +32,12 @@ export default function Header() {
   };
 
   return (
-    <header className="header">
+    <header className="header bg-beige-50 shadow-lg">
       <nav className="mx-auto flex max-w-7xl items-center justify-between p-6 lg:px-8" aria-label="Global">
         <div className="flex lg:flex-1">
           <Link to="/" className="-m-1.5 p-1.5">
-            <span className="sr-only">WagWagT</span>
-            <img className="h-16 w-auto" src={`${process.env.PUBLIC_URL}/images/borikkori_brown.svg`} alt="WagWagT Logo" />
+            <span className="sr-only">보리꼬리</span>
+            <img className="h-16 w-auto" src={`${process.env.PUBLIC_URL}/images/borikkori_brown.svg`} alt="보리꼬리 로고" />
           </Link>
         </div>
         {isMobile ? (
@@ -46,18 +47,18 @@ export default function Header() {
               className="-m-2.5 inline-flex items-center justify-center rounded-md p-2.5 text-gray-700"
               onClick={() => setMobileMenuOpen(true)}
             >
-              <span className="sr-only">Open main menu</span>
+              <span className="sr-only">메뉴 열기</span>
               <Bars3Icon className="h-6 w-6" aria-hidden="true" />
             </button>
           </div>
         ) : (
           <Popover.Group className="hidden lg:flex lg:gap-x-12">
-            <StyledButton to="/map">애견동반</StyledButton>
-            <StyledButton to="/chat">채팅</StyledButton>
-            <StyledButton to="/mainBoard">게시판</StyledButton>
-            <StyledButton to="/games">게임</StyledButton>
+            <StyledButton to="/board">게시판</StyledButton>
+            <StyledButton to="/map">애견 맛집</StyledButton>
+            <StyledButton to="/chat">실시간 소통</StyledButton>
+            <StyledButton to="/games">개임</StyledButton>
             <div className="flex flex-1 justify-end">
-              { !authenticated ? (
+              {!authenticated ? (
                 <>
                   <StyledButton to="/login">로그인</StyledButton>
                   <StyledButton to="/join">회원가입</StyledButton>
@@ -77,21 +78,21 @@ export default function Header() {
         <DialogPanel>
           <div className="flex items-center justify-between">
             <Link to="/" className="-m-1.5 p-1.5" onClick={() => setMobileMenuOpen(false)}>
-              <span className="sr-only">WagWagT</span>
-              <img className="h-8 w-auto" src="/images/dog_freinds_logo.png" alt="WagWagT Logo" />
+              <span className="sr-only">보리꼬리</span>
+              <img className="h-8 w-auto" src="/images/dog_freinds_logo.png" alt="보리꼬리 로고" />
             </Link>
             <button type="button" className="-m-2.5 rounded-md p-2.5 text-gray-700" onClick={() => setMobileMenuOpen(false)}>
-              <span className="sr-only">Close menu</span>
+              <span className="sr-only">메뉴 닫기</span>
               <XMarkIcon className="h-6 w-6" aria-hidden="true" />
             </button>
           </div>
           <div className="mt-6 flow-root">
             <div className="-my-6 divide-y divide-gray-500/10">
               <div className="space-y-2 py-6">
-                <StyledButton to="/map" onClick={() => setMobileMenuOpen(false)}>애견동반</StyledButton>
-                <StyledButton to="/chat" onClick={() => setMobileMenuOpen(false)}>채팅</StyledButton>
-                <StyledButton to="/mainBoard" onClick={() => setMobileMenuOpen(false)}>게시판</StyledButton>
-                <StyledButton to="/games" onClick={() => setMobileMenuOpen(false)}>게임</StyledButton>
+                <StyledButton to="/board" onClick={() => setMobileMenuOpen(false)}>게시판</StyledButton>
+                <StyledButton to="/map" onClick={() => setMobileMenuOpen(false)}>애견 맛집</StyledButton>
+                <StyledButton to="/chat" onClick={() => setMobileMenuOpen(false)}>실시간 소통</StyledButton>
+                <StyledButton to="/mbti" onClick={() => setMobileMenuOpen(false)}>MBTI 테스트</StyledButton>
               </div>
               <div className="py-6 flex flex-col items-start space-y-4">
                 {!authenticated ? (
@@ -129,7 +130,6 @@ export default function Header() {
           </div>
         </DialogPanel>
       </Dialog>
-
     </header>
   );
 }
