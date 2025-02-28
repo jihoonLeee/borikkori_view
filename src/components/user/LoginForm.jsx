@@ -11,10 +11,6 @@ import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 
 const LoginForm = ({ handleSubmit }) => {
-  const handleOpen = () => {
-    alert("만드세요");
-  };
-
   return (
     <Container component="main" maxWidth="xs">
       <CssBaseline />
@@ -26,7 +22,7 @@ const LoginForm = ({ handleSubmit }) => {
           alignItems: 'center',
         }}
       >
-        <img className="h-16 w-auto" src={`/images/borikkori_brown.svg`} alt="" />
+        <img className="h-16 w-auto" src={`/images/borikkori_brown.svg`} alt="Borikkori Logo" />
         <Typography component="h1" variant="h5">
           로그인
         </Typography>
@@ -63,10 +59,10 @@ const LoginForm = ({ handleSubmit }) => {
           >
             로그인
           </Button>
-          <Grid container>
-            <Grid container justifyContent="flex-end">
-              <Link href="/#/join" onClick={handleOpen} variant="body2">
-                {"계정이 없으신가요?"}
+          <Grid container justifyContent="flex-end">
+            <Grid item>
+              <Link href="/#/join" variant="body2">
+                계정이 없으신가요?
               </Link>
             </Grid>
           </Grid>

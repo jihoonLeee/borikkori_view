@@ -20,7 +20,7 @@
   box-sizing: border-box;
   border-right: 1px solid #ccc;
   overflow-y: auto;
-  z-index: 2; /* Ensure it stays above the map section */
+  z-index: 2; 
 }
 
 .list-section ul {
@@ -189,6 +189,9 @@
 }
 
 @media (max-width: 768px) {
+  nav {
+    display: none;
+  }
   .content {
     flex-direction: column;
   }

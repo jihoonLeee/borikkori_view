@@ -3,10 +3,6 @@
   background-color: #FFF7F0; /* 로고 배경색과 조화로운 부드러운 베이지톤 */
 }
 
-.header, .footer {
-  background-color: #FECDD3; /* 따뜻한 핑크톤 유지 */
-}
-
 .question {
   display: flex;
   flex-direction: column;
@@ -64,3 +60,9 @@
   opacity: 0;
   transition: opacity 300ms;
 }
+
+/* App.css */
+body {
+  font-family: 'Noto Sans KR', sans-serif;
+}
+

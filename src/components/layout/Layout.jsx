@@ -1,12 +1,19 @@
+// src/components/layout/Layout.jsx
 import React from 'react';
-import Footer from './Footer';
 import Header from './Header';
+import Footer from './Footer';
 
 const Layout = ({ children }) => {
   return (
-    <div>
+    <div className="flex flex-col min-h-screen">
+      {/* 헤더 영역 */}
       <Header />
-      <main>{children}</main>
+      {/* 메인 영역 */}
+      <main className="flex-grow">
+        {children}
+      </main>
+      
+      {/* 푸터 영역 */}
       <Footer />
     </div>
   );

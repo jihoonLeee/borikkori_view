@@ -1,5 +1,5 @@
 import React from 'react';
-import {Background, LoadingText} from '../../modules/Style.js';
+import {Background, LoadingText} from '../../utils/Style.js';
 
 const Spinner = () => {
     return (

@@ -1,19 +1,19 @@
 import React, { lazy } from 'react';
 
-const DogMbtiTest = lazy(() => import('../pages/dogTest/DogMbtiTest'));
-const DogMbtiResult = lazy(() => import('../pages/dogTest/DogMbtiResult'));
-const MainBoard = lazy(() => import('../pages/boards/MainBoard'));
+const DogMbtiTest = lazy(() => import('../pages/dbti/DogMbtiTestPage'));
+const DogMbtiResult = lazy(() => import('../pages/dbti/DogMbtiResultPage'));
+const MainBoard = lazy(() => import('../pages/board/BoardListPage'));
 const DogHouse = lazy(() => import('../pages/home/Home'));
 const Join = lazy(() => import('../pages/user/JoinPage'));
 const Login = lazy(() => import('../pages/user/LoginPage'));
-const BoardWrite = lazy(() => import('../pages/boards/BoardWrite'));
+const BoardWrite = lazy(() => import('../pages/board/BoardWritePage'));
 const GameList = lazy(() => import('../pages/game/GameList'));
 const Game = lazy(() => import('../pages/game/Game'));
-const Post = lazy(() => import('../pages/boards/Post'));
+const Post = lazy(() => import('../pages/board/PostPage'));
 const ChatRoom = lazy(() => import('../pages/chat/ChatRoom'));
 const ChatRoomList = lazy(() => import('../pages/chat/ChatRoomList'));
 const ChatLayout = lazy(() => import('../pages/chat/ChatLayout'));
-const KakaoMap = lazy(() => import('../pages/map/KakaoMap'));
+const KakaoMap = lazy(() => import('../pages/map/KakaoMapPage'));
 
 const routes = [
   { path: "/", element: <DogHouse /> },

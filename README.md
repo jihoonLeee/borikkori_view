@@ -25,3 +25,191 @@
 
 * 🧑🏻‍💻 : 이지훈
 * 💌 : ljh2723@gmail.com
+
+
+```
+my-dog
+├─ .yarn
+│  └─ cache
+├─ ads.txt
+├─ CNAME
+├─ package-lock.json
+├─ package.json
+├─ public
+│  ├─ CNAME
+│  ├─ icons
+│  │  └─ borikkori_brown.png
+│  ├─ images
+│  │  ├─ borikkori.ico
+│  │  ├─ borikkori.svg
+│  │  ├─ borikkori_brown.png
+│  │  ├─ borikkori_brown.svg
+│  │  ├─ borikkori_brown_logo.ico
+│  │  ├─ borikkori_logo.png
+│  │  ├─ explosion.png
+│  │  ├─ face_results
+│  │  │  ├─ ENFJ.png
+│  │  │  ├─ ENFP.png
+│  │  │  ├─ ENTJ.png
+│  │  │  ├─ ENTP.png
+│  │  │  ├─ ESFJ.png
+│  │  │  ├─ ESFP.png
+│  │  │  ├─ ESTJ.png
+│  │  │  ├─ ESTP.png
+│  │  │  ├─ INFJ.png
+│  │  │  ├─ INFP.png
+│  │  │  ├─ INTJ.png
+│  │  │  ├─ INTP.png
+│  │  │  ├─ ISFJ.png
+│  │  │  ├─ ISFP.png
+│  │  │  ├─ ISTJ.png
+│  │  │  └─ ISTP.png
+│  │  ├─ game
+│  │  │  ├─ bichon.png
+│  │  │  ├─ bori.png
+│  │  │  ├─ chihuahua.png
+│  │  │  ├─ french.png
+│  │  │  ├─ poodle.png
+│  │  │  ├─ retriever.png
+│  │  │  ├─ rottweiler.png
+│  │  │  ├─ saintbernard.png
+│  │  │  ├─ sanggun.png
+│  │  │  ├─ sharpei.png
+│  │  │  ├─ welshi.png
+│  │  │  └─ yorkshire.png
+│  │  ├─ main_button.png
+│  │  ├─ main_text.png
+│  │  ├─ results
+│  │  │  ├─ borikkori.svg
+│  │  │  ├─ enfj_result.png
+│  │  │  ├─ enfp_result.png
+│  │  │  ├─ entj_result.png
+│  │  │  ├─ entp_result.png
+│  │  │  ├─ esfj_result.png
+│  │  │  ├─ esfp_result.png
+│  │  │  ├─ estj_result.png
+│  │  │  ├─ estp_result.png
+│  │  │  ├─ infj_result.png
+│  │  │  ├─ infp_result.png
+│  │  │  ├─ intj_result.png
+│  │  │  ├─ intp_result.png
+│  │  │  ├─ isfj_result.png
+│  │  │  ├─ isfp_result.png
+│  │  │  ├─ istj_result.png
+│  │  │  └─ istp_result.png
+│  │  └─ upload
+│  ├─ index.html
+│  ├─ manifest.json
+│  └─ robots.txt
+├─ README.md
+├─ src
+│  ├─ api
+│  │  ├─ boardApi.js
+│  │  ├─ mapApi.js
+│  │  └─ userApi.js
+│  ├─ App.css
+│  ├─ App.js
+│  ├─ App.test.js
+│  ├─ assets
+│  │  └─ loading.gif
+│  ├─ components
+│  │  ├─ board
+│  │  │  ├─ BoardList.jsx
+│  │  │  ├─ BoardWriteForm.jsx
+│  │  │  └─ PostView.jsx
+│  │  ├─ chat
+│  │  ├─ common
+│  │  │  ├─ BasicAlert.jsx
+│  │  │  ├─ Loading.jsx
+│  │  │  ├─ ProgressBar.jsx
+│  │  │  ├─ Spinner.jsx
+│  │  │  └─ UserAvatar.jsx
+│  │  ├─ dbti
+│  │  │  ├─ DogMbtiHome.jsx
+│  │  │  ├─ DogQuestion.jsx
+│  │  │  └─ DogResult.jsx
+│  │  ├─ layout
+│  │  │  ├─ DialogPanel.jsx
+│  │  │  ├─ Footer.jsx
+│  │  │  ├─ Header.jsx
+│  │  │  ├─ Layout.jsx
+│  │  │  ├─ NavLink.jsx
+│  │  │  └─ StyledButton.jsx
+│  │  ├─ map
+│  │  │  └─ KakaoMapView.jsx
+│  │  └─ user
+│  │     ├─ JoinForm.jsx
+│  │     └─ LoginForm.jsx
+│  ├─ containers
+│  │  ├─ board
+│  │  │  ├─ BoardListContainer.jsx
+│  │  │  ├─ BoardWriteContainer.jsx
+│  │  │  └─ PostContainer.jsx
+│  │  ├─ dbti
+│  │  │  ├─ DogMbtiResultContainer.jsx
+│  │  │  └─ DogMbtiTestContainer.jsx
+│  │  ├─ map
+│  │  │  └─ KakaoMapContainer.jsx
+│  │  └─ user
+│  │     ├─ UserJoinContainer.jsx
+│  │     └─ UserLoginContainer.jsx
+│  ├─ contexts
+│  │  └─ AuthProvider.jsx
+│  ├─ function.js
+│  ├─ hooks
+│  │  └─ Example.jsx
+│  ├─ index.css
+│  ├─ index.js
+│  ├─ logo.svg
+│  ├─ pages
+│  │  ├─ board
+│  │  │  ├─ BoardListPage.jsx
+│  │  │  ├─ BoardWritePage.jsx
+│  │  │  └─ PostPage.jsx
+│  │  ├─ chat
+│  │  │  ├─ ChatLayout.jsx
+│  │  │  ├─ ChatRoom.jsx
+│  │  │  └─ ChatRoomList.jsx
+│  │  ├─ dbti
+│  │  │  ├─ DogMbtiResultPage.jsx
+│  │  │  └─ DogMbtiTestPage.jsx
+│  │  ├─ game
+│  │  │  ├─ Dogs.js
+│  │  │  ├─ Game.jsx
+│  │  │  └─ GameList.jsx
+│  │  ├─ home
+│  │  │  └─ Home.jsx
+│  │  ├─ map
+│  │  │  └─ KakaoMapPage.jsx
+│  │  └─ user
+│  │     ├─ JoinPage.jsx
+│  │     └─ LoginPage.jsx
+│  ├─ queries
+│  │  ├─ boards
+│  │  ├─ dbti
+│  │  │  └─ useDogMbtiQuery.js
+│  │  └─ map
+│  ├─ reportWebVitals.js
+│  ├─ routes
+│  │  └─ routes.js
+│  ├─ setupTests.js
+│  ├─ store
+│  │  └─ dbti
+│  │     └─ dogMbtiStore.js
+│  ├─ styles
+│  │  ├─ BoardWrite.css
+│  │  ├─ Game.css
+│  │  └─ KakaoMap.css
+│  ├─ utils
+│  │  ├─ DateFormat.js
+│  │  ├─ Firebase.js
+│  │  ├─ GetMBTI.js
+│  │  └─ Style.js
+│  └─ variables
+│     ├─ charts.js
+│     ├─ general.js
+│     └─ icons.js
+├─ tailwind.config.js
+└─ vite.config.ts
+
+```

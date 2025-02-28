@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { AuthContext } from '../../modules/AuthProvider';
+import { AuthContext } from '../../contexts/AuthProvider';
 import { useParams } from "react-router-dom";
 
 const ChatRoom = () => {

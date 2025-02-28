@@ -6,7 +6,7 @@ import * as Yup from 'yup';
 
 const JoinForm = ({ onSubmit, onVerify }) => {
   const [isVerified, setIsVerified] = useState(false);
-  const [email, setEmail] = useState(''); 
+  const [email, setEmail] = useState('');
   const nodeRef = useRef(null);
 
   const formik = useFormik({
@@ -30,12 +30,11 @@ const JoinForm = ({ onSubmit, onVerify }) => {
         alert("이메일 인증이 필요합니다.");
         return;
       }
-
       onSubmit({
         email: values.email,
         password: values.password,
-        name: values.nickName, 
-        verificationNumber: values.verificationNumber, 
+        name: values.nickName,
+        verificationNumber: values.verificationNumber,
       });
     },
   });
@@ -43,7 +42,7 @@ const JoinForm = ({ onSubmit, onVerify }) => {
   const handleVerify = async () => {
     const result = await onVerify(email);
     if (result) {
-      setIsVerified(true); 
+      setIsVerified(true);
     }
   };
 
@@ -51,51 +50,49 @@ const JoinForm = ({ onSubmit, onVerify }) => {
     <Box component="form" noValidate onSubmit={formik.handleSubmit} sx={{ mt: 3 }}>
       <Grid container spacing={2}>
         <Grid item xs={12}>
-          <TextField required fullWidth id="nickName" label="닉네임" name="nickName" autoComplete="family-name" onChange={formik.handleChange} value={formik.values.nickName}/>
-          {formik.touched.nickName &&formik.errors.nickName ? <div style={{ color: 'red', textAlign: 'left',fontSize:'12px' }}>{formik.errors.nickName}</div> : null}
+          <TextField required fullWidth id="nickName" label="닉네임" name="nickName" autoComplete="family-name" onChange={formik.handleChange} value={formik.values.nickName} />
+          {formik.touched.nickName && formik.errors.nickName && <div style={{ color: 'red', textAlign: 'left', fontSize:'12px' }}>{formik.errors.nickName}</div>}
         </Grid>
         <Grid item xs={10}>
-          <TextField 
-            required 
-            fullWidth 
-            id="email" 
-            label="이메일" 
-            name="email" 
-            autoComplete="email" 
-            value={formik.values.email} 
+          <TextField
+            required
+            fullWidth
+            id="email"
+            label="이메일"
+            name="email"
+            autoComplete="email"
+            value={formik.values.email}
             onChange={(event) => {
-              formik.handleChange(event); 
+              formik.handleChange(event);
               setEmail(event.target.value);
-            }} 
+            }}
           />
-          {formik.touched.nickName &&formik.errors.email ? <div style={{ color: 'red', textAlign: 'left',fontSize:'12px' }}>{formik.errors.email}</div> : null}
+          {formik.touched.email && formik.errors.email && <div style={{ color: 'red', textAlign: 'left', fontSize:'12px' }}>{formik.errors.email}</div>}
         </Grid>
         <Grid item xs={2}>
-          <Button onClick={handleVerify} type="button" fullWidth variant="contained" sx={{ height:55 ,mt: 0, ml: -1, backgroundColor: '#936e79', '&:hover': { backgroundColor: '#56434c' } }}> 인증</Button>
+          <Button onClick={handleVerify} type="button" fullWidth variant="contained" sx={{ height: 55, mt: 0, ml: -1, backgroundColor: '#936e79', '&:hover': { backgroundColor: '#56434c' } }}>
+            인증
+          </Button>
         </Grid>
-        {isVerified &&
-        <Fade  in={isVerified}>
-          <Grid item xs={12} ref={nodeRef}>
-            <TextField required fullWidth id="verificationNumber" label="인증번호" name="verificationNumber" onChange={formik.handleChange} value={formik.values.verificationNumber}/>
-          </Grid>
-        </Fade>
-        }
+        {isVerified && (
+          <Fade in={isVerified}>
+            <Grid item xs={12} ref={nodeRef}>
+              <TextField required fullWidth id="verificationNumber" label="인증번호" name="verificationNumber" onChange={formik.handleChange} value={formik.values.verificationNumber} />
+            </Grid>
+          </Fade>
+        )}
         <Grid item xs={12}>
-          <TextField required fullWidth name="password" label="비밀번호" type="password" id="password" autoComplete="new-password" 
-            onChange={formik.handleChange} 
-            value={formik.values.password}
-          />
-          {formik.touched.nickName &&formik.errors.password ? <div style={{ color: 'red', textAlign: 'left' ,fontSize:'12px'}}>{formik.errors.password}</div> : null}
+          <TextField required fullWidth name="password" label="비밀번호" type="password" id="password" autoComplete="new-password" onChange={formik.handleChange} value={formik.values.password} />
+          {formik.touched.password && formik.errors.password && <div style={{ color: 'red', textAlign: 'left', fontSize:'12px' }}>{formik.errors.password}</div>}
         </Grid>
         <Grid item xs={12}>
-          <TextField required fullWidth name="passwordCheck" label="비밀번호 확인" type="password" id="passwordCheck" autoComplete="passwordCheck" 
-            onChange={formik.handleChange} 
-            value={formik.values.passwordCheck}
-          />
-          {formik.touched.nickName &&formik.errors.passwordCheck ? <div style={{ color: 'red', textAlign: 'left',fontSize:'12px' }}>{formik.errors.passwordCheck}</div> : null}
+          <TextField required fullWidth name="passwordCheck" label="비밀번호 확인" type="password" id="passwordCheck" autoComplete="passwordCheck" onChange={formik.handleChange} value={formik.values.passwordCheck} />
+          {formik.touched.passwordCheck && formik.errors.passwordCheck && <div style={{ color: 'red', textAlign: 'left', fontSize:'12px' }}>{formik.errors.passwordCheck}</div>}
         </Grid>
       </Grid>
-      <Button type="submit" fullWidth variant="contained" sx={{ mt: 3, mb: 2, backgroundColor: '#fa7477', '&:hover': { backgroundColor: '#a52921' } }}>회원가입</Button>
+      <Button type="submit" fullWidth variant="contained" sx={{ mt: 3, mb: 2, backgroundColor: '#fa7477', '&:hover': { backgroundColor: '#a52921' } }}>
+        회원가입
+      </Button>
       <Grid container justifyContent="flex-end">
         <Grid item>
           <Link href="/login" variant="body2">이미 가입하셨나요?</Link>

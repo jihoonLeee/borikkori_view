@@ -1,10 +1,10 @@
 import React, { useState, useEffect, Suspense } from 'react';
 import { HashRouter as Router, Route, Routes } from "react-router-dom";
 import ReactGA from "react-ga4";
+import { AuthProvider } from './contexts/AuthProvider';
+import routes from './routes/routes';
 import Footer from './components/layout/Footer';
 import Header from './components/layout/Header';
-import { AuthProvider } from './modules/AuthProvider';
-import routes from './routes/routes';
 import './App.css';
 
 const trackingId = "G-2G1F6RJ26H"; // Google Analytics tracking ID
@@ -19,20 +19,34 @@ export default function App() {
 
   return (
     <AuthProvider>
-      <div className='App' style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
+    
+      <div className="flex flex-col min-h-screen bg-secondary text-primary">
         <Router>
           <Header />
-          <Suspense fallback={<div>Loading...</div>}>
-            <Routes>
-              {routes.map((route, index) => (
-                <Route key={index} path={route.path} element={route.element}>
-                  {route.children && route.children.map((child, idx) => (
-                    <Route key={idx} path={child.path} element={child.element} />
-                  ))}
-                </Route>
-              ))}
-            </Routes>
-          </Suspense>
+
+          {/* 메인 라우팅 영역 */}
+          <div className="flex-grow">
+            <Suspense fallback={<div>Loading...</div>}>
+              <Routes>
+                {routes.map((route, index) => (
+                  <Route
+                    key={index}
+                    path={route.path}
+                    element={route.element}
+                  >
+                    {route.children && route.children.map((child, idx) => (
+                      <Route
+                        key={idx}
+                        path={child.path}
+                        element={child.element}
+                      />
+                    ))}
+                  </Route>
+                ))}
+              </Routes>
+            </Suspense>
+          </div>
+
           <Footer />
         </Router>
       </div>
