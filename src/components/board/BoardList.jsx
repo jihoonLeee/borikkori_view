@@ -14,19 +14,17 @@ import useMediaQuery from '@mui/material/useMediaQuery';
 import DateFormat from '../../utils/DateFormat';
 
 const StyledTableCell = styled(TableCell)(() => ({
-  // 헤더 셀에만 bold 적용
   [`&.${tableCellClasses.head}`]: {
-    backgroundColor: 'var(--tw-bg-secondary)', // Tailwind의 secondary (크림색)
+    backgroundColor: 'var(--tw-bg-secondary)',
     color: 'black',
     textAlign: 'center',
-    fontSize: '1rem',
+    fontSize: '0.875rem', // 14px
     fontWeight: 'bold',
     padding: '8px',
     wordBreak: 'break-word',
   },
-  // 바디 셀은 일반 글씨체 유지
   [`&.${tableCellClasses.body}`]: {
-    fontSize: '1rem',
+    fontSize: '0.875rem', // 14px
     textAlign: 'center',
     padding: '8px',
     wordBreak: 'break-word',
@@ -53,6 +51,39 @@ const BoardList = ({
 }) => {
   const isMobile = useMediaQuery('(max-width: 768px)');
   const totalPages = Math.ceil(totalPosts / 10);
+  const [searchType, setSearchType] = React.useState('title');
+  const [sortColumn, setSortColumn] = React.useState('latest');
+  const [recentSearches, setRecentSearches] = React.useState(
+    JSON.parse(localStorage.getItem('recentSearches') || '[]')
+  );
+  const [showRecentSearches, setShowRecentSearches] = React.useState(false);
+
+  // 검색 히스토리 저장
+  const saveSearchHistory = (query) => {
+    if (!query.trim()) return;
+    const searches = [...recentSearches];
+    const index = searches.indexOf(query);
+    if (index > -1) {
+      searches.splice(index, 1);
+    }
+    searches.unshift(query);
+    if (searches.length > 5) searches.pop();
+    setRecentSearches(searches);
+    localStorage.setItem('recentSearches', JSON.stringify(searches));
+  };
+
+  // 검색 실행
+  const executeSearch = () => {
+    saveSearchHistory(searchQuery);
+    handleSearch(searchType, sortColumn);
+  };
+
+  // 컬럼 클릭 시 정렬 (좋아요만)
+  const handleColumnClick = (column) => {
+    if (column === 'likes') {
+      setSortColumn(prev => prev === 'likes' ? 'latest' : 'likes');
+    }
+  };
 
   if (isMobile) {
     return (
@@ -67,8 +98,8 @@ const BoardList = ({
               to="/boardWrite"
               size="small"
               sx={{
-                bgcolor: '#F08080',
-                '&:hover': { bgcolor: '#F08080' },
+                bgcolor: '#4caf50',
+                '&:hover': { bgcolor: '#357a38' },
               }}
               className="text-sm font-semibold"
             >
@@ -98,21 +129,62 @@ const BoardList = ({
           </div>
           {/* 검색 영역 */}
           <div className="board-search mt-4 w-full max-w-md">
-            <div className="flex flex-row items-center gap-2">
-              <input
-                className="border border-gray-300 rounded text-sm p-2 w-full"
-                type="text"
-                placeholder="검색하세요"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-              />
+            <div className="flex items-center gap-2">
+              <div className="relative flex-1">
+                <div className="flex">
+                  <select
+                    className="border-r-0 border-gray-300 rounded-l text-sm p-2"
+                    value={searchType}
+                    onChange={(e) => setSearchType(e.target.value)}
+                  >
+                    <option value="title">제목</option>
+                    <option value="content">내용</option>
+                    <option value="writer">작성자</option>
+                  </select>
+                  <input
+                    className="border border-l-0 border-gray-300 rounded-r text-sm p-2 flex-1"
+                    type="text"
+                    placeholder="검색어를 입력하세요"
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    onFocus={() => setShowRecentSearches(true)}
+                  />
+                </div>
+                {showRecentSearches && recentSearches.length > 0 && (
+                  <div className="absolute z-10 w-full bg-white border border-gray-300 rounded mt-1">
+                    {recentSearches.map((search, index) => (
+                      <div
+                        key={index}
+                        className="p-2 hover:bg-gray-100 cursor-pointer flex justify-between items-center"
+                        onClick={() => {
+                          setSearchQuery(search);
+                          setShowRecentSearches(false);
+                        }}
+                      >
+                        <span>{search}</span>
+                        <button
+                          className="text-gray-500 hover:text-gray-700"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            const newSearches = recentSearches.filter((_, i) => i !== index);
+                            setRecentSearches(newSearches);
+                            localStorage.setItem('recentSearches', JSON.stringify(newSearches));
+                          }}
+                        >
+                          ×
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
               <Button
                 variant="contained"
-                onClick={handleSearch}
+                onClick={executeSearch}
                 size="small"
                 sx={{
-                  bgcolor: '#F08080',
-                  '&:hover': { bgcolor: '#F08080' },
+                  bgcolor: '#8B5E3C',
+                  '&:hover': { bgcolor: '#6F4B30' },
                 }}
                 className="text-sm"
               >
@@ -139,19 +211,21 @@ const BoardList = ({
       <main className="board-container flex flex-col items-center bg-secondary min-h-screen px-4 md:px-6">
         <section className="board-section w-full max-w-6xl mt-8 bg-white dark:bg-rose-950 rounded-lg shadow-md overflow-hidden">
           <div className="p-4">
+           
+
             {/* 헤더 영역 */}
             <div className="board-header flex flex-row justify-between items-center w-full mb-4">
-              <h2 className="board-title text-xl sm:text-2xl font-bold text-primary dark:text-rose-50">
+              <h2 className="board-title text-lg font-bold text-primary">
                 정보 공유
               </h2>
               <Button
                 variant="contained"
                 component={Link}
                 to="/boardWrite"
-                size="medium"
+                size="small"
                 sx={{
-                  bgcolor: '#F08080',
-                  '&:hover': { bgcolor: '#F08080' },
+                  bgcolor: '#8B5E3C',
+                  '&:hover': { bgcolor: '#6F4B30' },
                 }}
               >
                 글쓰기
@@ -165,11 +239,19 @@ const BoardList = ({
               <Table className="w-full table-fixed" sx={{ minWidth: 700 }} aria-label="customized table">
                 <TableHead>
                   <TableRow>
-                    <StyledTableCell style={{ width: '70%' }}>제목</StyledTableCell>
+                    <StyledTableCell style={{ width: '70%' }}>
+                      제목
+                    </StyledTableCell>
                     <StyledTableCell style={{ width: '9%' }}>닉네임</StyledTableCell>
                     <StyledTableCell style={{ width: '9%' }}>날짜</StyledTableCell>
                     <StyledTableCell style={{ width: '6%' }}>조회수</StyledTableCell>
-                    <StyledTableCell style={{ width: '6%' }}>따봉</StyledTableCell>
+                    <StyledTableCell 
+                      style={{ width: '6%' }}
+                      onClick={() => handleColumnClick('likes')}
+                      sx={{ cursor: 'pointer' }}
+                    >
+                      따봉 {sortColumn === 'likes' && '▼'}
+                    </StyledTableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
@@ -189,29 +271,70 @@ const BoardList = ({
                 </TableBody>
               </Table>
             </TableContainer>
-
             {/* 검색 영역 */}
-            <div className="board-search mt-4 w-full max-w-lg flex flex-row items-center gap-2">
-              <input
-                className="search-input border border-gray-300 rounded text-sm p-2 w-full"
-                type="text"
-                placeholder="검색하세요"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-              />
-              <Button
-                variant="contained"
-                onClick={handleSearch}
-                size="medium"
-                sx={{
-                  bgcolor: '#F08080',
-                  '&:hover': { bgcolor: '#F08080' },
-                }}
-              >
-                검색
-              </Button>
+            <div className="board-search mb-6 w-full max-w-lg mt-4">
+              <div className="flex items-center gap-2">
+                <div className="relative flex-1">
+                  <div className="flex">
+                    <select
+                      className="border-r-0 border-gray-300 rounded-l text-sm p-2"
+                      value={searchType}
+                      onChange={(e) => setSearchType(e.target.value)}
+                    >
+                      <option value="title">제목</option>
+                      <option value="content">내용</option>
+                      <option value="writer">작성자</option>
+                    </select>
+                    <input
+                      className="border border-gray-300 rounded text-sm p-2 flex-1"
+                      type="text"
+                      placeholder="검색어를 입력하세요"
+                      value={searchQuery}
+                      onChange={(e) => setSearchQuery(e.target.value)}
+                      onFocus={() => setShowRecentSearches(true)}
+                    />
+                  </div>
+                  {showRecentSearches && recentSearches.length > 0 && (
+                    <div className="absolute z-10 w-full bg-white border border-gray-300 rounded mt-1">
+                      {recentSearches.map((search, index) => (
+                        <div
+                          key={index}
+                          className="p-2 hover:bg-gray-100 cursor-pointer flex justify-between items-center"
+                          onClick={() => {
+                            setSearchQuery(search);
+                            setShowRecentSearches(false);
+                          }}
+                        >
+                          <span>{search}</span>
+                          <button
+                            className="text-gray-500 hover:text-gray-700"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              const newSearches = recentSearches.filter((_, i) => i !== index);
+                              setRecentSearches(newSearches);
+                              localStorage.setItem('recentSearches', JSON.stringify(newSearches));
+                            }}
+                          >
+                            ×
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+                <Button
+                  variant="contained"
+                  onClick={executeSearch}
+                  size="medium"
+                  sx={{
+                    bgcolor: '#8B5E3C',
+                    '&:hover': { bgcolor: '#6F4B30' },
+                  }}
+                >
+                  검색
+                </Button>
+              </div>
             </div>
-
             {/* 페이지네이션 */}
             <div className="board-pagination flex justify-center mt-4">
               <Pagination

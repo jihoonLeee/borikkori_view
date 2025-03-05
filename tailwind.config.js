@@ -5,10 +5,10 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        // 로고와 어울리는 갈색(primary), 크림색(secondary), 포인트 핑크(accent)
+        // 로고와 어울리는 갈색(primary), 크림색(secondary), 포인트 초록(accent)
         primary: '#8B5E3C',
         secondary: '#FAF8F5',
-        accent: '#F08080',
+        accent: '#4caf50',
       },
       animation: {
         spin: 'spin 1s linear infinite',

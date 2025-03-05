@@ -49,12 +49,13 @@ const KakaoMapView = ({
                 onClick={() => handleKeywordChange(categories[key])}
                 style={{
                   padding: '6px 10px',
-                  border: selectedCategory === categories[key] ? '2px solid #4CAF50' : '1px solid #ccc',
+                  border: selectedCategory === categories[key] ? '2px solid #4caf50' : '1px solid #ccc',
                   borderRadius: '4px',
-                  backgroundColor: selectedCategory === categories[key] ? '#4CAF50' : '#fff',
+                  backgroundColor: selectedCategory === categories[key] ? '#4caf50' : '#fff',
                   color: selectedCategory === categories[key] ? '#fff' : '#000',
                   cursor: 'pointer',
                   fontSize: '0.8rem',
+                  '&:hover': { backgroundColor: selectedCategory === categories[key] ? '#357a38' : '#e8f5e9' }
                 }}
               >
                 {categories[key]}
@@ -110,12 +111,14 @@ const KakaoMapView = ({
               disabled={!selectedProvince || !selectedCity || !selectedDistrict}
               style={{
                 padding: '8px 12px',
-                backgroundColor: '#4CAF50',
+                backgroundColor: '#4caf50',
                 color: '#fff',
                 border: 'none',
                 borderRadius: '4px',
                 cursor: 'pointer',
                 fontSize: '0.8rem',
+                opacity: (!selectedProvince || !selectedCity || !selectedDistrict) ? '0.5' : '1',
+                '&:hover': { backgroundColor: '#357a38' }
               }}
             >
               검색
@@ -137,12 +140,13 @@ const KakaoMapView = ({
             onClick={toggleList}
             style={{
               padding: '8px 12px',
-              backgroundColor: '#4CAF50',
+              backgroundColor: '#4caf50',
               color: '#fff',
               border: 'none',
               borderRadius: '4px',
               cursor: 'pointer',
               fontSize: '0.8rem',
+              '&:hover': { backgroundColor: '#357a38' }
             }}
           >
             {openList ? '리스트 닫기' : '리스트 열기'}
@@ -223,7 +227,7 @@ const KakaoMapView = ({
               onClick={closeDetailSection}
               style={{
                 padding: '5px 10px',
-                backgroundColor: '#ff4d4f',
+                backgroundColor: '#4caf50',
                 color: 'white',
                 border: 'none',
                 borderRadius: '5px',
@@ -307,7 +311,7 @@ const KakaoMapView = ({
               onClick={closeDetailSection}
               style={{
                 padding: '5px 10px',
-                backgroundColor: '#ff4d4f',
+                backgroundColor: '#4caf50',
                 color: 'white',
                 border: 'none',
                 borderRadius: '5px',
@@ -348,11 +352,12 @@ const KakaoMapView = ({
               onClick={() => handleKeywordChange(categories[key])}
               style={{
                 padding: '8px 12px',
-                border: selectedCategory === categories[key] ? '2px solid #4CAF50' : '1px solid #ccc',
+                border: selectedCategory === categories[key] ? '2px solid #4caf50' : '1px solid #ccc',
                 borderRadius: '4px',
-                backgroundColor: selectedCategory === categories[key] ? '#4CAF50' : '#fff',
+                backgroundColor: selectedCategory === categories[key] ? '#4caf50' : '#fff',
                 color: selectedCategory === categories[key] ? '#fff' : '#000',
                 cursor: 'pointer',
+                '&:hover': { backgroundColor: selectedCategory === categories[key] ? '#357a38' : '#e8f5e9' }
               }}
             >
               {categories[key]}
@@ -413,11 +418,13 @@ const KakaoMapView = ({
             disabled={!selectedProvince || !selectedCity || !selectedDistrict}
             style={{
               padding: '10px 20px',
-              backgroundColor: '#4CAF50',
+              backgroundColor: '#4caf50',
               color: 'white',
               border: 'none',
               borderRadius: '5px',
-              cursor: 'pointer'
+              cursor: 'pointer',
+              opacity: (!selectedProvince || !selectedCity || !selectedDistrict) ? '0.5' : '1',
+              '&:hover': { backgroundColor: '#357a38' }
             }}
           >
             검색

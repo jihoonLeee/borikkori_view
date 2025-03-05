@@ -70,7 +70,7 @@ const JoinForm = ({ onSubmit, onVerify }) => {
           {formik.touched.email && formik.errors.email && <div style={{ color: 'red', textAlign: 'left', fontSize:'12px' }}>{formik.errors.email}</div>}
         </Grid>
         <Grid item xs={2}>
-          <Button onClick={handleVerify} type="button" fullWidth variant="contained" sx={{ height: 55, mt: 0, ml: -1, backgroundColor: '#936e79', '&:hover': { backgroundColor: '#56434c' } }}>
+          <Button onClick={handleVerify} type="button" fullWidth variant="contained" sx={{ height: 55, mt: 0, ml: -1, backgroundColor: '#4caf50', '&:hover': { backgroundColor: '#357a38' } }}>
             인증
           </Button>
         </Grid>
@@ -90,7 +90,7 @@ const JoinForm = ({ onSubmit, onVerify }) => {
           {formik.touched.passwordCheck && formik.errors.passwordCheck && <div style={{ color: 'red', textAlign: 'left', fontSize:'12px' }}>{formik.errors.passwordCheck}</div>}
         </Grid>
       </Grid>
-      <Button type="submit" fullWidth variant="contained" sx={{ mt: 3, mb: 2, backgroundColor: '#fa7477', '&:hover': { backgroundColor: '#a52921' } }}>
+      <Button type="submit" fullWidth variant="contained" sx={{ mt: 3, mb: 2, backgroundColor: '#4caf50', '&:hover': { backgroundColor: '#357a38' } }}>
         회원가입
       </Button>
       <Grid container justifyContent="flex-end">

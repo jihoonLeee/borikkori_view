@@ -55,7 +55,7 @@ const LoginForm = ({ handleSubmit }) => {
             type="submit"
             fullWidth
             variant="contained"
-            sx={{ mt: 3, mb: 2, backgroundColor: '#fa7477', '&:hover': { backgroundColor: '#a52921' } }}
+            sx={{ mt: 3, mb: 2, backgroundColor: '#4caf50', '&:hover': { backgroundColor: '#357a38' } }}
           >
             로그인
           </Button>

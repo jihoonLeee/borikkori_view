@@ -1,4 +1,5 @@
-import React from 'react';
+import React, { useState } from 'react';
+import { useMediaQuery } from '@mui/material';
 import Typography from '@mui/joy/Typography';
 import Card from '@mui/joy/Card';
 import Box from '@mui/joy/Box';
@@ -7,48 +8,77 @@ import FormControl from '@mui/joy/FormControl';
 import FormLabel from '@mui/joy/FormLabel';
 import Textarea from '@mui/joy/Textarea';
 import Sheet from '@mui/joy/Sheet';
+import Divider from '@mui/joy/Divider';
+import IconButton from '@mui/joy/IconButton';
+import { Link } from 'react-router-dom';
 import PetsIcon from '@mui/icons-material/Pets';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import DateFormat from '../../utils/DateFormat';
-import Grid from '@mui/material/Grid';
-import { Link } from 'react-router-dom';
+import ShareIcon from '@mui/icons-material/Share';
+import NavigateBeforeIcon from '@mui/icons-material/NavigateBefore';
+import NavigateNextIcon from '@mui/icons-material/NavigateNext';
+import DeleteIcon from '@mui/icons-material/Delete';
+import PreviewIcon from '@mui/icons-material/Preview';
+import ListIcon from '@mui/icons-material/List';
 
-function CommentCard({ comment, handleCommentLikeSubmit }) {
+function CommentCard({ comment, handleCommentLikeSubmit, handleCommentDelete }) {
   return (
-    <Card variant="outlined" sx={{ mb: 3, p: 2, borderRadius: 2 }}>
+    <Card variant="outlined" sx={{ mb: 2, p: { xs: 1, md: 2 }, borderRadius: 2 }}>
       <Box display="flex" alignItems="center" mb={1}>
         {comment.parentCommentId && (
           <ArrowDropDownIcon fontSize="small" sx={{ mr: 1 }} />
         )}
-        <Typography variant="subtitle1" fontWeight="bold">
+        <Typography variant="subtitle1" fontWeight="bold" sx={{ fontSize: { xs: '0.75rem', md: 'inherit' } }}>
           {comment.nickName}
         </Typography>
         <Box flexGrow={1} />
-        <Typography variant="caption" color="text.secondary">
+        <Typography variant="caption" color="text.secondary" sx={{ fontSize: { xs: '0.65rem', md: 'inherit' } }}>
           {DateFormat(comment.regDate)}
         </Typography>
       </Box>
-      <Typography variant="body2" mb={2}>
+      <Typography variant="body2" mb={1} sx={{ fontSize: { xs: '0.7rem', md: 'inherit' } }}>
         {comment.status === "OPEN" ? comment.contents : '삭제된 댓글입니다.'}
       </Typography>
-      <Box display="flex" justifyContent="flex-end">
+      <Box display="flex" justifyContent="flex-end" gap={1}>
+        <Button
+          onClick={() => handleCommentDelete(comment.commentId)}
+          size="sm"
+          startDecorator={<DeleteIcon fontSize="small" />}
+          variant="outlined"
+          sx={{
+            color: '#8B5E3C',
+            borderColor: '#8B5E3C',
+            '&:hover': { borderColor: '#6F4B30', color: '#6F4B30' },
+            fontSize: { xs: '0.65rem', md: '0.75rem' },
+            py: 0.5
+          }}
+        >
+          삭제
+        </Button>
         <Button
           onClick={() => handleCommentLikeSubmit(comment.commentId)}
-          size="small"
-          color="danger"
-          variant="soft"
+          size="sm"
           startDecorator={<PetsIcon fontSize="small" />}
+          variant="solid"
+          sx={{
+            bgcolor: '#8B5E3C',
+            '&:hover': { bgcolor: '#6F4B30' },
+            color: 'white',
+            fontSize: { xs: '0.65rem', md: '0.75rem' },
+            py: 0.5
+          }}
         >
           {comment.likeCnt}
         </Button>
       </Box>
       {comment.children && comment.children.length > 0 && (
-        <Box sx={{ ml: 4, mt: 2 }}>
+        <Box sx={{ ml: 3, mt: 1 }}>
           {comment.children.map(child => (
             <CommentCard
               key={child.commentId}
               comment={child}
               handleCommentLikeSubmit={handleCommentLikeSubmit}
+              handleCommentDelete={handleCommentDelete}
             />
           ))}
         </Box>
@@ -66,97 +96,276 @@ const PostView = ({
   content,
   setContent,
   handleCommentSubmit,
+  handleCommentDelete,
+  handleShare,
+  prevPost,
+  nextPost,
 }) => {
+  const [showPreview, setShowPreview] = useState(false);
+  const isMobile = useMediaQuery('(max-width:600px)');
+
   return (
-    <main className="flex flex-col items-center px-4 md:px-6 dark:bg-rose-900 min-h-screen">
-      <section className="w-full max-w-6xl mt-8 bg-white dark:bg-rose-950 rounded-lg shadow-md overflow-hidden">
-        <div className="flex justify-between items-center mb-4">
-          <h2 className="text-2xl font-semibold text-rose-900 dark:text-rose-50">정보 공유</h2>
-        </div>
-        <hr className="my-4 border-rose-200 dark:border-rose-800" />
-        <Card variant="outlined">
-          <Box display="flex" justifyContent="space-between" mb={0.5}>
-            <Typography level="h3" fontSize="xl">
-              {posts.title}
+    <main className="flex flex-col items-center bg-secondary min-h-screen" style={{ padding: isMobile ? '8px' : '20px' }}>
+      <section className="w-full max-w-6xl mt-8 bg-white rounded-lg shadow-md overflow-hidden" style={{ margin: isMobile ? '8px' : '20px auto' }}>
+        <div style={{ padding: isMobile ? '12px' : '24px' }}>
+          {/* 헤더 */}
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: isMobile ? '10px' : '20px' }}>
+            <Typography variant={isMobile ? 'h6' : 'h5'} sx={{ fontWeight: '600', color: '#2C1810' }}>
+              정보 공유
             </Typography>
-            <Box display="flex" justifyContent="space-between" width="auto" ml={2}>
-              <Typography fontSize="sm" mr={0.5}>
+            <Button
+              component={Link}
+              to="/board"
+              startDecorator={<ListIcon />}
+              variant="outlined"
+              size={isMobile ? 'sm' : 'md'}
+              sx={{
+                color: '#8B5E3C',
+                borderColor: '#8B5E3C',
+                '&:hover': { borderColor: '#6F4B30', color: '#6F4B30' },
+                fontSize: isMobile ? '0.65rem' : '0.875rem'
+              }}
+            >
+              목록으로
+            </Button>
+          </div>
+          {/* 게시글 내용 */}
+          <Card variant="outlined" sx={{ p: isMobile ? 2 : 4, bgcolor: 'background.surface' }}>
+            <Box display="flex" justifyContent="space-between" mb={isMobile ? 1 : 2}>
+              <Typography
+                component="h3"
+                sx={{
+                  fontSize: isMobile ? '1rem' : '1.25rem',
+                  fontWeight: 'bold',
+                  color: '#2C1810'
+                }}
+              >
+                {posts.title}
+              </Typography>
+              <Typography sx={{ fontSize: isMobile ? '0.65rem' : '0.875rem', color: 'text.secondary' }}>
                 {DateFormat(posts.regDate)}
               </Typography>
             </Box>
-          </Box>
-          <Box display="flex" justifyContent="space-between" mb={0.5}>
-            <Typography fontSize="sm">{posts.nickName}</Typography>
-            <Box display="flex" justifyContent="space-between" width="auto" ml={2}>
-              <Typography fontSize="sm" mr={0.5}>조회수</Typography>
-              <Typography level="h2" fontSize="sm" mr={2}>
-                {posts.visitCnt}
+            <Box display="flex" justifyContent="space-between" mb={isMobile ? 1 : 3}>
+              <Typography sx={{ fontSize: isMobile ? '0.65rem' : '0.875rem', color: 'text.secondary' }}>
+                작성자 : {posts.nickName}
               </Typography>
-              <Typography fontSize="sm" mr={0.5}>따봉</Typography>
-              <Typography level="h2" fontSize="sm">
-                {posts.likeCnt}
-              </Typography>
+              <Box display="flex" gap={isMobile ? 1 : 2}>
+                <Box display="flex" alignItems="center" gap={0.5}>
+                  <Typography sx={{ fontSize: isMobile ? '0.55rem' : '0.75rem', color: 'text.secondary' }}>
+                    조회수
+                  </Typography>
+                  <Typography sx={{ fontSize: isMobile ? '0.55rem' : '0.75rem', fontWeight: 'medium' }}>
+                    {posts.visitCnt}
+                  </Typography>
+                </Box>
+                <Box display="flex" alignItems="center" gap={0.5}>
+                  <Typography sx={{ fontSize: isMobile ? '0.55rem' : '0.75rem', color: 'text.secondary' }}>
+                    따봉
+                  </Typography>
+                  <Typography sx={{ fontSize: isMobile ? '0.55rem' : '0.75rem', fontWeight: 'medium' }}>
+                    {posts.likeCnt}
+                  </Typography>
+                </Box>
+              </Box>
             </Box>
-          </Box>
-          <hr className="my-4 border-rose-900 dark:border-rose-200" />
-          <Typography align="left" mb={5}>
-            <div dangerouslySetInnerHTML={{ __html: posts.contents }} />
-          </Typography>
-          <Box display="flex" justifyContent="center" alignItems="center">
-            <Button
-              sx={{ width: 130 }}
-              startDecorator={<PetsIcon />}
-              color="danger"
-              onClick={handleLikeSubmit}
-              variant="soft"
-            >
-              따봉 {posts.likeCnt}
-            </Button>
-          </Box>
-          {totalComments > 0 && (
-            <Sheet variant="outlined" color="neutral" sx={{ p: 3, mt: 4 }}>
-              <Typography variant="h3" component="h2" align="left" fontWeight="bold" mb={3}>
-                댓글 {totalComments} 개
-              </Typography>
-              {comments.map((comment) => (
-                <CommentCard
-                  key={comment.commentId}
-                  comment={comment}
-                  handleCommentLikeSubmit={handleCommentLikeSubmit}
-                />
-              ))}
-            </Sheet>
-          )}
-          <Card variant="soft">
-            <FormControl>
-              <FormLabel>댓글 쓰기</FormLabel>
-              <Box
+            <Divider sx={{ my: isMobile ? 1 : 3 }} />
+            <Box display="flex" justifyContent="flex-end" mb={isMobile ? 1 : 2}>
+              <Button
+                onClick={handleShare}
+                startDecorator={<ShareIcon sx={{ fontSize: isMobile ? '0.8rem' : '1rem' }} />}
+                variant="outlined"
+                size={isMobile ? 'sm' : 'md'}
                 sx={{
-                  display: 'flex',
-                  flexDirection: 'column',
-                  gap: 2,
-                  width: '100%',
+                  color: '#8B5E3C',
+                  borderColor: '#8B5E3C',
+                  '&:hover': { borderColor: '#6F4B30', color: '#6F4B30' },
+                  fontSize: isMobile ? '0.65rem' : '0.75rem',
+                  py: isMobile ? 0.3 : 0.5,
+                  px: isMobile ? 1 : 1.5,
                 }}
               >
-                <Textarea
-                  placeholder="댓글을 입력해주세요.."
-                  onChange={(e) => setContent(e.target.value)}
-                  value={content}
-                  minRows={3}
+                공유
+              </Button>
+            </Box>
+            <Typography
+              component="div"
+              sx={{
+                mb: isMobile ? 2 : 4,
+                '& img': { maxWidth: '100%', height: 'auto' },
+                '& p': { mb: 2 },
+                lineHeight: 1.6,
+                fontSize: isMobile ? '0.65rem' : '0.875rem'
+              }}
+            >
+              <div dangerouslySetInnerHTML={{ __html: posts.contents }} />
+            </Typography>
+            <Box display="flex" flexDirection="column" gap={isMobile ? 1 : 2} mb={isMobile ? 2 : 3}
+              sx={{ opacity: 0.8, transition: 'opacity 0.2s', '&:hover': { opacity: 1 } }}
+            >
+              <Box display="flex" justifyContent="center" gap={isMobile ? 0.5 : 1}>
+                <Button
+                  component={Link}
+                  to={prevPost ? `/post/${prevPost.id}` : '#'}
+                  disabled={!prevPost}
+                  startDecorator={<NavigateBeforeIcon sx={{ fontSize: isMobile ? '0.8rem' : '1rem' }} />}
+                  variant="outlined"
+                  size={isMobile ? 'sm' : 'md'}
                   sx={{
-                    minWidth: '100%',
-                    fontWeight: 'normal',
-                    fontStyle: 'initial',
-                    mb: 2,
+                    color: '#8B5E3C',
+                    borderColor: '#8B5E3C',
+                    '&:hover': { borderColor: '#6F4B30', color: '#6F4B30' },
+                    fontSize: isMobile ? '0.65rem' : '0.75rem',
+                    py: isMobile ? 0.3 : 0.5,
+                    minHeight: '24px',
+                    opacity: prevPost ? 1 : 0.5
                   }}
-                />
-                <Button sx={{ alignSelf: 'flex-end' }} onClick={handleCommentSubmit} className="bg-accent">
-                  작성
+                >
+                  이전글
+                </Button>
+                <Button
+                  component={Link}
+                  to={nextPost ? `/post/${nextPost.id}` : '#'}
+                  disabled={!nextPost}
+                  endDecorator={<NavigateNextIcon sx={{ fontSize: isMobile ? '0.8rem' : '1rem' }} />}
+                  variant="outlined"
+                  size={isMobile ? 'sm' : 'md'}
+                  sx={{
+                    color: '#8B5E3C',
+                    borderColor: '#8B5E3C',
+                    '&:hover': { borderColor: '#6F4B30', color: '#6F4B30' },
+                    fontSize: isMobile ? '0.65rem' : '0.75rem',
+                    py: isMobile ? 0.3 : 0.5,
+                    minHeight: '24px',
+                    opacity: nextPost ? 1 : 0.5
+                  }}
+                >
+                  다음글
                 </Button>
               </Box>
-            </FormControl>
+            </Box>
+            <Box display="flex" justifyContent="center" mb={isMobile ? 2 : 4}>
+              <Button
+                sx={{
+                  px: isMobile ? 2 : 4,
+                  bgcolor: '#4caf50',
+                  '&:hover': { bgcolor: '#357a38' },
+                  color: 'white',
+                  transition: 'transform 0.5s',
+                  '&:hover': { transform: 'scale(1.05)' },
+                  fontSize: isMobile ? '0.75rem' : '0.875rem',
+                }}
+                startDecorator={<PetsIcon />}
+                onClick={handleLikeSubmit}
+              >
+                따봉 {posts.likeCnt}
+              </Button>
+            </Box>
+            {totalComments > 0 && (
+              <Sheet
+                variant="outlined"
+                sx={{
+                  p: isMobile ? 2 : 3,
+                  mt: isMobile ? 2 : 4,
+                  borderRadius: 'sm',
+                  bgcolor: 'background.level1'
+                }}
+              >
+                <Typography
+                  level="h6"
+                  sx={{
+                    mb: isMobile ? 1 : 3,
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 1,
+                    color: 'text.primary',
+                    fontSize: isMobile ? '0.75rem' : '0.875rem',
+                  }}
+                >
+                  댓글 <Typography component="span" sx={{ color: '#4caf50' }}>{totalComments}</Typography>
+                </Typography>
+                {comments.map((comment) => (
+                  <CommentCard
+                    key={comment.commentId}
+                    comment={comment}
+                    handleCommentLikeSubmit={handleCommentLikeSubmit}
+                    handleCommentDelete={handleCommentDelete}
+                  />
+                ))}
+              </Sheet>
+            )}
+            <Card
+              variant="outlined"
+              sx={{
+                mt: isMobile ? 2 : 4,
+                p: isMobile ? 2 : 3,
+                bgcolor: 'background.level1'
+              }}
+            >
+              <FormControl>
+                <FormLabel sx={{ mb: 2, color: 'text.primary', fontSize: isMobile ? '0.75rem' : 'inherit' }}>
+                  댓글 작성
+                </FormLabel>
+                <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+                  <Box display="flex" justifyContent="space-between" alignItems="center" mb={1}>
+                    <Typography level="body2" sx={{ color: 'text.secondary', fontSize: isMobile ? '0.65rem' : 'inherit' }}>
+                      {content.length}/500자
+                    </Typography>
+                    <IconButton
+                      size="sm"
+                      variant="plain"
+                      sx={{ color: 'text.secondary', '&:hover': { color: 'text.primary' } }}
+                      onClick={() => setShowPreview(!showPreview)}
+                    >
+                      <PreviewIcon sx={{ fontSize: '1.25rem' }} />
+                    </IconButton>
+                  </Box>
+                  {showPreview ? (
+                    <Box
+                      sx={{
+                        p: 2,
+                        borderRadius: 'sm',
+                        bgcolor: 'background.surface',
+                        minHeight: '100px',
+                        border: '1px solid',
+                        borderColor: 'divider'
+                      }}
+                    >
+                      {content || '내용이 없습니다.'}
+                    </Box>
+                  ) : (
+                    <Textarea
+                      placeholder="댓글을 입력해주세요..."
+                      value={content}
+                      onChange={(e) => setContent(e.target.value)}
+                      minRows={3}
+                      maxLength={500}
+                      sx={{
+                        width: '100%',
+                        mb: 2,
+                        '&:hover': { borderColor: '#8B5E3C' },
+                        '&:focus-within': { borderColor: '#8B5E3C', boxShadow: '0 0 0 3px rgba(139, 94, 60, 0.1)' }
+                      }}
+                    />
+                  )}
+                  <Button
+                    sx={{
+                      alignSelf: 'flex-end',
+                      bgcolor: '#4caf50',
+                      '&:hover': { bgcolor: '#357a38' },
+                      color: 'white',
+                      px: 3,
+                      fontSize: isMobile ? '0.75rem' : 'inherit'
+                    }}
+                    onClick={handleCommentSubmit}
+                  >
+                    댓글 작성
+                  </Button>
+                </Box>
+              </FormControl>
+            </Card>
           </Card>
-        </Card>
+        </div>
       </section>
     </main>
   );
