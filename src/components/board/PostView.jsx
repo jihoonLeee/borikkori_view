@@ -148,7 +148,7 @@ const PostView = ({
             </Box>
             <Box display="flex" justifyContent="space-between" mb={isMobile ? 1 : 3}>
               <Typography sx={{ fontSize: isMobile ? '0.65rem' : '0.875rem', color: 'text.secondary' }}>
-                작성자 : {posts.nickName}
+                작성자 : {posts.name}
               </Typography>
               <Box display="flex" gap={isMobile ? 1 : 2}>
                 <Box display="flex" alignItems="center" gap={0.5}>

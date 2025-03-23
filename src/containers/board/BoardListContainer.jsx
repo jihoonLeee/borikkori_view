@@ -15,8 +15,9 @@ const BoardListContainer = () => {
           params: { page, search: searchQuery },
           withCredentials: true,
         });
+        var postList = response.data.data;
         setTotalPosts(response.data.totalCount || 0);
-        setPosts(response.data.posts || []);
+        setPosts(postList || []);
       } catch (error) {
         console.error('에러', error);
       }

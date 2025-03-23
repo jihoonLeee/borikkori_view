@@ -2,13 +2,13 @@ import axios from 'axios';
 
 export const initializePost = async () => {
   const response = await axios.post('/post/init', {}, { withCredentials: true });
-  return response.data; // { postId, temp, title }
+  return response.data; 
 };
 
-export const createPost = async ({ postId, title, contents }) => {
+export const createPost = async ({ postId, title, contents,isTemp }) => {
   const response = await axios.post(
     '/post',
-    { postId, title, contents },
+    { postId, title, contents ,isTemp},
     { withCredentials: true }
   );
   return response.data;

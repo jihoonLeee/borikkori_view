@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { EditorState, AtomicBlockUtils } from 'draft-js';
 import { stateToHTML } from 'draft-js-export-html';
+import { stateFromHTML } from 'draft-js-import-html';
 import { useDropzone } from 'react-dropzone';
 import { useNavigate } from 'react-router-dom';
 import BoardWriteForm from '../../components/board/BoardWriteForm';
@@ -22,11 +23,7 @@ const BoardWriteContainer = () => {
     const contentState = editorState.getCurrentContent();
     const contentStateWithEntity = contentState.createEntity('IMAGE', 'IMMUTABLE', { src: imageUrl });
     const entityKey = contentStateWithEntity.getLastCreatedEntityKey();
-    const newEditorState = AtomicBlockUtils.insertAtomicBlock(
-      editorState,
-      entityKey,
-      ' '
-    );
+    const newEditorState = AtomicBlockUtils.insertAtomicBlock(editorState, entityKey, ' ');
     return EditorState.forceSelection(
       newEditorState,
       newEditorState.getCurrentContent().getSelectionAfter()
@@ -37,13 +34,20 @@ const BoardWriteContainer = () => {
     acceptedFiles.forEach((file) => {
       uploadImage({ file, postId })
         .then((imageUrl) => {
-          setEditorState((currentEditorState) => addImageToEditorState(currentEditorState, imageUrl));
+          setEditorState((currentEditorState) =>
+            addImageToEditorState(currentEditorState, imageUrl)
+          );
         })
-        .catch(error => console.log(error));
+        .catch((error) => console.log(error));
     });
   };
 
-  const { getRootProps, getInputProps } = useDropzone({ onDrop, noClick: true });
+  // noClick, noKeyboard 옵션을 사용하여 에디터 영역에서 파일 선택창이 뜨지 않도록 설정
+  const { getRootProps, getInputProps } = useDropzone({
+    onDrop,
+    noClick: true,
+    noKeyboard: true,
+  });
 
   const myBlockRenderer = (contentBlock) => {
     if (contentBlock.getType() === 'atomic') {
@@ -62,6 +66,22 @@ const BoardWriteContainer = () => {
     return null;
   };
 
+  const handleTempSave = async () => {
+    const html = stateToHTML(editorState.getCurrentContent());
+    try {
+      await createPost({
+        postId,
+        title,
+        contents: html,
+        isTemp: true,
+      });
+      alert('임시저장 완료');
+    } catch (error) {
+      console.error('임시저장 실패', error);
+      alert('임시저장에 실패했습니다.');
+    }
+  };
+
   const handleSubmit = async () => {
     const contentState = editorState.getCurrentContent();
     const html = stateToHTML(contentState);
@@ -70,9 +90,10 @@ const BoardWriteContainer = () => {
         postId,
         title,
         contents: html,
+        isTemp: false,
       });
       alert('글이 성공적으로 등록되었습니다.');
-      navigate("/mainBoard");
+      navigate('/mainBoard');
       window.location.reload();
     } catch (error) {
       console.error('글 등록에 실패했습니다.', error);
@@ -84,14 +105,17 @@ const BoardWriteContainer = () => {
     initializePost()
       .then((data) => {
         setPostId(data.postId);
-        if (data.temp && window.confirm("임시 저장된 게시글이 있습니다. 계속 작성 하시겠습니까?")) {
+        if (data.temp && window.confirm('임시 저장된 게시글이 있습니다. 계속 작성 하시겠습니까?')) {
           setTitle(data.title);
+          const contentState = stateFromHTML(data.contents);
+          const restoredState = EditorState.createWithContent(contentState);
+          setEditorState(restoredState);
         }
       })
-      .catch(error => console.log(error));
+      .catch((error) => console.log(error));
 
     if (!authenticated) {
-      alert("로그인 해주세요.");
+      alert('로그인 해주세요.');
       navigate('/login');
     }
   }, [authenticated, navigate]);
@@ -105,6 +129,7 @@ const BoardWriteContainer = () => {
       getRootProps={getRootProps}
       getInputProps={getInputProps}
       handleSubmit={handleSubmit}
+      handleTempSave={handleTempSave}
       blockRendererFn={myBlockRenderer}
     />
   );

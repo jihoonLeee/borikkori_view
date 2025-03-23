@@ -9,7 +9,6 @@ import useMediaQuery from '@mui/material/useMediaQuery';
 export default function Header() {
   const { authenticated, userInfo } = useContext(AuthContext);
   const isMobile = useMediaQuery('(max-width: 1024px)');
-
   const logout = () => {
     axios
       .post('/logout', {}, { withCredentials: true })
@@ -48,7 +47,7 @@ export default function Header() {
               </>
             ) : (
               <>
-                <UserAvatar userName={userInfo?.nickName} className="w-8 h-8" />
+                <UserAvatar userName={userInfo?.name} className="w-8 h-8" />
                 <StyledButton onClick={logout} className="text-white hover:text-accent text-xs px-2 py-1">
                   로그아웃
                 </StyledButton>
@@ -117,7 +116,7 @@ export default function Header() {
               </>
             ) : (
               <>
-                <UserAvatar userName={userInfo?.nickName} />
+                <UserAvatar userName={userInfo?.name} />
                 <StyledButton onClick={logout} className="text-white hover:text-accent">
                   로그아웃
                 </StyledButton>
