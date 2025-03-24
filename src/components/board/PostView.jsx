@@ -98,8 +98,8 @@ const PostView = ({
   handleCommentSubmit,
   handleCommentDelete,
   handleShare,
-  prevPost,
-  nextPost,
+  prevPostId,
+  nextPostId,
 }) => {
   const [showPreview, setShowPreview] = useState(false);
   const isMobile = useMediaQuery('(max-width:600px)');
@@ -206,8 +206,8 @@ const PostView = ({
               <Box display="flex" justifyContent="center" gap={isMobile ? 0.5 : 1}>
                 <Button
                   component={Link}
-                  to={prevPost ? `/post/${prevPost.id}` : '#'}
-                  disabled={!prevPost}
+                  to={prevPostId ? `/post/${prevPostId}` : '#'}
+                  disabled={!prevPostId}
                   startDecorator={<NavigateBeforeIcon sx={{ fontSize: isMobile ? '0.8rem' : '1rem' }} />}
                   variant="outlined"
                   size={isMobile ? 'sm' : 'md'}
@@ -218,15 +218,15 @@ const PostView = ({
                     fontSize: isMobile ? '0.65rem' : '0.75rem',
                     py: isMobile ? 0.3 : 0.5,
                     minHeight: '24px',
-                    opacity: prevPost ? 1 : 0.5
+                    opacity: prevPostId ? 1 : 0.5
                   }}
                 >
                   이전글
                 </Button>
                 <Button
                   component={Link}
-                  to={nextPost ? `/post/${nextPost.id}` : '#'}
-                  disabled={!nextPost}
+                  to={nextPostId ? `/post/${nextPostId}` : '#'}
+                  disabled={!nextPostId}
                   endDecorator={<NavigateNextIcon sx={{ fontSize: isMobile ? '0.8rem' : '1rem' }} />}
                   variant="outlined"
                   size={isMobile ? 'sm' : 'md'}
@@ -237,7 +237,7 @@ const PostView = ({
                     fontSize: isMobile ? '0.65rem' : '0.75rem',
                     py: isMobile ? 0.3 : 0.5,
                     minHeight: '24px',
-                    opacity: nextPost ? 1 : 0.5
+                    opacity: nextPostId ? 1 : 0.5
                   }}
                 >
                   다음글

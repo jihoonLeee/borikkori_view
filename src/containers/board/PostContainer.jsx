@@ -13,6 +13,9 @@ const PostContainer = () => {
   const [totalComments, setTotalComments] = useState(0);
   const [page, setPage] = useState(1);
 
+  const [prevPostId, setPrevPostId] = useState(null);
+  const [nextPostId, setNextPostId] = useState(null);
+
   useEffect(() => {
     const fetchPostData = async () => {
       try {
@@ -25,6 +28,13 @@ const PostContainer = () => {
         });
         setTotalComments(commentResponse.data.totalCount);
         setComments(commentResponse.data.comments);
+
+        // 이웃 게시글(이전글, 다음글) 데이터 가져오기
+        const neighborResponse = await axios.get(`/post/${postId}/neighbors`, { withCredentials: true });
+        const { prevPostId, nextPostId } = neighborResponse.data;
+        setPrevPostId(prevPostId);
+        setNextPostId(nextPostId);
+
       } catch (error) {
         console.error("에러", error);
       }
@@ -101,6 +111,8 @@ const PostContainer = () => {
       content={content}
       setContent={setContent}
       handleCommentSubmit={handleCommentSubmit}
+      prevPostId={prevPostId}
+      nextPostId={nextPostId}
     />
   );
 };

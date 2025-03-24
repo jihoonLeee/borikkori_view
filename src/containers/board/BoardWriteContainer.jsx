@@ -5,7 +5,7 @@ import { stateFromHTML } from 'draft-js-import-html';
 import { useDropzone } from 'react-dropzone';
 import { useNavigate } from 'react-router-dom';
 import BoardWriteForm from '../../components/board/BoardWriteForm';
-import { initializePost, createPost, uploadImage } from '../../api/boardApi';
+import { initializePost, createPost, uploadImage,deletePost } from '../../api/boardApi';
 import { AuthContext } from '../../contexts/AuthProvider';
 
 const BoardWriteContainer = () => {
@@ -93,7 +93,7 @@ const BoardWriteContainer = () => {
         isTemp: false,
       });
       alert('글이 성공적으로 등록되었습니다.');
-      navigate('/mainBoard');
+      navigate('/board');
       window.location.reload();
     } catch (error) {
       console.error('글 등록에 실패했습니다.', error);
@@ -105,11 +105,14 @@ const BoardWriteContainer = () => {
     initializePost()
       .then((data) => {
         setPostId(data.postId);
+        console.log(data.postId + " : 1 : "+ postId);
         if (data.temp && window.confirm('임시 저장된 게시글이 있습니다. 계속 작성 하시겠습니까?')) {
           setTitle(data.title);
           const contentState = stateFromHTML(data.contents);
           const restoredState = EditorState.createWithContent(contentState);
           setEditorState(restoredState);
+        }else if(data.temp){
+          deletePost(data.postId);
         }
       })
       .catch((error) => console.log(error));
