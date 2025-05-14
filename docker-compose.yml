@@ -5,5 +5,7 @@ services:
       context: .
       dockerfile: Dockerfile
     ports:
-      - "80:80"
+      - "3000:80"      # Nginx 컨테이너가 내부 80번 바인딩 → 호스트 3000으로 포워딩
     restart: unless-stopped
+    env_file:
+      - ./view/.env.release  # 로컬에서 GPG 복호화한 .env 파일 경로

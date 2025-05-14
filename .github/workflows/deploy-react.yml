@@ -16,14 +16,23 @@ jobs:
         with:
           fetch-depth: 0
 
-      # 2) QEMU & Buildx 세팅 (멀티아키 지원)
+      # 2) 프로젝트 파일 유무 확인 (npm 사용 기준)
+      - name: Verify build context files
+        run: |
+          echo "🔎 Checking files in workspace:"
+          ls -la .
+          if [ ! -f package-lock.json ]; then echo "🚨 package-lock.json not found!"; exit 1; fi
+          if [ ! -f package.json ]; then echo "🚨 package.json not found!"; exit 1; fi
+          echo "✅ package.json and package-lock.json are present."
+
+      # 3) QEMU & Buildx 세팅 (멀티아키 지원)
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v3
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
-      # 3) GHCR 로그인
+      # 4) GHCR 로그인
       - name: Log in to GitHub Container Registry
         uses: docker/login-action@v2
         with:
@@ -31,7 +40,7 @@ jobs:
           username: jihoonleee
           password: ${{ secrets.GHCR_TOKEN }}
 
-      # 4) 도커 이미지 빌드 & 푸시
+      # 5) 도커 이미지 빌드 & 푸시
       - name: Build and push Docker image
         uses: docker/build-push-action@v4
         with:
@@ -42,7 +51,7 @@ jobs:
             ghcr.io/jihoonleee/my-dog:latest
             ghcr.io/jihoonleee/my-dog:${{ github.ref_name }}
 
-      # 5) SSH 준비
+      # 6) SSH 준비
       - name: Prepare SSH directory
         run: |
           mkdir -p ~/.ssh
@@ -63,7 +72,7 @@ jobs:
       - name: Test SSH connection
         run: ssh -o StrictHostKeyChecking=no deploy@bokko.kr "echo SSH 연결 성공"
 
-      # 6) 서버에 배포
+      # 7) 서버에 배포
       - name: Deploy via SSH
         uses: appleboy/ssh-action@v1
         with:
@@ -74,7 +83,7 @@ jobs:
           script: |
             set -e
 
-            # 6.1) .env.release.gpg 복호화
+            # 7.1) .env.release.gpg 복호화
             echo "Decrypting environment…"
             GPG_PASSPHRASE="${{ secrets.GPG_PASSPHRASE }}"
             gpg --quiet --batch --yes \
@@ -82,7 +91,7 @@ jobs:
                 --output ~/borikkori/secret/view/.env.release \
                 --decrypt ~/borikkori/secret/view/.env.release.gpg
 
-            # 6.2) GHCR 로그인
+            # 7.2) GHCR 로그인
             echo "🔐 GHCR 로그인"
             echo "${{ secrets.GHCR_TOKEN }}" | docker login ghcr.io -u jihoonleee --password-stdin
 
@@ -90,11 +99,11 @@ jobs:
             echo "⬇️ Pulling new image: $IMAGE"
             docker pull $IMAGE
 
-            # 컨테이너 교체
+            # 컨테이너 교체 (Nginx 프록시용 3000 포트)
             docker rm -f react-app || true
             docker run -d \
               --name react-app \
               --restart unless-stopped \
-              -p 80:80 \
+              -p 3000:80 \
               --env-file ~/borikkori/secret/view/.env.release \
               $IMAGE
