@@ -73,20 +73,28 @@ jobs:
           key:      ${{ secrets.DEPLOY_KEY }}
           script: |
             set -e
-            IMAGE=ghcr.io/jihoonleee/my-dog:${{ github.ref_name }}
 
+            # 6.1) .env.release.gpg 복호화
+            echo "Decrypting environment…"
+            GPG_PASSPHRASE="${{ secrets.GPG_PASSPHRASE }}"
+            gpg --quiet --batch --yes \
+                --passphrase "$GPG_PASSPHRASE" \
+                --output ~/borikkori/secret/view/.env.release \
+                --decrypt ~/borikkori/secret/view/.env.release.gpg
+
+            # 6.2) GHCR 로그인
             echo "🔐 GHCR 로그인"
             echo "${{ secrets.GHCR_TOKEN }}" | docker login ghcr.io -u jihoonleee --password-stdin
 
-            echo "⬇️ 새 이미지 Pull: $IMAGE"
+            IMAGE=ghcr.io/jihoonleee/my-dog:${{ github.ref_name }}
+            echo "⬇️ Pulling new image: $IMAGE"
             docker pull $IMAGE
 
-            # 기존 컨테이너 삭제 (있다면)
+            # 컨테이너 교체
             docker rm -f react-app || true
-
-            # 새 컨테이너 실행
             docker run -d \
               --name react-app \
-              -p 80:80 \
               --restart unless-stopped \
+              -p 80:80 \
+              --env-file ~/borikkori/secret/view/.env.release \
               $IMAGE
