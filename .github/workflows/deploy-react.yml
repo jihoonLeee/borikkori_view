@@ -44,6 +44,8 @@ jobs:
       - name: Build and push Docker image
         uses: docker/build-push-action@v4
         with:
+          build-args: |
+            REACT_APP_API_URL=https://api.bokko.kr
           context: .
           file:    ./Dockerfile
           push:    true

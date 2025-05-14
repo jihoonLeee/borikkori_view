@@ -2,6 +2,9 @@
 FROM node:18-alpine AS builder
 WORKDIR /app
 
+ARG REACT_APP_API_URL
+ENV REACT_APP_API_URL=${REACT_APP_API_URL}
+
 # npm 설치 (package-lock.json 기반)
 COPY package.json package-lock.json ./
 RUN npm ci
