@@ -7,7 +7,7 @@ import axios from 'axios';
 import { QueryClient, QueryClientProvider } from 'react-query';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
-axios.defaults.baseURL = process.env.REACT_APP_API_URL + process.env.REACT_APP_API_PORT;
+axios.defaults.baseURL = process.env.REACT_APP_API_URL;
 
 const queryClient = new QueryClient();
 
