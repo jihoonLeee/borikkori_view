@@ -280,7 +280,7 @@ export default function Game() {
           </div>
         </div>
       </header>
-
+      
       {/* 게임 플레이 영역 */}
       <div className="flex-grow flex flex-col items-center justify-center p-4">
         <div ref={containerRef} className="gameplay-container w-full max-w-lg relative">
@@ -291,26 +291,28 @@ export default function Game() {
       {/* 컨트롤 버튼 */}
       <div className="controls p-4 flex justify-center">
         <Stack direction="row" spacing={2}>
-          <Button variant="contained" size="small"
+          <Button variant="contained" size="large"
             onTouchStart={() => handleKeyDown({ code: 'KeyA' })}
             onTouchEnd={() => handleKeyUp({ code: 'KeyA' })}
             onMouseDown={() => handleKeyDown({ code: 'KeyA' })}
             onMouseUp={() => handleKeyUp({ code: 'KeyA' })}
+            style={{ backgroundColor: '#8B5E3C' }}
           >
             왼쪽
           </Button>
-          <Button variant="contained" size="small"
+          <Button variant="contained" size="large"
             onTouchStart={() => handleKeyDown({ code: 'KeyS' })}
             onMouseDown={() => handleKeyDown({ code: 'KeyS' })}
-            style={{ backgroundColor: '#F08080' }}
+            style={{ backgroundColor: '#4caf50' }}
           >
             내려
           </Button>
-          <Button variant="contained" size="small"
+          <Button variant="contained" size="large"
             onTouchStart={() => handleKeyDown({ code: 'KeyD' })}
             onTouchEnd={() => handleKeyUp({ code: 'KeyD' })}
             onMouseDown={() => handleKeyDown({ code: 'KeyD' })}
             onMouseUp={() => handleKeyUp({ code: 'KeyD' })}
+            style={{ backgroundColor: '#8B5E3C' }}
           >
             오른쪽
           </Button>

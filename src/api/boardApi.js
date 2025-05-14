@@ -25,14 +25,15 @@ export const deletePost = async (postId) => {
 
 
 
-export const uploadImage = async ({ file, postId }) => {
+export const uploadFile = async ({ file, postId }) => {
   console.log(file);
   console.log(postId);
   const formData = new FormData();
   formData.append('file', file);
-  formData.append('postId', postId);
-  const response = await axios.post('/file/image/upload', formData, {
+  formData.append('postId', postId); 
+  const response = await axios.post(`/file/upload`, formData, {
     headers: { 'Content-Type': 'multipart/form-data' },
+    withCredentials: true,
   });
   return response.data; // 이미지 URL 반환
 };

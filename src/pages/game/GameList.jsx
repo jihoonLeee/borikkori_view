@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useState, useEffect } from 'react';
 import Button from '@mui/material/Button';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
@@ -11,11 +12,78 @@ import Container from '@mui/material/Container';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { Link } from "react-router-dom";
 import useMediaQuery from '@mui/material/useMediaQuery';
+import CircularProgress from '@mui/material/CircularProgress';
 
 const defaultTheme = createTheme();
 
 export default function Album() {
   const isMobile = useMediaQuery('(max-width: 768px)');
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    // 2초 후 로딩 상태 해제
+    const timer = setTimeout(() => {
+      setLoading(false);
+    }, 2000);
+
+    return () => clearTimeout(timer);
+  }, []);
+
+  if (loading) {
+    return (
+      <Box
+        sx={{
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          justifyContent: 'center',
+          height: '100vh',
+          width: '100vw',
+          backgroundColor: '#FAF8F5',
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          zIndex: 9999
+        }}
+      >
+        <img 
+          src="/images/borikkori_cartoon_game.png" 
+          alt="보리꼬리 게임 로딩" 
+          style={{ 
+            maxWidth: '350px',
+            marginBottom: '20px',
+            animation: 'jump 1.2s infinite alternate'
+          }} 
+        />
+        <Typography 
+          variant="h5" 
+          sx={{ 
+            color: '#8B5E3C', 
+            fontWeight: 'bold',
+            marginTop: '16px',
+            textAlign: 'center'
+          }}
+        >
+          게임 목록을 불러오는 중입니다...
+        </Typography>
+        <CircularProgress 
+          size="1.5rem" 
+          sx={{ 
+            color: '#4caf50', 
+            marginTop: '16px' 
+          }} 
+        />
+        
+        <style>{`
+          @keyframes jump {
+            0% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(5deg); }
+            100% { transform: translateY(0) rotate(-5deg); }
+          }
+        `}</style>
+      </Box>
+    );
+  }
 
   return (
     <ThemeProvider theme={defaultTheme}>

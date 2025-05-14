@@ -1,5 +1,4 @@
 import React from 'react';
-import ButtonGroup from '@mui/material/ButtonGroup';
 
 const DogQuestion = ({ current, question, onAnswer }) => {
   if (!question) {
@@ -8,24 +7,28 @@ const DogQuestion = ({ current, question, onAnswer }) => {
   return (
     <div className="question">
       <div className="q_content">
-        <span className="font-bold">{question.title}</span>
+        <h2 className="text-xl font-bold text-center mb-4">{question.title}</h2>
         <img
-          className='m-auto py-5 block'
+          className='m-auto py-5 block w-32 h-32 object-contain'
           alt="main_dog"
           src={`${process.env.PUBLIC_URL}/images/borikkori_logo.png`}
         />
-        <ButtonGroup
-          orientation="horizontal"
-          aria-label="horizontal outlined button group"
-          onClick={(e) => onAnswer(e.target.name)}
-        >
-          <button className='button text-gray-950 h-20 font-bold' name="a">
+        <div className="flex flex-col gap-4 mt-4 w-full">
+          <button 
+            className="w-full px-4 py-3 text-sm md:text-base rounded-lg bg-primary hover:bg-primary-dark text-white font-medium transition-colors duration-200 min-h-[80px] flex items-center justify-center shadow-md"
+            name="a"
+            onClick={() => onAnswer('a')}
+          >
             {question.a}
           </button>
-          <button className='button text-gray-950 h-20 font-bold' name="b">
+          <button 
+            className="w-full px-4 py-3 text-sm md:text-base rounded-lg bg-primary hover:bg-primary-dark text-white font-medium transition-colors duration-200 min-h-[80px] flex items-center justify-center shadow-md"
+            name="b"
+            onClick={() => onAnswer('b')}
+          >
             {question.b}
           </button>
-        </ButtonGroup>
+        </div>
       </div>
     </div>
   );

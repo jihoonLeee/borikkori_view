@@ -30,7 +30,7 @@ export default function Header() {
             <span className="sr-only">보리꼬리</span>
             <img
               className="h-12 w-auto"
-              src={`${process.env.PUBLIC_URL}/images/borikkori.svg`}
+              src={`${process.env.PUBLIC_URL}/images/bokko_pixel.svg`}
               alt="보리꼬리 로고"
             />
           </Link>
@@ -84,7 +84,7 @@ export default function Header() {
               <span className="sr-only">보리꼬리</span>
               <img
                 className="h-16 w-auto"
-                src={`${process.env.PUBLIC_URL}/images/borikkori.svg`}
+                src={`${process.env.PUBLIC_URL}/images/bokko_pixel.svg`}
                 alt="보리꼬리 로고"
               />
             </Link>

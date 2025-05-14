@@ -46,12 +46,12 @@ const DogMbtiTestContainer = () => {
         <Navigate to={`/dogBTI/result?result=${param}`} replace />
         <button
           onClick={() => handleShare(param)}
-          className="fixed bottom-4 right-4 btn btn-primary rounded-full shadow-lg"
+          className="fixed bottom-4 right-4 bg-primary hover:bg-primary-dark text-white font-bold py-3 px-6 rounded-full shadow-lg transform transition-all duration-300 hover:scale-105 z-10"
         >
           결과 공유하기
         </button>
         {showShareModal && (
-          <div className="fixed bottom-20 right-4 bg-text text-white px-4 py-2 rounded-lg shadow-lg animate-fade-in">
+          <div className="fixed bottom-20 right-4 bg-primary text-white px-4 py-2 rounded-lg shadow-lg animate-fade-in z-20">
             결과가 클립보드에 복사되었습니다!
           </div>
         )}
@@ -59,22 +59,25 @@ const DogMbtiTestContainer = () => {
     );
   }
 
+  // 현재 보여줄 질문 결정 - current가 0이면 홈 화면, 1부터 문제 시작
+  const currentQuestion = current > 0 ? questions[current - 1] : null;
+
   return (
     <div className="min-h-screen bg-secondary py-8 px-4">
-      <div className="container mx-auto max-w-4xl">
+      <div className="container mx-auto max-w-md">
         {current === 0 ? (
-          <div className="card p-8 text-center">
+          <div className="bg-white rounded-xl shadow-lg overflow-hidden">
             <DogMbtiHome onStart={() => setCurrent(1)} />
           </div>
         ) : (
-          <div className="space-y-8">
-            <div className="card p-6">
+          <div className="space-y-6">
+            <div className="bg-white rounded-xl shadow-lg p-6">
               <ProgressBar value={(current / MAX_QUESTION_ID) * 100} />
             </div>
-            <div className="card p-8">
+            <div className="bg-white rounded-xl shadow-lg p-6">
               <DogQuestion 
                 current={current} 
-                question={questions[current]} 
+                question={currentQuestion} 
                 onAnswer={handleAnswer} 
               />
             </div>

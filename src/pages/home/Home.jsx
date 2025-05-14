@@ -73,18 +73,28 @@ export default function DogHouse() {
             <h1 className="text-4xl md:text-5xl font-bold text-text mb-6">
               Welcome to <span className="text-primary">보리꼬리</span>
             </h1>
-            <p className="text-lg md:text-xl text-text-light mb-12 leading-relaxed">
+            {/* <p className="text-lg md:text-xl text-text-light mb-12 leading-relaxed">
               우리 강아지가 사람이라면? 검증되지 않은 개BTI 테스트!<br/>
               우리 강아지랑 어딜 가면 좋을까? 반려견 관련 주변 장소 추천!<br/>
               그리고 5천만 반려인들과 소통하세요~
-            </p>
-            <div className="flex flex-col sm:flex-row justify-center gap-4">
+            </p> */}
+          <div className="flex flex-col sm:flex-row justify-center gap-4">
               <Link to="/dogBTI" className="btn btn-primary">
                 개BTI 테스트 하러가기
               </Link>
-              <Link to="/map" className="btn btn-secondary">
+              
+              <Link 
+                to="/map" className="btn btn-primary">
                 개와 함께! 주변 장소 보러가기
               </Link>
+            </div>
+
+            <div className="mt-12">
+              <img
+                src={`${process.env.PUBLIC_URL}/images/borikkori_4cut.png`}
+                alt="브로콜리 캐릭터 4컷 만화"
+                className="mx-auto w-full max-w-md"
+              />
             </div>
           </div>
         </div>

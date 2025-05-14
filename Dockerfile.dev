@@ -1,0 +1,16 @@
+# 1) Node.js 이미지 사용
+FROM node:18-alpine
+
+# 2) 작업 디렉터리 설정
+WORKDIR /app
+
+# 3) 패키지 매니저 캐시 활용
+COPY package.json yarn.lock ./
+
+RUN yarn install
+
+# 4) 소스 복사
+COPY . .
+
+# 5) 개발 서버 실행
+CMD ["yarn", "start"]

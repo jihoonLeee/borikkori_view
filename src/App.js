@@ -6,12 +6,10 @@ import routes from './routes/routes';
 import Footer from './components/layout/Footer';
 import Header from './components/layout/Header';
 import './App.css';
-
+import Spinner from './components/common/Spinner';
 const trackingId = "G-2G1F6RJ26H"; // Google Analytics tracking ID
 
 export default function App() {
-  const [result] = useState([]);
-
   useEffect(() => {
     ReactGA.initialize(trackingId);
     ReactGA.send({ hitType: "pageview", page: window.location.pathname });
@@ -26,7 +24,7 @@ export default function App() {
 
           {/* 메인 라우팅 영역 */}
           <div className="flex-grow">
-            <Suspense fallback={<div>Loading...</div>}>
+          <Suspense fallback={<Spinner />}>
               <Routes>
                 {routes.map((route, index) => (
                   <Route

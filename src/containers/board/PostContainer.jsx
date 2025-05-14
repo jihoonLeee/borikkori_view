@@ -49,7 +49,11 @@ const PostContainer = () => {
       return;
     }
     try {
-      const response = await axios.post(`/post/${postId}/like`, {}, { withCredentials: true });
+      const response = await axios.post(`/post/reaction`, {
+        postId : postId,
+        reactionType: "LIKE"
+      }, 
+        { withCredentials: true });
       if (response.status === 200) {
         alert('따봉을 눌렀습니다!');
         setPosts(prevPosts => ({
@@ -69,7 +73,10 @@ const PostContainer = () => {
       return;
     }
     try {
-      const response = await axios.post(`/comment/${commentId}/like`, {}, { withCredentials: true });
+      const response = await axios.post(`/comment/like`, {
+        commentId : commentId,
+        reactionTyep : "LIKE"
+      }, { withCredentials: true });
       if (response.status === 200) {
         alert('댓글에 따봉을 눌렀습니다!');
         // Option: 전체 댓글 재조회 로직 추가 가능

@@ -1,0 +1,13 @@
+version: '3.8'
+services:
+  react-dev:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    ports:
+      - "3000:3000"         # CRA 기본 dev 서버 포트
+    volumes:
+      - .:/app             # 호스트 소스 ↔ 컨테이너 동기화
+      - /app/node_modules # 의존성은 컨테이너에만 보관
+    environment:
+      - CHOKIDAR_USEPOLLING=true # 일부 환경에서 파일 변경 감지 안정화

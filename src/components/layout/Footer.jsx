@@ -34,7 +34,7 @@ function Footer() {
               <a href="/" className="text-xl font-bold mx-auto">
                 <img
                   className="h-16 w-auto"
-                  src="/images/borikkori_brown.svg"
+                  src="/images/bokko_pixel.svg"
                   alt="보리꼬리 로고"
                 />
               </a>
