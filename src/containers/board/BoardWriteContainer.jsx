@@ -132,7 +132,7 @@ const BoardWriteContainer = () => {
         title,
         contents: contentStateJSON,
         isTemp: true,
-        category: finalCategory
+        categoryType: finalCategory
       });
       alert('임시 저장 성공');
     } catch (error) {
@@ -193,7 +193,7 @@ const BoardWriteContainer = () => {
         title,
         contents: htmlContent,
         isTemp,
-        category: finalCategory
+        categoryType: finalCategory
       };
 
       const response = await createPost(postData);
