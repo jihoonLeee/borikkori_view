@@ -7,10 +7,10 @@ export const initializePost = async () => {
   return response.data; 
 };
 
-export const createPost = async ({ postId, title, contents,isTemp }) => {
+export const createPost = async ({ postId, title, contents, isTemp, category }) => {
   const response = await axios.post(
     '/post',
-    { postId, title, contents ,isTemp},
+    { postId, title, contents, isTemp, category },
     { withCredentials: true }
   );
   return response.data;
@@ -22,8 +22,6 @@ export const deletePost = async (postId) => {
   });
   return response.data;
 };
-
-
 
 export const uploadFile = async ({ file, postId }) => {
   console.log(file);

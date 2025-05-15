@@ -14,6 +14,7 @@ import UndoIcon from '@mui/icons-material/Undo';
 import RedoIcon from '@mui/icons-material/Redo';
 import DeleteIcon from '@mui/icons-material/Delete';
 import VideocamIcon from '@mui/icons-material/Videocam';
+import BoardCategorySelector from './BoardCategorySelector';
 
 /**
  * 게시글 작성 폼 컴포넌트
@@ -253,6 +254,30 @@ const MediaComponent = (props) => {
   );
 };
 
+// getBlobUrls 함수 추가
+const getBlobUrls = (contentState) => {
+  if (!contentState) return [];
+  
+  const blobUrls = [];
+  const blocks = contentState.getBlocksAsArray();
+  
+  for (const block of blocks) {
+    if (block.getType() === 'atomic') {
+      const entityKey = block.getEntityAt(0);
+      if (entityKey) {
+        const entity = contentState.getEntity(entityKey);
+        const { src } = entity.getData();
+        
+        if (src && src.startsWith('blob:')) {
+          blobUrls.push(src);
+        }
+      }
+    }
+  }
+  
+  return blobUrls;
+};
+
 const BoardWriteForm = ({
   title,
   setTitle,
@@ -265,6 +290,10 @@ const BoardWriteForm = ({
   handleTempSave,
   handleImageUpload,
   setHtmlContent,
+  category,
+  onCategoryChange,
+  handleKeyCommand,
+  handleDeleteClick
 }) => {
   const [showPreview, setShowPreview] = useState(false);
   const [showFormatting, setShowFormatting] = useState(false);
@@ -274,6 +303,10 @@ const BoardWriteForm = ({
   const [titleError, setTitleError] = useState(false);
   const fileInputRef = useRef(null);
   const videoInputRef = useRef(null);
+  const editorRef = useRef(null);
+  
+  // getRootProps에서 isDragActive 추출
+  const { isDragActive } = getRootProps ? getRootProps() : { isDragActive: false };
 
   const toggleFormatting = (format) => {
     if (format === 'COLOR') {
@@ -637,86 +670,36 @@ const BoardWriteForm = ({
 
   const inputProps = getInputProps();
 
-  const handleSubmitWithHtml = () => {
-    // 제목 검증
-    if (!title || title.trim() === '') {
-      setTitleError(true);
-      alert('제목을 입력해주세요.');
+  const handleSubmitWithHtml = (isTemp = false) => {
+    // 제목 확인
+    if (!title.trim() && !isTemp) {
+      alert('제목을 입력해주세요');
       return;
     }
-    
-    // 콘텐츠 비어있는지 확인
-    const contentState = editorState.getCurrentContent();
-    if (!contentState.hasText() && contentState.getBlockMap().size <= 1) {
-      alert('내용을 입력해주세요.');
+
+    // 카테고리 확인 (임시저장이 아닌 경우)
+    if (!category.mainCategory && !isTemp) {
+      alert('카테고리를 선택해주세요');
       return;
     }
-    
-    setTitleError(false);
-    
-    // 현재 콘텐츠의 미디어 URL 상태 확인
-    const blocks = contentState.getBlocksAsArray();
-    let hasBlobUrl = false;
-    let hasContent = false;
-    let hasVideoContent = false;
-    
-    for (const block of blocks) {
-      if (block.getType() === 'atomic') {
-        const entityKey = block.getEntityAt(0);
-        if (entityKey) {
-          const entity = contentState.getEntity(entityKey);
-          const entityData = entity.getData();
-          const { src, type: mediaType } = entityData;
-          
-          if (src) {
-            hasContent = true;
-            if (mediaType === 'video') {
-              hasVideoContent = true;
-              console.log('비디오 콘텐츠 확인:', src);
-            }
-            if (src.startsWith('blob:')) {
-              hasBlobUrl = true;
-              console.warn('blob URL이 포함된 콘텐츠가 발견되었습니다:', src);
-            }
-          }
-        }
-      } else if (block.getText().trim().length > 0) {
-        hasContent = true;
-      }
-    }
-    
-    if (!hasContent) {
-      alert('내용을 입력해주세요.');
-      return;
-    }
-    
-    if (hasBlobUrl) {
-      // 경고 메시지 개선
-      const warningMessage = '일부 미디어 파일이 서버에 저장되지 않았습니다. 게시물 저장 후 미디어가 보이지 않을 수 있습니다. 계속하시겠습니까?';
-      if (!window.confirm(warningMessage)) {
-        return;
-      }
-      console.warn('사용자가 Blob URL을 포함한 콘텐츠로 계속 진행하기로 선택했습니다.');
-    }
-    
+
     // HTML 변환
+    const contentState = editorState.getCurrentContent();
     const html = convertContentToHTML(contentState);
     
-    // 비디오가 정상적으로 변환되었는지 확인
-    if (hasVideoContent && !html.includes('<video')) {
-      console.error('비디오 콘텐츠가 있지만 HTML에 <video> 태그가 없습니다');
-      console.log('현재 HTML:', html);
+    // 미디어 URL 경고
+    const blobUrls = getBlobUrls(contentState);
+    if (blobUrls.length > 0 && !isTemp) {
+      const confirmed = window.confirm(
+        '저장되지 않은 미디어 파일이 있습니다. 계속 진행하시면 이미지나 비디오가 제대로 표시되지 않을 수 있습니다. 계속하시겠습니까?'
+      );
+      if (!confirmed) {
+        return;
+      }
     }
     
-    // 부모 컴포넌트로 HTML 전달
-    if (typeof setHtmlContent === 'function') {
-      setHtmlContent(html);
-    }
-    
-    // 기존 제출 핸들러 호출
-    if (typeof handleSubmit === 'function') {
-      handleSubmit();
-    }
+    // 제출
+    handleSubmit(title, html, isTemp);
   };
 
   // 미리보기 렌더링을 위한 커스텀 함수
@@ -753,396 +736,291 @@ const BoardWriteForm = ({
   };
 
   return (
-    <main className="boardwrite-container flex flex-col items-center px-4 md:px-6 dark:bg-stone-900 min-h-screen">
-      <section className="boardwrite-section w-full max-w-4xl mt-8 bg-white dark:bg-stone-800 rounded-lg shadow-md overflow-hidden p-6">
-        <Box display="flex" justifyContent="space-between" alignItems="center" mb={2}>
-          <h2 className="boardwrite-title text-2xl font-semibold text-stone-800 dark:text-stone-100">
-          정보 공유 게시판 글 쓰기
-        </h2>
-          <Box display="flex" gap={2}>
-            <Button 
-              startDecorator={<SaveIcon sx={{ fontSize: '1.2rem', color: '#8B5E3C' }} />} 
-              onClick={handleTempSaveWrapper} 
-              disabled={isUploading}
-              variant="soft"
-              sx={{
-                bgcolor: 'rgba(139, 94, 60, 0.1)',
-                color: '#8B5E3C',
-                '&:hover': { 
-                  bgcolor: 'rgba(139, 94, 60, 0.2)',
-                  transform: 'translateY(-2px)',
-                  boxShadow: '0 4px 8px rgba(0,0,0,0.1)'
-                },
-                transition: 'all 0.3s ease',
-                fontWeight: '600',
-                borderRadius: '8px',
-                px: 2,
-                py: 1,
-                fontSize: '0.9rem',
-                boxShadow: '0 2px 4px rgba(0,0,0,0.05)'
-              }}
-            >
-              임시저장
-            </Button>
-            <Button
-              startDecorator={<PreviewIcon sx={{ fontSize: '1.2rem', color: '#8B5E3C' }} />}
-              onClick={() => setShowPreview(!showPreview)}
-              disabled={isUploading}
-              variant="soft"
-              sx={{
-                bgcolor: 'rgba(139, 94, 60, 0.1)',
-                color: '#8B5E3C',
-                '&:hover': { 
-                  bgcolor: 'rgba(139, 94, 60, 0.2)',
-                  transform: 'translateY(-2px)',
-                  boxShadow: '0 4px 8px rgba(0,0,0,0.1)'
-                },
-                transition: 'all 0.3s ease',
-                fontWeight: '600',
-                borderRadius: '8px',
-                px: 2,
-                py: 1,
-                fontSize: '0.9rem',
-                boxShadow: '0 2px 4px rgba(0,0,0,0.05)'
-              }}
-            >
-              {showPreview ? '수정하기' : '미리보기'}
-            </Button>
-          </Box>
-        </Box>
-
-        <FormControl error={titleError} sx={{ mb: 2 }}>
+    <Box className="board-write-container" sx={{ p: 2, maxWidth: '1200px', mx: 'auto' }}>
+      <Box className="board-write-header" sx={{ mb: 2 }}>
+        <Typography level="h3" component="h1" sx={{ mb: 2 }}>
+          게시글 작성
+        </Typography>
+        
+        {/* 카테고리 선택 */}
+        <BoardCategorySelector 
+          selectedCategory={category.subCategory || category.mainCategory}
+          onCategoryChange={onCategoryChange}
+        />
+        
+        <FormControl sx={{ width: '100%', mt: 2 }}>
           <input
-            name="title"
-            placeholder="제목을 입력해주세요."
-            className={`boardwrite-title-input p-2 border rounded w-full ${titleError ? 'border-red-500' : 'border-stone-300'}`}
+            type="text"
+            className="postTitle"
+            placeholder="제목을 입력하세요"
             value={title}
-            onChange={(e) => {
-              setTitle(e.target.value);
-              if (e.target.value.trim() !== '') {
-                setTitleError(false);
-              }
-            }}
-            style={{ 
-              height: '40px',
-              fontSize: '1rem',
-              outline: 'none',
-              padding: '8px 12px',
-              borderRadius: '8px'
-            }}
-            required
+            onChange={(e) => setTitle(e.target.value)}
           />
-          {titleError && (
-            <Typography level="body2" color="danger" fontSize="sm">
-              제목을 입력해주세요.
-            </Typography>
-          )}
         </FormControl>
+      </Box>
 
-        <FormControl sx={{ flexGrow: 1 }}>
-          {!showPreview ? (
-            <>
-              <Box 
-                className="editor-toolbar" 
-                display="flex" 
-                flexWrap="wrap" 
-                gap={1} 
-                mb={1}
-                p={1.5}
-                sx={{
-                  bgcolor: 'rgba(139, 94, 60, 0.05)',
-                  borderRadius: '8px',
-                  border: '1px solid rgba(139, 94, 60, 0.15)',
-                  flexWrap: 'wrap',
-                  justifyContent: 'flex-start'
-                }}
-              >
-                <IconButton 
-                  onClick={() => toggleFormatting('BOLD')} 
-                  color="neutral"
-                  size="sm"
-                  sx={{ 
-                    color: '#8B5E3C',
-                    '&:hover': { 
-                      bgcolor: 'rgba(139, 94, 60, 0.1)',
-                      transform: 'scale(1.1)' 
-                    },
-                    transition: 'all 0.2s ease'
-                  }}
-                >
-                  <FormatBoldIcon />
-                </IconButton>
-                <IconButton 
-                  onClick={() => toggleFormatting('ITALIC')} 
-                  color="neutral"
-                  size="sm" 
-                  sx={{ 
-                    color: '#8B5E3C',
-                    '&:hover': { 
-                      bgcolor: 'rgba(139, 94, 60, 0.1)',
-                      transform: 'scale(1.1)' 
-                    },
-                    transition: 'all 0.2s ease'
-                  }}
-                >
-                  <FormatItalicIcon />
-                </IconButton>
-                <IconButton 
-                  onClick={() => toggleFormatting('UNDERLINE')} 
-                  color="neutral"
-                  size="sm"
-                  sx={{ 
-                    color: '#8B5E3C',
-                    '&:hover': { 
-                      bgcolor: 'rgba(139, 94, 60, 0.1)',
-                      transform: 'scale(1.1)' 
-                    },
-                    transition: 'all 0.2s ease'
-                  }}
-                >
-                  <FormatUnderlinedIcon />
-                </IconButton>
-                <Box position="relative">
-                  <IconButton 
-                    onClick={() => setShowFormatting(!showFormatting)} 
-                    color="neutral"
-                    size="sm"
-                    sx={{ 
-                      color: '#8B5E3C',
-                      '&:hover': { 
-                        bgcolor: 'rgba(139, 94, 60, 0.1)',
-                        transform: 'scale(1.1)' 
-                      },
-                      transition: 'all 0.2s ease'
-                    }}
-                  >
-                    <FormatColorTextIcon />
-                  </IconButton>
-                  {showFormatting && (
-                    <Box
-                      position="absolute"
-                      top="100%"
-                      left={0}
-                      bgcolor="white"
-                      border="1px solid rgba(139, 94, 60, 0.3)"
-                      borderRadius={2}
-                      p={1}
-                      zIndex={10}
-                      boxShadow="0 4px 12px rgba(0,0,0,0.1)"
-                    >
-                      <input
-                        type="color"
-                        value={selectedColor}
-                        onChange={(e) => {
-                          setSelectedColor(e.target.value);
-                          toggleFormatting('COLOR');
-                        }}
-                        style={{ cursor: 'pointer' }}
-                      />
-                    </Box>
-                  )}
-                </Box>
-                
-                <Box sx={{ display: 'flex', gap: 1, ml: 2, borderLeft: '1px solid rgba(139, 94, 60, 0.2)', pl: 2 }}>
-                  <IconButton 
-                    onClick={() => fileInputRef.current?.click()} 
-                    color="neutral"
-                    size="sm"
-                    sx={{ 
-                      color: '#8B5E3C',
-                      '&:hover': { 
-                        bgcolor: 'rgba(139, 94, 60, 0.1)',
-                        transform: 'scale(1.1)' 
-                      },
-                      transition: 'all 0.2s ease'
-                    }}
-                    disabled={isUploading}
-                  >
-                    {isUploading ? <CircularProgress size="sm" /> : <ImageIcon />}
-                  </IconButton>
-                  <IconButton 
-                    onClick={() => videoInputRef.current?.click()}
-                    color="neutral" 
-                    size="sm"
-                    sx={{ 
-                      color: '#8B5E3C',
-                      '&:hover': { 
-                        bgcolor: 'rgba(139, 94, 60, 0.1)',
-                        transform: 'scale(1.1)' 
-                      },
-                      transition: 'all 0.2s ease'
-                    }}
-                    disabled={isUploading}
-                  >
-                    {isUploading ? <CircularProgress size="sm" /> : <VideocamIcon />}
-                  </IconButton>
-                </Box>
-                
-                <input
-                  type="file"
-                  accept="image/*"
-                  style={{ display: 'none' }}
-                  ref={fileInputRef}
-                  onChange={(e) => handleFileInput(e, 'image')}
-                />
-                
-                <input
-                  type="file"
-                  accept="video/*"
-                  style={{ display: 'none' }}
-                  ref={videoInputRef}
-                  onChange={(e) => handleFileInput(e, 'video')}
-                />
-                
-                <Box sx={{ display: 'flex', gap: 1, ml: 2, borderLeft: '1px solid rgba(139, 94, 60, 0.2)', pl: 2 }}>
-                  <IconButton 
-                    onClick={() => {
-                      const newState = EditorState.undo(editorState);
-                      if (typeof onEditorChange === 'function') {
-                        onEditorChange(newState);
-                      } else if (typeof setEditorState === 'function') {
-                        setEditorState(newState);
-                      }
-                    }} 
-                    color="neutral"
-                    size="sm"
-                    sx={{ 
-                      color: '#8B5E3C',
-                      '&:hover': { 
-                        bgcolor: 'rgba(139, 94, 60, 0.1)',
-                        transform: 'scale(1.1)' 
-                      },
-                      transition: 'all 0.2s ease'
-                    }}
-                  >
-                    <UndoIcon />
-                  </IconButton>
-                  <IconButton 
-                    onClick={() => {
-                      const newState = EditorState.redo(editorState);
-                      if (typeof onEditorChange === 'function') {
-                        onEditorChange(newState);
-                      } else if (typeof setEditorState === 'function') {
-                        setEditorState(newState);
-                      }
-                    }} 
-                    color="neutral"
-                    size="sm"
-                    sx={{ 
-                      color: '#8B5E3C',
-                      '&:hover': { 
-                        bgcolor: 'rgba(139, 94, 60, 0.1)',
-                        transform: 'scale(1.1)' 
-                      },
-                      transition: 'all 0.2s ease'
-                    }}
-                  >
-                    <RedoIcon />
-                  </IconButton>
-                </Box>
-              </Box>
-              
-              <Box sx={{ position: 'relative' }}>
-                {isUploading && (
-                  <Box 
-                    sx={{ 
-                      position: 'absolute', 
-                      top: 0, 
-                      left: 0, 
-                      right: 0, 
-                      bottom: 0, 
-                      display: 'flex', 
-                      alignItems: 'center', 
-                      justifyContent: 'center',
-                      backgroundColor: 'rgba(255, 255, 255, 0.7)',
-                      zIndex: 1
-                    }}
-                  >
-                    <CircularProgress sx={{ color: '#8B5E3C' }} />
-                    <Typography level="body2" sx={{ ml: 2, color: '#8B5E3C' }}>
-                      미디어 업로드 중...
-                    </Typography>
-                  </Box>
-                )}
-              
-          <div
-            {...getRootProps()}
-                  className="boardwrite-editor border p-4 rounded"
-                  style={{
-                    minHeight: '400px',
-                    maxHeight: '600px',
-                    overflowY: 'auto',
-                    border: '1px solid rgba(139, 94, 60, 0.2)',
-                    borderRadius: '8px',
-                    padding: '16px',
-                    backgroundColor: '#FAF8F5'
-                  }}
-                >
-            <Editor
-              editorState={editorState}
-                    onChange={handleEditorChange}
-                    blockRendererFn={blockRendererFunction}
-                    customStyleFn={customStyleFn}
-                    handlePastedFiles={handlePastedFiles}
-                    handleDroppedFiles={handleDroppedFiles}
-              placeholder="내용을 입력해주세요..."
-                    readOnly={isUploading}
-            />
-          </div>
-              </Box>
-            </>
-          ) : (
-            <Box 
-              className="preview-container" 
-              p={4} 
-              border={1} 
-              borderRadius={1} 
-              mb={4}
-              sx={{
-                minHeight: '450px',
-                border: '1px solid rgba(139, 94, 60, 0.2)',
-                borderRadius: '8px',
-                backgroundColor: '#FAF8F5'
-              }}
+      {/* 에디터 툴바 */}
+      <Box className="editor-toolbar" sx={{ mb: 1, display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
+        <IconButton 
+          onClick={() => toggleFormatting('BOLD')} 
+          color="neutral"
+          size="sm"
+          sx={{ 
+            color: '#8B5E3C',
+            '&:hover': { 
+              bgcolor: 'rgba(139, 94, 60, 0.1)',
+              transform: 'scale(1.1)' 
+            },
+            transition: 'all 0.2s ease'
+          }}
+        >
+          <FormatBoldIcon />
+        </IconButton>
+        <IconButton 
+          onClick={() => toggleFormatting('ITALIC')} 
+          color="neutral"
+          size="sm" 
+          sx={{ 
+            color: '#8B5E3C',
+            '&:hover': { 
+              bgcolor: 'rgba(139, 94, 60, 0.1)',
+              transform: 'scale(1.1)' 
+            },
+            transition: 'all 0.2s ease'
+          }}
+        >
+          <FormatItalicIcon />
+        </IconButton>
+        <IconButton 
+          onClick={() => toggleFormatting('UNDERLINE')} 
+          color="neutral"
+          size="sm"
+          sx={{ 
+            color: '#8B5E3C',
+            '&:hover': { 
+              bgcolor: 'rgba(139, 94, 60, 0.1)',
+              transform: 'scale(1.1)' 
+            },
+            transition: 'all 0.2s ease'
+          }}
+        >
+          <FormatUnderlinedIcon />
+        </IconButton>
+        <Box position="relative">
+          <IconButton 
+            onClick={() => setShowFormatting(!showFormatting)} 
+            color="neutral"
+            size="sm"
+            sx={{ 
+              color: '#8B5E3C',
+              '&:hover': { 
+                bgcolor: 'rgba(139, 94, 60, 0.1)',
+                transform: 'scale(1.1)' 
+              },
+              transition: 'all 0.2s ease'
+            }}
+          >
+            <FormatColorTextIcon />
+          </IconButton>
+          {showFormatting && (
+            <Box
+              position="absolute"
+              top="100%"
+              left={0}
+              bgcolor="white"
+              border="1px solid rgba(139, 94, 60, 0.3)"
+              borderRadius={2}
+              p={1}
+              zIndex={10}
+              boxShadow="0 4px 12px rgba(0,0,0,0.1)"
             >
-              <Typography level="h4" mb={2} sx={{ color: '#8B5E3C' }}>
-                {title || '제목 없음'}
-              </Typography>
-              <div
-                dangerouslySetInnerHTML={{
-                  __html: previewHtml || '내용이 없습니다.'
+              <input
+                type="color"
+                value={selectedColor}
+                onChange={(e) => {
+                  setSelectedColor(e.target.value);
+                  toggleFormatting('COLOR');
                 }}
+                style={{ cursor: 'pointer' }}
               />
             </Box>
           )}
-          <Button
-            onClick={handleSubmitWithHtml}
-            className="boardwrite-submit mt-4 self-end"
-            sx={{
-              bgcolor: '#4caf50',
+        </Box>
+        
+        <Box sx={{ display: 'flex', gap: 1, ml: 2, borderLeft: '1px solid rgba(139, 94, 60, 0.2)', pl: 2 }}>
+          <IconButton 
+            onClick={() => fileInputRef.current?.click()} 
+            color="neutral"
+            size="sm"
+            sx={{ 
+              color: '#8B5E3C',
               '&:hover': { 
-                bgcolor: '#3d8b40',
-                transform: 'translateY(-2px)',
-                boxShadow: '0 4px 12px rgba(0,0,0,0.15)'
+                bgcolor: 'rgba(139, 94, 60, 0.1)',
+                transform: 'scale(1.1)' 
               },
-              color: 'white',
-              mt: 3,
-              fontWeight: '600',
-              float: 'right',
-              borderRadius: '8px',
-              px: 3,
-              py: 1,
-              transition: 'all 0.3s ease',
-              boxShadow: '0 2px 8px rgba(0,0,0,0.1)'
+              transition: 'all 0.2s ease'
             }}
             disabled={isUploading}
           >
-            {isUploading ? <CircularProgress size="sm" sx={{ mr: 1 }} /> : null}
-            글쓰기
+            {isUploading ? <CircularProgress size="sm" /> : <ImageIcon />}
+          </IconButton>
+          <IconButton 
+            onClick={() => videoInputRef.current?.click()}
+            color="neutral" 
+            size="sm"
+            sx={{ 
+              color: '#8B5E3C',
+              '&:hover': { 
+                bgcolor: 'rgba(139, 94, 60, 0.1)',
+                transform: 'scale(1.1)' 
+              },
+              transition: 'all 0.2s ease'
+            }}
+            disabled={isUploading}
+          >
+            {isUploading ? <CircularProgress size="sm" /> : <VideocamIcon />}
+          </IconButton>
+        </Box>
+        
+        <input
+          type="file"
+          accept="image/*"
+          style={{ display: 'none' }}
+          ref={fileInputRef}
+          onChange={(e) => handleFileInput(e, 'image')}
+        />
+        
+        <input
+          type="file"
+          accept="video/*"
+          style={{ display: 'none' }}
+          ref={videoInputRef}
+          onChange={(e) => handleFileInput(e, 'video')}
+        />
+        
+        <Box sx={{ display: 'flex', gap: 1, ml: 2, borderLeft: '1px solid rgba(139, 94, 60, 0.2)', pl: 2 }}>
+          <IconButton 
+            onClick={() => {
+              const newState = EditorState.undo(editorState);
+              if (typeof onEditorChange === 'function') {
+                onEditorChange(newState);
+              } else if (typeof setEditorState === 'function') {
+                setEditorState(newState);
+              }
+            }} 
+            color="neutral"
+            size="sm"
+            sx={{ 
+              color: '#8B5E3C',
+              '&:hover': { 
+                bgcolor: 'rgba(139, 94, 60, 0.1)',
+                transform: 'scale(1.1)' 
+              },
+              transition: 'all 0.2s ease'
+            }}
+          >
+            <UndoIcon />
+          </IconButton>
+          <IconButton 
+            onClick={() => {
+              const newState = EditorState.redo(editorState);
+              if (typeof onEditorChange === 'function') {
+                onEditorChange(newState);
+              } else if (typeof setEditorState === 'function') {
+                setEditorState(newState);
+              }
+            }} 
+            color="neutral"
+            size="sm"
+            sx={{ 
+              color: '#8B5E3C',
+              '&:hover': { 
+                bgcolor: 'rgba(139, 94, 60, 0.1)',
+                transform: 'scale(1.1)' 
+              },
+              transition: 'all 0.2s ease'
+            }}
+          >
+            <RedoIcon />
+          </IconButton>
+        </Box>
+      </Box>
+
+      {/* 에디터 */}
+      <Box
+        className="postEditor"
+        sx={{
+          border: '1px solid #ccc',
+          padding: 2,
+          minHeight: '300px',
+          backgroundColor: 'white',
+        }}
+      >
+        <Editor
+          ref={editorRef}
+          editorState={editorState}
+          onChange={handleEditorChange}
+          handleKeyCommand={handleKeyCommand}
+          blockRendererFn={mediaBlockRenderer}
+          placeholder="내용을 입력하세요..."
+        />
+      </Box>
+
+      {/* 액션 버튼 */}
+      <Box sx={{ mt: 2, display: 'flex', justifyContent: 'space-between' }}>
+        <Button
+          color="danger"
+          startDecorator={<DeleteIcon />}
+          onClick={handleDeleteClick}
+        >
+          삭제
+        </Button>
+        <Box sx={{ display: 'flex', gap: 1 }}>
+          <Button
+            color="neutral"
+            startDecorator={<SaveIcon />}
+            onClick={() => handleSubmitWithHtml(true)}
+          >
+            임시저장
           </Button>
-        </FormControl>
-      </section>
-    </main>
+          <Button
+            color="primary"
+            startDecorator={<PreviewIcon />}
+            onClick={() => handleSubmitWithHtml(false)}
+          >
+            등록
+          </Button>
+        </Box>
+      </Box>
+
+      {/* 이미지/비디오 업로드 드래그 영역 */}
+      <Box
+        {...getRootProps()}
+        sx={{
+          mt: 2,
+          p: 2,
+          border: '2px dashed #ccc',
+          borderRadius: 2,
+          textAlign: 'center',
+          cursor: 'pointer',
+          '&:hover': {
+            backgroundColor: '#f8f8f8'
+          }
+        }}
+      >
+        <input {...getInputProps()} />
+        {isDragActive ? (
+          <Typography>파일을 여기에 놓으세요...</Typography>
+        ) : (
+          <Typography>
+            클릭하거나 파일을 여기로 드래그하여 이미지나 비디오를 업로드하세요
+          </Typography>
+        )}
+      </Box>
+
+      {/* 미리보기 모달 */}
+      {/* ... existing preview modal ... */}
+    </Box>
   );
 };
 

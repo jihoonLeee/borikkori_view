@@ -5,12 +5,17 @@ import { useNavigate } from 'react-router-dom';
 import BoardWriteForm from '../../components/board/BoardWriteForm';
 import { initializePost, createPost, uploadFile, deletePost } from '../../api/boardApi';
 import { AuthContext } from '../../contexts/AuthProvider';
+import { getCategoryByKey } from '../../constants/boardCategory';
 
 const BoardWriteContainer = () => {
   const [editorState, setEditorState] = useState(EditorState.createEmpty());
   const [postId, setPostId] = useState(null);
   const [title, setTitle] = useState('');
   const [htmlContent, setHtmlContent] = useState('');
+  const [category, setCategory] = useState({
+    mainCategory: '',
+    subCategory: ''
+  });
   const navigate = useNavigate();
   const { authenticated } = useContext(AuthContext);
 
@@ -120,11 +125,14 @@ const BoardWriteContainer = () => {
       editorState.getCurrentContent().toJS()
     );
     try {
+      const finalCategory = category.subCategory || category.mainCategory;
+      
       await createPost({
         postId,
         title,
         contents: contentStateJSON,
         isTemp: true,
+        category: finalCategory
       });
       alert('임시 저장 성공');
     } catch (error) {
@@ -136,35 +144,8 @@ const BoardWriteContainer = () => {
   const handleKeyCommand = (command, editorState) => {
     const newState = RichUtils.handleKeyCommand(editorState, command);
     if (newState) {
-      setEditorState(newState);
+      onEditorChange(newState);
       return 'handled';
-    }
-    if (command === 'split-block') {
-      const selection = editorState.getSelection();
-      const content = editorState.getCurrentContent();
-      const block = content.getBlockForKey(selection.getStartKey());
-      if (block.getType() === 'atomic') {
-        // Manually create a new block after the atomic block
-        const newContent = content.insertAfter(
-          block,
-          ContentBlock.create({
-            type: 'unstyled',
-            data: {},
-          })
-        );
-        const newEditorState = EditorState.push(
-          editorState,
-          newContent,
-          'insert-block'
-        );
-        const newSelection = newEditorState.getSelection().merge({
-          anchorKey: newContent.getLastBlock().getKey(),
-          anchorOffset: 0,
-          focusOffset: 0,
-        });
-        setEditorState(EditorState.forceSelection(newEditorState, newSelection));
-        return 'handled';
-      }
     }
     return 'not-handled';
   };
@@ -187,37 +168,114 @@ const BoardWriteContainer = () => {
     return 'not-handled';
   };
 
-  const handleSubmit = async () => {
-    console.log(htmlContent);
+  const handleSubmit = async (title, htmlContent, isTemp = false) => {
+    if (!authenticated) {
+      alert("로그인이 필요합니다.");
+      navigate("/login");
+      return;
+    }
+
+    if (!category.mainCategory) {
+      alert("카테고리를 선택해주세요.");
+      return;
+    }
+
+    if (!title.trim()) {
+      alert("제목을 입력해주세요.");
+      return;
+    }
+
     try {
-      await createPost({
+      const finalCategory = category.subCategory || category.mainCategory;
+      
+      const postData = {
         postId,
         title,
         contents: htmlContent,
-        isTemp: false,
-      });
-      alert('게시글 등록 성공');
-      navigate('/board');
-      window.location.reload();
+        isTemp,
+        category: finalCategory
+      };
+
+      const response = await createPost(postData);
+      
+      if (response.success) {
+        navigate("/board");
+      } else {
+        alert("게시글 작성에 실패했습니다: " + response.message);
+      }
     } catch (error) {
-      console.error('게시글 등록 실패', error);
-      alert('게시글 등록 실패');
+      console.error("게시글 작성 중 오류 발생:", error);
+      alert("게시글 작성 중 오류가 발생했습니다.");
     }
   };
 
   const handleImageUpload = async (file) => {
-    if (!file) return null;
+    if (!file) {
+      console.error('업로드할 파일이 없습니다.');
+      return null;
+    }
     
-    console.log('BoardWriteContainer: 파일 업로드 시작', file.name, file.type);
+    console.log('파일 업로드 시작:', file.name);
     
     try {
-      // uploadFile API 호출
-      const fileUrl = await uploadFile({ file, postId });
-      console.log('파일 업로드 완료, 서버 URL:', fileUrl);
-      return fileUrl;
+      // 초기화된 postId가 없으면 생성
+      if (!postId) {
+        await initializePostId();
+      }
+      
+      // 서버에 파일 업로드
+      const uploadResult = await uploadFile({ file, postId });
+      console.log('서버 업로드 결과:', uploadResult);
+      
+      if (uploadResult && uploadResult.fileUrl) {
+        return uploadResult.fileUrl;
+      } else {
+        throw new Error('파일 URL을 받지 못했습니다.');
+      }
     } catch (error) {
       console.error('파일 업로드 실패:', error);
-      throw new Error(`파일 업로드 실패: ${error.message}`);
+      alert('파일 업로드에 실패했습니다.');
+      return null;
+    }
+  };
+
+  const handleCategoryChange = (mainCategory, subCategory) => {
+    setCategory({
+      mainCategory,
+      subCategory
+    });
+  };
+
+  const initializePostId = async () => {
+    try {
+      const response = await initializePost();
+      if (response && response.postId) {
+        setPostId(response.postId);
+        return response.postId;
+      } else {
+        throw new Error('게시글 초기화 중 오류가 발생했습니다.');
+      }
+    } catch (error) {
+      console.error('게시글 초기화 실패:', error);
+      throw error;
+    }
+  };
+
+  const handleDeletePost = async () => {
+    if (!postId) {
+      navigate('/board');
+      return;
+    }
+    
+    if (window.confirm('작성 중인 게시글을 삭제하시겠습니까?')) {
+      try {
+        await deletePost(postId);
+        alert('게시글이 삭제되었습니다.');
+        navigate('/board');
+      } catch (error) {
+        console.error('게시글 삭제 실패:', error);
+        alert('게시글 삭제에 실패했습니다.');
+      }
     }
   };
 
@@ -241,6 +299,28 @@ const BoardWriteContainer = () => {
               JSON.parse(data.contents).blocks
             );
             setEditorState(EditorState.createWithContent(contentState));
+            
+            // 카테고리 설정
+            if (data.category) {
+              // 카테고리 정보 확인 및 설정
+              const categoryInfo = getCategoryByKey(data.category);
+              
+              if (categoryInfo) {
+                if (categoryInfo.parentKey) {
+                  // 하위 카테고리인 경우
+                  setCategory({
+                    mainCategory: categoryInfo.parentKey,
+                    subCategory: data.category
+                  });
+                } else {
+                  // 메인 카테고리인 경우
+                  setCategory({
+                    mainCategory: data.category,
+                    subCategory: ''
+                  });
+                }
+              }
+            }
           } else {
             deletePost(data.postId)
               .then(() => window.location.reload())
@@ -267,6 +347,9 @@ const BoardWriteContainer = () => {
       handleBeforeInput={handleBeforeInput}
       setHtmlContent={setHtmlContent}
       handleImageUpload={handleImageUpload}
+      category={category}
+      onCategoryChange={handleCategoryChange}
+      handleDeleteClick={handleDeletePost}
     />
   );
 };

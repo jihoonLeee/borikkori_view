@@ -7,26 +7,36 @@ const BoardListContainer = () => {
   const [totalPosts, setTotalPosts] = useState(0);
   const [searchQuery, setSearchQuery] = useState('');
   const [page, setPage] = useState(1);
+  const [categoryFilter, setCategoryFilter] = useState('');
 
   useEffect(() => {
     const fetchPosts = async () => {
       try {
         const response = await axios.get('/post', {
-          params: { page, search: searchQuery },
+          params: { 
+            page, 
+            search: searchQuery,
+            category: categoryFilter 
+          },
           withCredentials: true,
         });
         var postList = response.data.data;
         setTotalPosts(response.data.totalCount || 0);
         setPosts(postList || []);
       } catch (error) {
-        console.error('에러', error);
+        console.error('게시글을 불러오는 중 오류가 발생했습니다:', error);
       }
     };
 
     fetchPosts();
-  }, [page, searchQuery]);
+  }, [page, searchQuery, categoryFilter]);
 
   const handleSearch = () => {
+    setPage(1);
+  };
+  
+  const handleCategoryFilterChange = (category) => {
+    setCategoryFilter(category);
     setPage(1);
   };
 
@@ -39,6 +49,8 @@ const BoardListContainer = () => {
       handleSearch={handleSearch}
       page={page}
       onPageChange={setPage}
+      selectedCategoryFilter={categoryFilter}
+      onCategoryFilterChange={handleCategoryFilterChange}
     />
   );
 };

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { useMediaQuery } from '@mui/material';
 import Typography from '@mui/joy/Typography';
 import Card from '@mui/joy/Card';
@@ -10,7 +10,7 @@ import Textarea from '@mui/joy/Textarea';
 import Sheet from '@mui/joy/Sheet';
 import Divider from '@mui/joy/Divider';
 import IconButton from '@mui/joy/IconButton';
-import { Link } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 import PetsIcon from '@mui/icons-material/Pets';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import DateFormat from '../../utils/DateFormat';
@@ -20,6 +20,7 @@ import NavigateNextIcon from '@mui/icons-material/NavigateNext';
 import DeleteIcon from '@mui/icons-material/Delete';
 import PreviewIcon from '@mui/icons-material/Preview';
 import ListIcon from '@mui/icons-material/List';
+import { getCategoryByKey } from '../../constants/boardCategory';
 
 function CommentCard({ comment, handleCommentLikeSubmit, handleCommentDelete }) {
   return (
@@ -87,6 +88,35 @@ function CommentCard({ comment, handleCommentLikeSubmit, handleCommentDelete }) 
   );
 }
 
+// 카테고리 정보 가져오는 헬퍼 함수
+const getCategoryInfo = (categoryKey) => {
+  if (!categoryKey) return { name: '미분류', color: '#999' };
+  
+  const categoryInfo = getCategoryByKey(categoryKey);
+  if (!categoryInfo) return { name: '미분류', color: '#999' };
+  
+  // 카테고리 정보에 따른 색상 결정
+  let color = '#4caf50'; // 기본 색상
+  
+  if (categoryInfo.isNotice) {
+    color = '#f44336'; // 공지사항은 빨간색
+  } else if (categoryKey.includes('FREE')) {
+    color = '#2196f3'; // 자유 카테고리는 파란색
+  } else if (categoryKey.includes('INFO')) {
+    color = '#ff9800'; // 정보공유는 주황색
+  } else if (categoryKey.includes('FUNNY')) {
+    color = '#9c27b0'; // 웃긴은 보라색
+  } else if (categoryKey.includes('BEGINNER')) {
+    color = '#009688'; // 초보 애견인은 청록색
+  }
+  
+  return {
+    name: categoryInfo.name,
+    color: color,
+    isNotice: categoryInfo.isNotice
+  };
+};
+
 const PostView = ({
   posts,
   handleLikeSubmit,
@@ -132,16 +162,35 @@ const PostView = ({
           {/* 게시글 내용 */}
           <Card variant="outlined" sx={{ p: isMobile ? 2 : 4, bgcolor: 'background.surface' }}>
             <Box display="flex" justifyContent="space-between" mb={isMobile ? 1 : 2}>
-              <Typography
-                component="h3"
-                sx={{
-                  fontSize: isMobile ? '1rem' : '1.25rem',
-                  fontWeight: 'bold',
-                  color: '#2C1810'
-                }}
-              >
-                {posts.title}
-              </Typography>
+              <Box display="flex" alignItems="center" gap={1}>
+                {posts.category && (
+                  <Box
+                    component="span"
+                    sx={{
+                      display: 'inline-block',
+                      px: 1,
+                      py: 0.5,
+                      borderRadius: 1,
+                      fontSize: isMobile ? '0.7rem' : '0.8rem',
+                      fontWeight: getCategoryInfo(posts.category).isNotice ? 'bold' : 'normal',
+                      backgroundColor: `${getCategoryInfo(posts.category).color}20`,
+                      color: getCategoryInfo(posts.category).color,
+                    }}
+                  >
+                    {getCategoryInfo(posts.category).name}
+                  </Box>
+                )}
+                <Typography
+                  component="h3"
+                  sx={{
+                    fontSize: isMobile ? '1rem' : '1.25rem',
+                    fontWeight: 'bold',
+                    color: '#2C1810'
+                  }}
+                >
+                  {posts.title}
+                </Typography>
+              </Box>
               <Typography sx={{ fontSize: isMobile ? '0.65rem' : '0.875rem', color: 'text.secondary' }}>
                 {DateFormat(posts.regDate)}
               </Typography>

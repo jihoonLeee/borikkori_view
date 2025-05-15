@@ -110,7 +110,7 @@ const KakaoMapContainer = () => {
       document.body.style.overflow = 'auto';
     }
   }, [isMobile, selectedPlace]);
-  
+
   // 장소가 선택되면 리뷰 데이터 가져오기
   useEffect(() => {
     if (selectedPlace) {
@@ -215,7 +215,7 @@ const KakaoMapContainer = () => {
 
     const map = new window.kakao.maps.Map(mapContainerRef.current, mapOption);
     mapRef.current = map;
-    
+
     // 지도 확대/축소 컨트롤 추가
     const zoomControl = new window.kakao.maps.ZoomControl();
     map.addControl(zoomControl, window.kakao.maps.ControlPosition.RIGHT);
@@ -485,21 +485,21 @@ const KakaoMapContainer = () => {
 
   // 현재 위치 마커 업데이트 - 검색된 장소와 구분되는 현재 위치 표시용 마커
   const updateCurrentLocationMarker = (map, latlng) => {
-    if (currentLocationMarker.current) {
-      currentLocationMarker.current.setPosition(latlng);
-    } else {
-      const marker = new window.kakao.maps.Marker({
-        map,
-        position: latlng,
+      if (currentLocationMarker.current) {
+        currentLocationMarker.current.setPosition(latlng);
+      } else {
+        const marker = new window.kakao.maps.Marker({
+          map,
+          position: latlng,
         title: "현재 위치",
-        image: new window.kakao.maps.MarkerImage(
-          "http://t1.daumcdn.net/localimg/localimages/07/mapapidoc/marker_blue.png",
-          new window.kakao.maps.Size(24, 35),
-          { offset: new window.kakao.maps.Point(12, 35) }
-        ),
-      });
-      currentLocationMarker.current = marker;
-    }
+          image: new window.kakao.maps.MarkerImage(
+            "http://t1.daumcdn.net/localimg/localimages/07/mapapidoc/marker_blue.png",
+            new window.kakao.maps.Size(24, 35),
+            { offset: new window.kakao.maps.Point(12, 35) }
+          ),
+        });
+        currentLocationMarker.current = marker;
+      }
   };
 
   // 커스텀 오버레이를 사용한 예쁜 마커 생성 함수
@@ -657,8 +657,8 @@ const KakaoMapContainer = () => {
   const fetchLocations = (map, lat, lng, keyword) => {
     try {
       // 먼저 기존 마커들을 모두 제거
-      clearMarkers();
-      setLocations([]);
+    clearMarkers();
+    setLocations([]);
       
       if (!keyword) {
         console.warn('검색 키워드가 없어 검색을 중단합니다.');
@@ -667,7 +667,7 @@ const KakaoMapContainer = () => {
       
       console.log(`"${keyword}" 키워드로 위치(${lat.toFixed(6)}, ${lng.toFixed(6)}) 주변 검색 시작`);
       
-      const places = new window.kakao.maps.services.Places();
+    const places = new window.kakao.maps.services.Places();
       
       // 현재 맵 영역(바운드) 가져오기
       const bounds = map.getBounds();
@@ -685,8 +685,8 @@ const KakaoMapContainer = () => {
       
       console.log(`검색 반경: ${searchRadius}m, 줌 레벨: ${zoomLevel}`);
       
-      const callback = (result, status) => {
-        if (status === window.kakao.maps.services.Status.OK) {
+    const callback = (result, status) => {
+      if (status === window.kakao.maps.services.Status.OK) {
           console.log(`검색 결과: ${result.length}개 장소 발견`);
           
           // 현재 맵 영역 안에 있는 장소만 필터링
@@ -711,14 +711,14 @@ const KakaoMapContainer = () => {
           
           customOverlaysRef.current = newOverlays;
           console.log(`${newOverlays.length}개의 새 마커가 생성되었습니다.`);
-        } else {
+      } else {
           console.error('검색 결과가 없습니다:', status);
           setLocations([]);
-        }
-      };
-      
-      places.keywordSearch(keyword, callback, {
-        location: new window.kakao.maps.LatLng(lat, lng),
+      }
+    };
+
+    places.keywordSearch(keyword, callback, {
+      location: new window.kakao.maps.LatLng(lat, lng),
         radius: searchRadius,
         sort: window.kakao.maps.services.SortBy.DISTANCE
       });
@@ -763,17 +763,17 @@ const KakaoMapContainer = () => {
         if (currentLocationMarker.current) {
           currentLocationMarker.current.setPosition(coords);
         } else {
-          const marker = new window.kakao.maps.Marker({
-            map: mapRef.current,
-            position: coords,
+        const marker = new window.kakao.maps.Marker({
+          map: mapRef.current,
+          position: coords,
             title: "검색 위치",
             image: new window.kakao.maps.MarkerImage(
               "http://t1.daumcdn.net/localimg/localimages/07/mapapidoc/marker_blue.png",
               new window.kakao.maps.Size(24, 35),
               { offset: new window.kakao.maps.Point(12, 35) }
             ),
-          });
-          currentLocationMarker.current = marker;
+        });
+        currentLocationMarker.current = marker;
         }
         
         setCurrentLocation({ latitude: result[0].y, longitude: result[0].x });
@@ -810,7 +810,7 @@ const KakaoMapContainer = () => {
     
     // 지도 중심 이동
     if (mapRef.current) {
-      mapRef.current.setCenter(new window.kakao.maps.LatLng(place.y, place.x));
+    mapRef.current.setCenter(new window.kakao.maps.LatLng(place.y, place.x));
     }
   };
 
