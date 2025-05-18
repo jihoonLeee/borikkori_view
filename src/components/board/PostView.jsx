@@ -131,9 +131,10 @@ const PostView = ({
   prevPostId,
   nextPostId,
 }) => {
+  
   const [showPreview, setShowPreview] = useState(false);
   const isMobile = useMediaQuery('(max-width:600px)');
-
+  const categoryKey = posts.category?.categoryType;
   return (
     <main className="flex flex-col items-center bg-secondary min-h-screen" style={{ padding: isMobile ? '8px' : '20px' }}>
       <section className="w-full max-w-6xl mt-8 bg-white rounded-lg shadow-md overflow-hidden" style={{ margin: isMobile ? '8px' : '20px auto' }}>
@@ -163,6 +164,7 @@ const PostView = ({
           <Card variant="outlined" sx={{ p: isMobile ? 2 : 4, bgcolor: 'background.surface' }}>
             <Box display="flex" justifyContent="space-between" mb={isMobile ? 1 : 2}>
               <Box display="flex" alignItems="center" gap={1}>
+              
                 {posts.category && (
                   <Box
                     component="span"
@@ -172,12 +174,12 @@ const PostView = ({
                       py: 0.5,
                       borderRadius: 1,
                       fontSize: isMobile ? '0.7rem' : '0.8rem',
-                      fontWeight: getCategoryInfo(posts.category).isNotice ? 'bold' : 'normal',
-                      backgroundColor: `${getCategoryInfo(posts.category).color}20`,
-                      color: getCategoryInfo(posts.category).color,
+                      fontWeight: getCategoryInfo(categoryKey).isNotice ? 'bold' : 'normal',
+                      backgroundColor: `${getCategoryInfo(categoryKey).color}20`,
+                      color: getCategoryInfo(categoryKey).color,
                     }}
                   >
-                    {getCategoryInfo(posts.category).name}
+                    {getCategoryInfo(categoryKey).name}
                   </Box>
                 )}
                 <Typography
