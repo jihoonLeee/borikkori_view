@@ -6,6 +6,7 @@ import BoardWriteForm from '../../components/board/BoardWriteForm';
 import { initializePost, createPost, uploadFile, deletePost } from '../../api/boardApi';
 import { AuthContext } from '../../contexts/AuthProvider';
 import { getCategoryByKey } from '../../constants/boardCategory';
+import axios from 'axios';
 
 const BoardWriteContainer = () => {
   const [editorState, setEditorState] = useState(EditorState.createEmpty());
