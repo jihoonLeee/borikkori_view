@@ -195,6 +195,7 @@ const BoardWriteContainer = () => {
         isTemp,
         categoryType: finalCategory,
       });
+      alert("게시글 작성에 성공했습니다.");
       navigate('/board');
     } catch (error) {
       console.error('게시글 작성 중 오류 발생:', error);

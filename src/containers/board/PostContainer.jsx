@@ -22,6 +22,8 @@ const PostContainer = () => {
         const postResponse = await axios.get(`/post/${postId}`, { withCredentials: true });
         setPosts(postResponse.data);
 
+        console.log(postResponse.data);
+        
         const commentResponse = await axios.get('/comment', {
           params: { id: postId, page: page },
           withCredentials: true,
