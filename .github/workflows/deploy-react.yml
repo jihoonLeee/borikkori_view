@@ -21,11 +21,11 @@ jobs:
         env:
           GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
         run: |
-          echo "🔐 Decrypting .env.release.gpg to .env"
+          echo "🔐 Decrypting .env.release.gpg to .env.release"
           gpg --quiet --batch --yes \
             --passphrase "$GPG_PASSPHRASE" \
-            --output .env \
-            --decrypt secret/view/.env.release.gpg
+            --output .env.release \
+            --decrypt ~/borikkori/secret/view/.env.release.gpg
 
       # 3) 프로젝트 파일 유무 확인 (npm 사용 기준)
       - name: Verify build context files
