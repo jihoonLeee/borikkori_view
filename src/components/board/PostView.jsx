@@ -69,7 +69,7 @@ function CommentCard({ comment, handleCommentLikeSubmit, handleCommentDelete }) 
             py: 0.5
           }}
         >
-          {comment.likeCnt}
+          {comment.likeCount}
         </Button>
       </Box>
       {comment.children && comment.children.length > 0 && (
@@ -207,7 +207,7 @@ const PostView = ({
                     조회수
                   </Typography>
                   <Typography sx={{ fontSize: isMobile ? '0.55rem' : '0.75rem', fontWeight: 'medium' }}>
-                    {posts.visitCnt}
+                    {posts.visitCount}
                   </Typography>
                 </Box>
                 <Box display="flex" alignItems="center" gap={0.5}>
@@ -215,7 +215,7 @@ const PostView = ({
                     따봉
                   </Typography>
                   <Typography sx={{ fontSize: isMobile ? '0.55rem' : '0.75rem', fontWeight: 'medium' }}>
-                    {posts.likeCnt}
+                    {posts.likeCount}
                   </Typography>
                 </Box>
               </Box>
@@ -309,7 +309,7 @@ const PostView = ({
                 startDecorator={<PetsIcon />}
                 onClick={handleLikeSubmit}
               >
-                따봉 {posts.likeCnt}
+                따봉 {posts.likeCount}
               </Button>
             </Box>
             {totalComments > 0 && (

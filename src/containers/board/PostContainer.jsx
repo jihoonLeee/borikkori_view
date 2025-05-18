@@ -57,7 +57,7 @@ const PostContainer = () => {
         alert('따봉을 눌렀습니다!');
         setPosts(prevPosts => ({
           ...prevPosts,
-          likeCnt: response.data.likeCnt,
+          likeCount: response.data.likeCount,
         }));
       }
     } catch (error) {

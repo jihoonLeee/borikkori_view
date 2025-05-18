@@ -215,9 +215,9 @@ const BoardList = ({
                     <span className="mx-1">·</span>
                     <span>{post.name}</span>
                     <span className="mx-1">·</span>
-                    <span>조회수 {post.visitCnt}</span>
+                    <span>조회수 {post.visitCount}</span>
                     <span className="mx-1">·</span>
-                    <span>따봉 {post.likeCnt}</span>
+                    <span>따봉 {post.likeCount}</span>
                   </div>
                 </div>
               );
@@ -401,8 +401,8 @@ const BoardList = ({
                         </StyledTableCell>
                         <StyledTableCell>{post.name}</StyledTableCell>
                         <StyledTableCell>{DateFormat(post.regDate)}</StyledTableCell>
-                        <StyledTableCell>{post.visitCnt}</StyledTableCell>
-                        <StyledTableCell>{post.likeCnt}</StyledTableCell>
+                        <StyledTableCell>{post.visitCount}</StyledTableCell>
+                        <StyledTableCell>{post.likeCount}</StyledTableCell>
                       </StyledTableRow>
                     );
                   })}
