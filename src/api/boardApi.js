@@ -7,14 +7,12 @@ export const initializePost = async () => {
   return response.data; 
 };
 
-export const createPost = async ({ postId, title, contents, isTemp, categoryType }) => {
-  const response = await axios.post(
+export const createPost = ({ postId, title, contents, isTemp, categoryType }) =>
+  axios.post(
     '/post',
     { postId, title, contents, isTemp, categoryType },
     { withCredentials: true }
   );
-  return response.data;
-};
 
 export const deletePost = async (postId) => {
   const response = await axios.delete(`/post/${postId}`, {

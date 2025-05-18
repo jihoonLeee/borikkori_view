@@ -185,27 +185,25 @@ const BoardWriteContainer = () => {
       return;
     }
 
-    try {
+     try {
       const finalCategory = category.subCategory || category.mainCategory;
-      
-      const postData = {
+      await createPost({
         postId,
         title,
         contents: htmlContent,
         isTemp,
-        categoryType: finalCategory
-      };
-
-      const response = await createPost(postData);
-      
-      if (response.success) {
-        navigate("/board");
-      } else {
-        alert("게시글 작성에 실패했습니다: " + response.message);
-      }
+        categoryType: finalCategory,
+      });
+      navigate('/board');
     } catch (error) {
-      console.error("게시글 작성 중 오류 발생:", error);
-      alert("게시글 작성 중 오류가 발생했습니다.");
+      console.error('게시글 작성 중 오류 발생:', error);
+      if (axios.isAxiosError(error) && error.response) {
+        const msg =
+          error.response.data?.message || `서버 오류: ${error.response.status}`;
+        alert(`게시글 작성에 실패했습니다: ${msg}`);
+      } else {
+        alert('게시글 작성 중 오류가 발생했습니다.');
+      }
     }
   };
 
