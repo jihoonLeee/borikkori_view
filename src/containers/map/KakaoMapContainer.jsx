@@ -136,8 +136,7 @@ const KakaoMapContainer = () => {
         document.head.appendChild(script);
       });
 
-    const KAKAO_APP_KEY = process.env.REACT_APP_KAKAO_MAP_API;
-    const scriptSrc = `https://dapi.kakao.com/v2/maps/sdk.js?appkey=${KAKAO_APP_KEY}&autoload=false&libraries=services,clusterer,drawing`;
+    const scriptSrc = `https://dapi.kakao.com/v2/maps/sdk.js?appkey=${process.env.REACT_APP_KAKAO_MAP_API}&autoload=false&libraries=services,clusterer,drawing`;
 
     loadScript(scriptSrc)
       .then(() => {

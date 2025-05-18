@@ -2,14 +2,14 @@
 FROM node:18-alpine AS builder
 WORKDIR /app
 
-ARG REACT_APP_API_URL
-ENV REACT_APP_API_URL=${REACT_APP_API_URL}
-
-# npm 설치 (package-lock.json 기반)
+# 1. 패키지 설치
 COPY package.json package-lock.json ./
 RUN npm ci
 
-# 소스 복사 및 빌드
+# 2. 환경변수 파일 복사 (.env는 CI에서 복호화된 파일)
+COPY .env .env
+
+# 3. 소스 복사 및 번들링
 COPY . .
 RUN npm run build
 
@@ -19,9 +19,7 @@ FROM nginx:stable-alpine
 # 빌드 결과를 웹 폴더로 복사
 COPY --from=builder /app/build /usr/share/nginx/html
 
-# 런타임 환경변수 주입
-# React 앱이 process.env.REACT_APP_API_URL 등으로 참조하도록 셋업
-ENV REACT_APP_API_URL=${REACT_APP_API_URL}
+# 프로덕션 환경으로 고정
 ENV NODE_ENV=production
 
 EXPOSE 80
