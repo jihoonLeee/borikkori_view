@@ -213,7 +213,7 @@ const BoardList = ({
                   <div className="mt-2 text-xs text-gray-500">
                     <span>{DateFormat(post.regDate)}</span>
                     <span className="mx-1">·</span>
-                    <span>{post.nickName}</span>
+                    <span>{post.name}</span>
                     <span className="mx-1">·</span>
                     <span>조회수 {post.visitCnt}</span>
                     <span className="mx-1">·</span>
@@ -373,10 +373,8 @@ const BoardList = ({
               <Table className="w-full table-fixed" sx={{ minWidth: 700 }} aria-label="customized table">
                 <TableHead>
                   <TableRow>
-                    <StyledTableCell style={{ width: '10%' }}>
-                      카테고리
-                    </StyledTableCell>
-                    <StyledTableCell style={{ width: '55%' }}>
+            
+                    <StyledTableCell style={{ width: '65%' }}>
                       제목
                     </StyledTableCell>
                     <StyledTableCell style={{ width: '10%' }}>닉네임</StyledTableCell>
@@ -396,21 +394,12 @@ const BoardList = ({
                     const categoryInfo = getCategoryInfo(post.category);
                     return (
                       <StyledTableRow key={post.postId}>
-                        <StyledTableCell 
-                          sx={{ 
-                            color: categoryInfo.color,
-                            fontWeight: categoryInfo.isNotice ? 'bold' : 'normal',
-                            bgcolor: categoryInfo.isNotice ? `${categoryInfo.color}10` : 'inherit'
-                          }}
-                        >
-                          {categoryInfo.name}
-                        </StyledTableCell>
                         <StyledTableCell component="th" scope="row">
                           <Link to={`/post/${post.postId}`} className="hover:text-accent break-words">
                             {post.title}
                           </Link>
                         </StyledTableCell>
-                        <StyledTableCell>{post.nickName}</StyledTableCell>
+                        <StyledTableCell>{post.name}</StyledTableCell>
                         <StyledTableCell>{DateFormat(post.regDate)}</StyledTableCell>
                         <StyledTableCell>{post.visitCnt}</StyledTableCell>
                         <StyledTableCell>{post.likeCnt}</StyledTableCell>

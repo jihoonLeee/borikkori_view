@@ -128,8 +128,8 @@ const ChatRoom = () => {
               </div>
             </div>
           ) : (
-            <div key={index} style={styles.messageContainer(userInfo && msg.sender === userInfo.nickName)}>
-              <div style={styles.message(userInfo && msg.sender === userInfo.nickName)}>
+            <div key={index} style={styles.messageContainer(userInfo && msg.sender === userInfo.name)}>
+              <div style={styles.message(userInfo && msg.sender === userInfo.name)}>
                 <span>{msg.sender}: {msg.message}</span>
               </div>
             </div>

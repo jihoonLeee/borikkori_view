@@ -30,7 +30,7 @@ function CommentCard({ comment, handleCommentLikeSubmit, handleCommentDelete }) 
           <ArrowDropDownIcon fontSize="small" sx={{ mr: 1 }} />
         )}
         <Typography variant="subtitle1" fontWeight="bold" sx={{ fontSize: { xs: '0.75rem', md: 'inherit' } }}>
-          {comment.nickName}
+          {comment.name}
         </Typography>
         <Box flexGrow={1} />
         <Typography variant="caption" color="text.secondary" sx={{ fontSize: { xs: '0.65rem', md: 'inherit' } }}>

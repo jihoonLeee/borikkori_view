@@ -26,9 +26,9 @@ export default function Game() {
 
   // 순위 예시
   const [rankings] = useState([
-    { nickname: '지훈', score: 100 },
-    { nickname: '짱', score: 80 },
-    { nickname: '보리', score: 70 },
+    { name: '지훈', score: 100 },
+    { name: '짱', score: 80 },
+    { name: '보리', score: 70 },
   ]);
 
   // 컴포넌트 마운트 시 한 번 초기화
@@ -275,7 +275,7 @@ export default function Game() {
           <div className="score text-lg">점수: {score}</div>
           <div className="rank text-sm">
             {rankings.map((r, i) => (
-              <span key={i}>{i + 1}. {r.nickname} ({r.score}점) </span>
+              <span key={i}>{i + 1}. {r.name} ({r.score}점) </span>
             ))}
           </div>
         </div>

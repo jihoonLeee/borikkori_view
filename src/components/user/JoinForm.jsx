@@ -11,14 +11,14 @@ const JoinForm = ({ onSubmit, onVerify }) => {
 
   const formik = useFormik({
     initialValues: {
-      nickName: '',
+      name: '',
       email: '',
       verificationNumber: '',
       password: '',
       passwordCheck: ''
     },
     validationSchema: Yup.object({
-      nickName: Yup.string().required('필수 항목입니다.'),
+      name: Yup.string().required('필수 항목입니다.'),
       email: Yup.string().email('이메일 형식이 틀렸습니다.').required('필수 항목입니다.'),
       password: Yup.string().required('필수 항목입니다.'),
       passwordCheck: Yup.string()
@@ -33,7 +33,7 @@ const JoinForm = ({ onSubmit, onVerify }) => {
       onSubmit({
         email: values.email,
         password: values.password,
-        name: values.nickName,
+        name: values.name,
         verificationNumber: values.verificationNumber,
       });
     },
@@ -50,8 +50,8 @@ const JoinForm = ({ onSubmit, onVerify }) => {
     <Box component="form" noValidate onSubmit={formik.handleSubmit} sx={{ mt: 3 }}>
       <Grid container spacing={2}>
         <Grid item xs={12}>
-          <TextField required fullWidth id="nickName" label="닉네임" name="nickName" autoComplete="family-name" onChange={formik.handleChange} value={formik.values.nickName} />
-          {formik.touched.nickName && formik.errors.nickName && <div style={{ color: 'red', textAlign: 'left', fontSize:'12px' }}>{formik.errors.nickName}</div>}
+          <TextField required fullWidth id="name" label="닉네임" name="name" autoComplete="family-name" onChange={formik.handleChange} value={formik.values.name} />
+          {formik.touched.name && formik.errors.name && <div style={{ color: 'red', textAlign: 'left', fontSize:'12px' }}>{formik.errors.name}</div>}
         </Grid>
         <Grid item xs={10}>
           <TextField
