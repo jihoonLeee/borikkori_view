@@ -6,8 +6,8 @@ WORKDIR /app
 COPY package.json package-lock.json ./
 RUN npm ci
 
-# 2. 환경변수 파일 복사 (.env는 CI에서 복호화된 파일)
-COPY .env .env
+# 2. 환경변수 파일 복사
+COPY .env.release .env
 
 # 3. 소스 복사 및 번들링
 COPY . .
