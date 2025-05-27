@@ -410,8 +410,12 @@ const BoardWriteForm = ({
     
     // 내용이 비어있는지 확인
     const contentState = newEditorState.getCurrentContent();
-    if (!contentState.hasText() && contentState.getBlockMap().size <= 1) {
-      // 내용이 비어있는 경우, 빈 HTML 반환
+    const hasText = contentState.hasText();
+    const blockMap = contentState.getBlockMap();
+    const isEmpty = !hasText && blockMap.size <= 1;
+    
+    // 내용이 비어있는 경우, 빈 HTML 반환
+    if (isEmpty) {
       if (typeof setHtmlContent === 'function') {
         setHtmlContent('');
       }
@@ -429,11 +433,6 @@ const BoardWriteForm = ({
     
     // 미리보기 업데이트
     setPreviewHtml(html);
-    
-    // 디버깅 - HTML 내용 확인
-    if (html.includes('<figure>&nbsp;</figure>')) {
-      console.warn('빈 figure 태그가 포함되어 있습니다:', html);
-    }
   };
 
   const insertMedia = (url, mediaType) => {

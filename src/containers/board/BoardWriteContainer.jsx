@@ -22,7 +22,13 @@ const BoardWriteContainer = () => {
 
   const onEditorChange = (newEditorState) => {
     setEditorState(newEditorState);
-    console.log(newEditorState.getCurrentContent().getBlockMap());
+    const contentState = newEditorState.getCurrentContent();
+    const selection = newEditorState.getSelection();
+    
+    // 선택 영역이 있는 경우에만 로그 출력
+    if (!selection.isCollapsed()) {
+      console.log('선택된 텍스트:', contentState.getBlockForKey(selection.getStartKey()).getText());
+    }
   };
 
   const addMediaToEditorState = (editorState, mediaUrl, mediaType) => {
