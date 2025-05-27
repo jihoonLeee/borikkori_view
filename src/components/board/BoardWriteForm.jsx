@@ -293,7 +293,9 @@ const BoardWriteForm = ({
   category,
   onCategoryChange,
   handleKeyCommand,
-  handleDeleteClick
+  handleDeleteClick,
+  blockRendererFn,
+  handleBeforeInput
 }) => {
   const [showPreview, setShowPreview] = useState(false);
   const [showFormatting, setShowFormatting] = useState(false);
@@ -960,8 +962,10 @@ const BoardWriteForm = ({
           editorState={editorState}
           onChange={handleEditorChange}
           handleKeyCommand={handleKeyCommand}
-          blockRendererFn={mediaBlockRenderer}
+          {...(typeof blockRendererFn === 'function' ? { blockRendererFn } : {})}
+          {...(typeof handleBeforeInput === 'function' ? { handleBeforeInput } : {})}
           placeholder="내용을 입력하세요..."
+          autoFocus
         />
       </Box>
 
