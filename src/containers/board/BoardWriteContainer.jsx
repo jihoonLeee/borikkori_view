@@ -253,7 +253,7 @@ const BoardWriteContainer = () => {
 
   const initializePostId = async () => {
     try {
-      const response = await initializePost();
+      const response = await initializePost("FREE");
       if (response && response.postId) {
         setPostId(response.postId);
         return response.postId;
@@ -291,7 +291,7 @@ const BoardWriteContainer = () => {
       return;
     }
   
-    initializePost()
+    initializePost("FREE")
       .then((data) => {
         setPostId(data.postId);
         if (data.temp) {

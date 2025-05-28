@@ -1,7 +1,7 @@
 import axios from 'axios';
 
-export const initializePost = async () => {
-  const response = await axios.post('/post/init', {}, { 
+export const initializePost = async ({categoryType}) => {
+  const response = await axios.post('/post/init', {categoryType}, { 
     withCredentials: true });
     console.log(response.data);
   return response.data; 
