@@ -7,10 +7,10 @@ export const initializePost = async () => {
   return response.data; 
 };
 
-export const createPost = ({ postId, title, contents, isTemp, categoryType }) =>
+export const createPost = ({ postId, title, contents, isTemp, categoryType,subCategoryType }) =>
   axios.post(
     '/post',
-    { postId, title, contents, isTemp, categoryType },
+    { postId, title, contents, isTemp, categoryType,subCategoryType },
     { withCredentials: true }
   );
 

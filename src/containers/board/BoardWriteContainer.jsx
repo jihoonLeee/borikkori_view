@@ -132,14 +132,13 @@ const BoardWriteContainer = () => {
       editorState.getCurrentContent().toJS()
     );
     try {
-      const finalCategory = category.subCategory || category.mainCategory;
-      
       await createPost({
         postId,
         title,
         contents: contentStateJSON,
         isTemp: true,
-        categoryType: finalCategory
+        categoryType: category.mainCategory,
+        subCategoryType :category.subCategory
       });
       alert('임시 저장 성공');
     } catch (error) {
@@ -193,13 +192,13 @@ const BoardWriteContainer = () => {
     }
 
      try {
-      const finalCategory = category.subCategory || category.mainCategory;
       await createPost({
         postId,
         title,
         contents: htmlContent,
         isTemp,
-        categoryType: finalCategory,
+        categoryType: category.mainCategory,
+        subCategoryType:category.subCategory
       });
       alert("게시글 작성에 성공했습니다.");
       navigate('/board');

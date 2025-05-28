@@ -1,6 +1,6 @@
 import React, { useState, useRef, useCallback, useEffect } from 'react';
 import { Box, Button, FormControl, IconButton, Typography, CircularProgress } from '@mui/joy';
-import { Editor, RichUtils, EditorState, AtomicBlockUtils, convertToRaw, convertFromRaw } from 'draft-js';
+import { Editor, RichUtils, EditorState, AtomicBlockUtils, convertToRaw, convertFromRaw,Modifier } from 'draft-js';
 import 'draft-js/dist/Draft.css';
 import '../../styles/BoardWrite.css';
 import PreviewIcon from '@mui/icons-material/Preview';
@@ -15,36 +15,6 @@ import RedoIcon from '@mui/icons-material/Redo';
 import DeleteIcon from '@mui/icons-material/Delete';
 import VideocamIcon from '@mui/icons-material/Videocam';
 import BoardCategorySelector from './BoardCategorySelector';
-
-/**
- * 게시글 작성 폼 컴포넌트
- * 
- * 미디어 업로드 시 주의사항:
- * 1. 현재 구현은 임시 blob URL을 생성하여 사용하므로 페이지를 벗어나면 미디어가 사라집니다.
- * 2. 실제 서버 업로드 기능을 구현하려면 상위 컴포넌트에서 다음과 같이 handleImageUpload를 구현해야 합니다:
- * 
- * // BoardWriteContainer.jsx에서 구현 예시
- * const handleImageUpload = async (file) => {
- *   if (!file) return null;
- *   
- *   try {
- *     const formData = new FormData();
- *     formData.append('file', file);
- *     
- *     const response = await axios.post('/api/upload', formData, {
- *       headers: {
- *         'Content-Type': 'multipart/form-data'
- *       }
- *     });
- *     
- *     // 서버에서 반환된 실제 URL 사용
- *     return response.data.url;
- *   } catch (error) {
- *     console.error('업로드 실패:', error);
- *     return null;
- *   }
- * };
- */
 
 // HTML 변환 유틸리티 함수 최종 개선
 const convertContentToHTML = (contentState) => {
@@ -295,7 +265,6 @@ const BoardWriteForm = ({
   handleKeyCommand,
   handleDeleteClick,
   blockRendererFn,
-  handleBeforeInput
 }) => {
   const [showPreview, setShowPreview] = useState(false);
   const [showFormatting, setShowFormatting] = useState(false);
@@ -306,9 +275,44 @@ const BoardWriteForm = ({
   const fileInputRef = useRef(null);
   const videoInputRef = useRef(null);
   const editorRef = useRef(null);
-  
+   const [isComposing, setIsComposing] = useState(false);
+
   // getRootProps에서 isDragActive 추출
   const { isDragActive } = getRootProps ? getRootProps() : { isDragActive: false };
+  const handleCompositionStart = () => setIsComposing(true);
+  const handleCompositionEnd = () => setIsComposing(false);
+
+  // Draft.js handleBeforeInput 훅에서 조합 중일 땐 무시
+  const localHandleBeforeInput = useCallback((chars, state) => {
+    if (isComposing) {
+      return 'not-handled';
+    }
+    return 'not-handled';
+  }, [isComposing]);
+  // onKeyDown으로 백스페이스 직접 처리 (composition 중)
+  const localHandleKeyDown = useCallback((e) => {
+    if (isComposing && e.key === 'Backspace') {
+      e.preventDefault();
+      const selection = editorState.getSelection();
+      const anchor = selection.getStartOffset();
+      if (anchor > 0) {
+        const newContent = Modifier.removeRange(
+          editorState.getCurrentContent(),
+          selection.merge({
+            anchorOffset: anchor - 1,
+            focusOffset: anchor
+          }),
+          'backward'
+        );
+        const newState = EditorState.push(editorState, newContent, 'remove-range');
+        if (typeof onEditorChange === 'function') {
+          onEditorChange(newState);
+        } else {
+          setEditorState(newState);
+        }
+      }
+    }
+  }, [isComposing, editorState, onEditorChange, setEditorState]);
 
   const toggleFormatting = (format) => {
     if (format === 'COLOR') {
@@ -962,8 +966,11 @@ const BoardWriteForm = ({
           editorState={editorState}
           onChange={handleEditorChange}
           handleKeyCommand={handleKeyCommand}
+          onCompositionStart={handleCompositionStart}
+          onCompositionEnd={handleCompositionEnd}
+          onKeyDown={localHandleKeyDown}
           {...(typeof blockRendererFn === 'function' ? { blockRendererFn } : {})}
-          {...(typeof handleBeforeInput === 'function' ? { handleBeforeInput } : {})}
+          handleBeforeInput={localHandleBeforeInput}
           placeholder="내용을 입력하세요..."
           autoFocus
         />
@@ -1020,9 +1027,6 @@ const BoardWriteForm = ({
           </Typography>
         )}
       </Box>
-
-      {/* 미리보기 모달 */}
-      {/* ... existing preview modal ... */}
     </Box>
   );
 };
