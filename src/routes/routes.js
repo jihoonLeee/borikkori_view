@@ -7,12 +7,12 @@ const DogHouse = lazy(() => import('../pages/home/Home'));
 const Join = lazy(() => import('../pages/user/JoinPage'));
 const Login = lazy(() => import('../pages/user/LoginPage'));
 const BoardWrite = lazy(() => import('../pages/board/BoardWritePage'));
-const GameList = lazy(() => import('../pages/game/GameList'));
-const Game = lazy(() => import('../pages/game/Game'));
+const GameList = lazy(() => import('../pages/Game/GameList'));
+const Game = lazy(() => import('../pages/Game/Game'));
 const Post = lazy(() => import('../pages/board/PostPage'));
-const ChatRoom = lazy(() => import('../pages/chat/ChatRoom'));
-const ChatRoomList = lazy(() => import('../pages/chat/ChatRoomList'));
-const ChatLayout = lazy(() => import('../pages/chat/ChatLayout'));
+const ChatRoom = lazy(() => import('../pages/Chat/ChatRoom'));
+const ChatRoomList = lazy(() => import('../pages/Chat/ChatRoomList'));
+const ChatLayout = lazy(() => import('../pages/Chat/ChatLayout'));
 const KakaoMap = lazy(() => import('../pages/map/KakaoMapPage'));
 
 const routes = [

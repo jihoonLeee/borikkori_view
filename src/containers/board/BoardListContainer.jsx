@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import axiosInstance from '../../api/axiosInstance';
 import BoardList from '../../components/board/BoardList';
 
 const BoardListContainer = () => {
@@ -12,17 +12,15 @@ const BoardListContainer = () => {
   useEffect(() => {
     const fetchPosts = async () => {
       try {
-        const response = await axios.get('/post', {
-          params: { 
-            page, 
+        const response = await axiosInstance.get('/post', {
+          params: {
+            page,
             search: searchQuery,
-            category: categoryFilter 
+            category: categoryFilter,
           },
-          withCredentials: true,
         });
-        var postList = response.data.data;
+        setPosts(response.data.data || []);
         setTotalPosts(response.data.totalCount || 0);
-        setPosts(postList || []);
       } catch (error) {
         console.error('게시글을 불러오는 중 오류가 발생했습니다:', error);
       }
@@ -34,7 +32,7 @@ const BoardListContainer = () => {
   const handleSearch = () => {
     setPage(1);
   };
-  
+
   const handleCategoryFilterChange = (category) => {
     setCategoryFilter(category);
     setPage(1);

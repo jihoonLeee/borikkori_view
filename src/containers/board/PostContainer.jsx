@@ -1,6 +1,6 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useEffect, useContext, useCallback } from 'react';
 import { useParams } from 'react-router-dom';
-import axios from 'axios';
+import axiosInstance from '../../api/axiosInstance';
 import PostView from '../../components/board/PostView';
 import { AuthContext } from '../../contexts/AuthProvider';
 
@@ -12,30 +12,32 @@ const PostContainer = () => {
   const [comments, setComments] = useState([]);
   const [totalComments, setTotalComments] = useState(0);
   const [page, setPage] = useState(1);
-
   const [prevPostId, setPrevPostId] = useState(null);
   const [nextPostId, setNextPostId] = useState(null);
+
+  const fetchComments = useCallback(async () => {
+    const response = await axiosInstance.get('/comment', {
+      params: { id: postId, page },
+    });
+    setComments(response.data.comments);
+    setTotalComments(response.data.totalCount);
+  }, [postId, page]);
 
   useEffect(() => {
     const fetchPostData = async () => {
       try {
-        const postResponse = await axios.get(`/post/${postId}`, { withCredentials: true });
+        const [postResponse, commentResponse, neighborResponse] = await Promise.all([
+          axiosInstance.get(`/post/${postId}`),
+          axiosInstance.get('/comment', { params: { id: postId, page } }),
+          axiosInstance.get(`/post/${postId}/neighbors`),
+        ]);
         setPosts(postResponse.data);
-        const commentResponse = await axios.get('/comment', {
-          params: { id: postId, page: page },
-          withCredentials: true,
-        });
-        setTotalComments(commentResponse.data.totalCount);
         setComments(commentResponse.data.comments);
-
-        // 이웃 게시글(이전글, 다음글) 데이터 가져오기
-        const neighborResponse = await axios.get(`/post/${postId}/neighbors`, { withCredentials: true });
-        const { prevPostId, nextPostId } = neighborResponse.data;
-        setPrevPostId(prevPostId);
-        setNextPostId(nextPostId);
-
+        setTotalComments(commentResponse.data.totalCount);
+        setPrevPostId(neighborResponse.data.prevPostId);
+        setNextPostId(neighborResponse.data.nextPostId);
       } catch (error) {
-        console.error("에러", error);
+        console.error('게시글 로딩 오류:', error);
       }
     };
 
@@ -48,17 +50,13 @@ const PostContainer = () => {
       return;
     }
     try {
-      const response = await axios.post(`/post/reaction`, {
-        postId : postId,
-        reactionType: "LIKE"
-      }, 
-        { withCredentials: true });
+      const response = await axiosInstance.post('/post/reaction', {
+        postId,
+        reactionType: 'LIKE',
+      });
       if (response.status === 200) {
         alert('따봉을 눌렀습니다!');
-        setPosts(prevPosts => ({
-          ...prevPosts,
-          likeCount: response.data.likeCount,
-        }));
+        setPosts((prev) => ({ ...prev, likeCount: response.data.likeCount }));
       }
     } catch (error) {
       console.error('따봉 처리 중 오류 발생', error);
@@ -72,13 +70,13 @@ const PostContainer = () => {
       return;
     }
     try {
-      const response = await axios.post(`/comment/like`, {
-        commentId : commentId,
-        reactionTyep : "LIKE"
-      }, { withCredentials: true });
+      const response = await axiosInstance.post('/comment/like', {
+        commentId,
+        reactionType: 'LIKE',
+      });
       if (response.status === 200) {
         alert('댓글에 따봉을 눌렀습니다!');
-        // Option: 전체 댓글 재조회 로직 추가 가능
+        await fetchComments();
       }
     } catch (error) {
       console.error('댓글 따봉 처리 중 오류 발생', error);
@@ -92,14 +90,14 @@ const PostContainer = () => {
       return;
     }
     try {
-      const response = await axios.post(
-        '/comment',
-        { postId: postId, email: userInfo.email, contents: content },
-        { withCredentials: true }
-      );
+      const response = await axiosInstance.post('/comment', {
+        postId,
+        email: userInfo.email,
+        contents: content,
+      });
       if (response.status === 201) {
         setContent('');
-        // Option: 전체 댓글 재조회 로직 추가 가능
+        await fetchComments();
       }
     } catch (error) {
       console.error('댓글 쓰기 실패!', error);

@@ -1,16 +1,29 @@
-import * as React from 'react';
-import { Avatar, Chip } from "@mui/material";
+import React from 'react';
 
-export default function UserAvatar({ userName }) {
+/**
+ * 사용자 아바타 컴포넌트 (MUI 제거, 순수 Tailwind)
+ * - 이미지가 없으면 이름 첫 글자 이니셜 표시
+ * - size: 'sm'|'md' (기본: 'md')
+ */
+export default function UserAvatar({ userName, size = 'md' }) {
+  const initial = userName ? userName.charAt(0).toUpperCase() : '?';
+
+  const sizeClasses = {
+    sm: 'w-7 h-7 text-xs',
+    md: 'w-9 h-9 text-sm',
+  };
+
   return (
-    <Chip
-      avatar={<Avatar alt="logo" src="/images/borikkori_logo.png" />}
-      label={userName}
-      variant="outlined"
-      sx={{ 
-        fontWeight: "bold",   
-        color: "white",
-        fontSize: "0.875rem" }} 
-    />
+    <div
+      title={userName}
+      className={`
+        ${sizeClasses[size] ?? sizeClasses.md}
+        flex items-center justify-center rounded-full shrink-0
+        bg-white/20 border border-white/30
+        font-bold text-white select-none
+      `}
+    >
+      {initial}
+    </div>
   );
 }

@@ -1,35 +1,24 @@
-import axios from 'axios';
+import axiosInstance from './axiosInstance';
 
-export const initializePost = async ({categoryType}) => {
-  const response = await axios.post('/post/init', {categoryType}, { 
-    withCredentials: true });
-    console.log(response.data);
-  return response.data; 
+export const initializePost = async ({ categoryType }) => {
+  const response = await axiosInstance.post('/post/init', { categoryType });
+  return response.data;
 };
 
-export const createPost = ({ postId, title, contents, isTemp, categoryType,subCategoryType }) =>
-  axios.post(
-    '/post',
-    { postId, title, contents, isTemp, categoryType,subCategoryType },
-    { withCredentials: true }
-  );
+export const createPost = ({ postId, title, contents, isTemp, categoryType, subCategoryType }) =>
+  axiosInstance.post('/post', { postId, title, contents, isTemp, categoryType, subCategoryType });
 
 export const deletePost = async (postId) => {
-  const response = await axios.delete(`/post/${postId}`, {
-    withCredentials: true,
-  });
+  const response = await axiosInstance.delete(`/post/${postId}`);
   return response.data;
 };
 
 export const uploadFile = async ({ file, postId }) => {
-  console.log(file);
-  console.log(postId);
   const formData = new FormData();
   formData.append('file', file);
-  formData.append('postId', postId); 
-  const response = await axios.post(`/file/upload`, formData, {
+  formData.append('postId', postId);
+  const response = await axiosInstance.post('/file/upload', formData, {
     headers: { 'Content-Type': 'multipart/form-data' },
-    withCredentials: true,
   });
-  return response.data; // 이미지 URL 반환
+  return response.data;
 };
