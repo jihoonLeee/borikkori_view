@@ -96,6 +96,17 @@ html.dark ::-webkit-scrollbar-thumb { background: #555; }
   }
 }
 
+/* ── 스크롤바 숨기기 유틸리티 ───────────────────────────────── */
+@layer utilities {
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+}
+
 /* ── Draft.js 에디터 필수 스타일 ───────────────────────────────── */
 .DraftEditor-root {
   position: relative;
