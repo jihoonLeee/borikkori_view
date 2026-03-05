@@ -70,6 +70,9 @@ module.exports = {
         'fade-in':   'fadeIn 0.2s ease-out',
         'slide-up':  'slideUp 0.3s ease-out',
         'pulse-slow':'pulse 2s cubic-bezier(0.4,0,0.6,1) infinite',
+        'combo-pop': 'comboPop 0.4s ease-out',
+        'float-up':  'floatUp 0.8s ease-out forwards',
+        shake:       'shake 0.3s ease-in-out',
       },
       keyframes: {
         spin: {
@@ -83,6 +86,22 @@ module.exports = {
         slideUp: {
           '0%':   { opacity: '0', transform: 'translateY(8px)' },
           '100%': { opacity: '1', transform: 'translateY(0)' },
+        },
+        comboPop: {
+          '0%':   { transform: 'scale(0.5)', opacity: '0' },
+          '50%':  { transform: 'scale(1.3)', opacity: '1' },
+          '100%': { transform: 'scale(1)', opacity: '1' },
+        },
+        floatUp: {
+          '0%':   { transform: 'translate(-50%, -50%)', opacity: '1' },
+          '100%': { transform: 'translate(-50%, calc(-50% - 40px))', opacity: '0' },
+        },
+        shake: {
+          '0%, 100%': { transform: 'translateX(0)' },
+          '20%':      { transform: 'translateX(-4px)' },
+          '40%':      { transform: 'translateX(4px)' },
+          '60%':      { transform: 'translateX(-3px)' },
+          '80%':      { transform: 'translateX(2px)' },
         },
       },
 
