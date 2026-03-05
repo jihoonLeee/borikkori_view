@@ -1,14 +1,30 @@
+/* 보리게임 전용 CSS — tailwind에서 처리 못 하는 keyframes 등 */
+
+/* 콤보 팝업 (CSS 애니메이션 — JSX에서 style로 참조) */
+@keyframes combo-pop {
+  0%   { transform: scale(0.5); opacity: 0; }
+  50%  { transform: scale(1.3); opacity: 1; }
+  100% { transform: scale(1);   opacity: 1; }
+}
+
+/* 점수 팝업 위로 뜨기 */
+@keyframes float-up {
+  0%   { transform: translate(-50%, -50%); opacity: 1; }
+  100% { transform: translate(-50%, calc(-50% - 40px)); opacity: 0; }
+}
+
+/* 화면 흔들림 (큰 합체 시) */
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  20%  { transform: translateX(-4px); }
+  40%  { transform: translateX(4px); }
+  60%  { transform: translateX(-3px); }
+  80%  { transform: translateX(2px); }
+}
+
+/* 합체 이펙트 (레거시, 파티클로 대체) */
 @keyframes merge {
-    0% { transform: scale(1); }
-    50% { transform: scale(1.2); }
-    100% { transform: scale(0); }
-}
-
-.dog {
-    background-size: contain;
-    background-repeat: no-repeat;
-}
-
-.merge-animation {
-    animation: merge 1s forwards;
+  0%   { transform: scale(1); }
+  50%  { transform: scale(1.2); }
+  100% { transform: scale(0); }
 }

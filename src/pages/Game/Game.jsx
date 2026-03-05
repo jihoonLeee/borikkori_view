@@ -1,322 +1,230 @@
-import React, { useState, useEffect, useRef } from 'react';
-import Matter, { Engine, Render, Runner, Bodies, Body, World, Events } from 'matter-js';
+import React, { useEffect, useRef, useState, useCallback } from 'react';
+import { useTheme } from '../../contexts/ThemeProvider';
+import { GAME_STATUS } from './utils/gameConstants';
+import useGameState from './hooks/useGameState';
+import useGameEngine from './hooks/useGameEngine';
+import useGameControls from './hooks/useGameControls';
+import GameOverOverlay from './components/GameOverOverlay';
+import GameHUD, { ScorePopups } from './components/GameHUD';
 import { DOGS } from './Dogs';
-import Button from '@mui/material/Button';
-import Stack from '@mui/material/Stack';
 
-const DROP_DELAY = 700;
-
+/**
+ * 보리게임 — 수박게임 스타일 강아지 합체 퍼즐
+ */
 export default function Game() {
   const containerRef = useRef(null);
   const canvasRef = useRef(null);
+  const gameAreaRef = useRef(null);
+  const { isDark } = useTheme();
 
-  // Matter.js 관련 상태는 useRef로 관리
-  const engineRef = useRef(null);
-  const disableActionRef = useRef(false);
-  const intervalRef = useRef(null);
-  const currentBodyRef = useRef(null);
-  const currentDogRef = useRef(null);
+  // --- 게임 상태 ---
+  const {
+    score, bestScore, addScore,
+    gameStatus, gameOver, resetGame, startGame,
+    comboCount, updateCombo,
+    nextDogIndex, consumeNextDog,
+    scorePopups,
+  } = useGameState();
 
-  // 초기 치수는 한 번만 계산합니다.
-  const [dimensions, setDimensions] = useState(null);
+  // 캔버스 DOM rect (점수 팝업 좌표 변환용)
+  const [canvasRect, setCanvasRect] = useState(null);
 
-  // 점수 관리
-  const scoreRef = useRef(0);
-  const [score, setScore] = useState(0);
+  // 조작 힌트 표시
+  const [showHint, setShowHint] = useState(true);
 
-  // 순위 예시
-  const [rankings] = useState([
-    { name: '지훈', score: 100 },
-    { name: '짱', score: 80 },
-    { name: '보리', score: 70 },
-  ]);
+  // 신기록 여부
+  const isNewBest = gameStatus === GAME_STATUS.GAME_OVER && score === bestScore && score > 0;
 
-  // 컴포넌트 마운트 시 한 번 초기화
+  // --- 합체 콜백 ---
+  const handleMerge = useCallback((index, baseScore, x, y) => {
+    updateCombo();
+    addScore(baseScore, x, y);
+  }, [updateCombo, addScore]);
+
+  // --- 게임오버 콜백 ---
+  const handleGameOver = useCallback(() => {
+    gameOver();
+  }, [gameOver]);
+
+  // --- Matter.js 엔진 ---
+  const engine = useGameEngine({
+    containerRef,
+    canvasRef,
+    isDark,
+    onMerge: handleMerge,
+    onGameOver: handleGameOver,
+    consumeNextDog,
+  });
+
+  // --- 입력 컨트롤 ---
+  useGameControls({
+    canvasRef,
+    currentBodyRef: engine.currentBodyRef,
+    currentDogRef: engine.currentDogRef,
+    disableActionRef: engine.disableActionRef,
+    dimensionsRef: engine.dimensionsRef,
+    dropDog: engine.dropDog,
+    moveLeft: engine.moveLeft,
+    moveRight: engine.moveRight,
+    gameOverFlag: gameStatus === GAME_STATUS.GAME_OVER,
+  });
+
+  // --- 초기화 ---
   useEffect(() => {
-    // 처음 계산한 치수를 사용
-    const dims = calculateDimensions();
-    setDimensions(dims);
-    const imagePaths = DOGS.map(dog => `${dog.name}.png`);
-    preloadImages(imagePaths, () => {
-      initializeGame(dims);
+    engine.preloadImages(() => {
+      const dims = engine.initializeGame();
+      startGame();
+
+      // 캔버스 rect 업데이트
+      if (canvasRef.current) {
+        setCanvasRect(canvasRef.current.getBoundingClientRect());
+      }
     });
-    document.addEventListener('keydown', handleKeyDown);
-    document.addEventListener('keyup', handleKeyUp);
+
+    // 조작 힌트 3초 후 숨김
+    const hintTimer = setTimeout(() => setShowHint(false), 3000);
+
     return () => {
-        document.removeEventListener('keydown', handleKeyDown);
-        document.removeEventListener('keyup', handleKeyUp);
-      cleanupEngine();
+      engine.cleanupEngine();
+      clearTimeout(hintTimer);
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // 이미지 프리로드 함수
-  const preloadImages = (srcArray, callback) => {
-    let loaded = 0;
-    srcArray.forEach(src => {
-      const img = new Image();
-      img.src = src;
-      img.onload = () => {
-        loaded++;
-        if (loaded === srcArray.length) callback();
-      };
-      img.onerror = err => console.error(`Error loading ${src}`, err);
-    });
-  };
-
-  // 창 크기에 따른 초기 치수 계산 (리사이즈 이벤트 제거)
-  const calculateDimensions = () => {
-    const isDesktop = window.innerWidth >= 1024;
-    const renderWidth = isDesktop ? 600 : 380;
-    const renderHeight = isDesktop ? 800 : 550;
-    const startDog = isDesktop ? 280 : 190;
-    const maxR = isDesktop ? 800 : 400;
-    const maxL = isDesktop ? 50 : 20;
-    return { renderWidth, renderHeight, startDog, maxR, maxL };
-  };
-
-  // 기존 엔진 정리
-  const cleanupEngine = () => {
-    if (engineRef.current) {
-      World.clear(engineRef.current.world, false);
-      Engine.clear(engineRef.current);
-      engineRef.current = null;
-    }
-  };
-
-  // dims를 인자로 받아 게임 초기화 (한 번만 호출)
-  const initializeGame = (dims) => {
-    if (!dims || !dims.renderWidth) return;
-    cleanupEngine();
-    const engine = Engine.create();
-    engineRef.current = engine;
-
-    const render = Render.create({
-      element: containerRef.current,
-      engine: engine,
-      canvas: canvasRef.current,
-      options: {
-        width: dims.renderWidth,
-        height: dims.renderHeight,
-        background: '#FAF8F5', // Secondary 색상
-        wireframes: false,
-      },
-    });
-
-    // 경계 생성 및 추가
-    const boundaries = createBoundaries(dims);
-    World.add(engine.world, boundaries);
-
-    // 첫 강아지 추가
-    addDog(engine, dims);
-
-    Runner.run(engine);
-    Render.run(render);
-
-    // 충돌 이벤트 등록
-    Events.on(engine, 'collisionStart', handleCollision);
-  };
-
-  // dims를 받아 경계 바디 생성
-  const createBoundaries = (dims) => {
-    const { renderWidth, renderHeight } = dims;
-    const floor = Bodies.rectangle(renderWidth / 2, renderHeight + 30, renderWidth, 60, { 
-      isStatic: true, render: { fillStyle: '#8B5E3C' } 
-    });
-    const leftWall = Bodies.rectangle(-30, renderHeight / 2, 60, renderHeight, { 
-      isStatic: true, render: { fillStyle: '#8B5E3C' } 
-    });
-    const rightWall = Bodies.rectangle(renderWidth + 30, renderHeight / 2, 60, renderHeight, { 
-      isStatic: true, render: { fillStyle: '#8B5E3C' } 
-    });
-    const topLine = Bodies.rectangle(renderWidth / 2, -10, renderWidth, 20, { 
-      isStatic: true, isSensor: true, label: 'topLine', render: { fillStyle: 'transparent' } 
-    });
-    return [floor, leftWall, rightWall, topLine];
-  };
-
-  // 키 이벤트 핸들러
-  const handleKeyDown = (event) => {
-    if (disableActionRef.current) return;
-    switch (event.code) {
-      case 'KeyA':
-        startInterval(moveLeft);
-        break;
-      case 'KeyD':
-        startInterval(moveRight);
-        break;
-      case 'KeyS':
-        dropDog();
-        break;
-      default:
-        break;
-    }
-  };
-
-  const handleKeyUp = (event) => {
-    if (event.code === 'KeyA' || event.code === 'KeyD') {
-      clearInterval(intervalRef.current);
-      intervalRef.current = null;
-    }
-  };
-
-  const startInterval = (moveFunction) => {
-    if (intervalRef.current) return;
-    intervalRef.current = setInterval(moveFunction, 8);
-  };
-
-  const moveLeft = () => {
-    const body = currentBodyRef.current;
-    const dog = currentDogRef.current;
-    if (!body || !dog || !dimensions) return;
-    if (body.position.x - dog.radius > dimensions.maxL) {
-      Body.setPosition(body, { x: body.position.x - 3, y: body.position.y });
-    }
-  };
-
-  const moveRight = () => {
-    const body = currentBodyRef.current;
-    const dog = currentDogRef.current;
-    if (!body || !dog || !dimensions) return;
-    if (body.position.x + dog.radius < dimensions.maxR) {
-      Body.setPosition(body, { x: body.position.x + 3, y: body.position.y });
-    }
-  };
-
-  const dropDog = () => {
-    if (!currentBodyRef.current) return;
-    currentBodyRef.current.isSleeping = false;
-    disableActionRef.current = true;
-    setTimeout(() => {
-      if (engineRef.current && dimensions) {
-        addDog(engineRef.current, dimensions);
+  // canvasRect 주기적 업데이트 (리사이즈 대응)
+  useEffect(() => {
+    const updateRect = () => {
+      if (canvasRef.current) {
+        setCanvasRect(canvasRef.current.getBoundingClientRect());
       }
-      disableActionRef.current = false;
-    }, DROP_DELAY);
-  };
+    };
+    window.addEventListener('resize', updateRect);
+    return () => window.removeEventListener('resize', updateRect);
+  }, []);
 
-  // 충돌 이벤트 처리: 상단 센서와 강아지 합체
-  const handleCollision = (event) => {
-    event.pairs.forEach(pair => {
-      const { bodyA, bodyB, collision } = pair;
-      if (bodyA.label === 'topLine' || bodyB.label === 'topLine') {
-        alert(`게임오버\n${scoreRef.current}점 입니다!`);
-        window.location.reload();
-      }
-      if (bodyA.index !== undefined && bodyA.index === bodyB.index) {
-        const inc = mergeDogs(pair);
-        scoreRef.current += inc;
-        setScore(scoreRef.current);
+  // --- 재시작 ---
+  const handleRestart = useCallback(() => {
+    resetGame();
+    engine.preloadImages(() => {
+      engine.initializeGame();
+      if (canvasRef.current) {
+        setCanvasRect(canvasRef.current.getBoundingClientRect());
       }
     });
-  };
+    setShowHint(true);
+    setTimeout(() => setShowHint(false), 3000);
+  }, [resetGame, engine]);
 
-  // 같은 강아지끼리 충돌 시 합성
-  const mergeDogs = (collision) => {
-    const { bodyA, bodyB, collision: { supports } } = collision;
-    const index = bodyA.index;
-    if (index === DOGS.length - 1) return 0;
-    World.remove(engineRef.current.world, [bodyA, bodyB]);
-    addMergeEffect(supports[0].x, supports[0].y);
-    const newDog = DOGS[index + 1];
-    const newBody = Bodies.circle(supports[0].x, supports[0].y, newDog.radius, {
-      render: { sprite: { texture: `${newDog.name}.png` } },
-      index: index + 1,
-      density: (10 - index) / 10,
-      friction: 0.05,
-      frictionAir: 0.05,
-    });
-    World.add(engineRef.current.world, newBody);
-    return Math.pow(index + 1, 2);
-  };
+  // --- 점수 공유 ---
+  const handleShare = useCallback(async () => {
+    const text = `🐕 보리게임에서 ${score.toLocaleString()}점을 기록했어요!`;
+    if (navigator.share) {
+      try {
+        await navigator.share({ title: '보리게임', text });
+      } catch (e) {
+        // 사용자 취소
+      }
+    } else {
+      try {
+        await navigator.clipboard.writeText(text);
+        alert('점수가 클립보드에 복사되었습니다!');
+      } catch (e) {
+        // 복사 실패
+      }
+    }
+  }, [score]);
 
-  // 새로운 강아지 추가
-  const addDog = (engine, dims) => {
-    const randomIndex = Math.floor(Math.random() * 5);
-    const dog = DOGS[randomIndex];
-    const body = Bodies.circle(dims.startDog, 50, dog.radius, {
-      index: randomIndex,
-      isSleeping: true,
-      render: { sprite: { texture: `${dog.name}.png` } },
-      restitution: 0.3,
-      density: (10 - randomIndex) / 10,
-      friction: 0.5,
-      frictionAir: 0.01,
-    });
-    currentBodyRef.current = body;
-    currentDogRef.current = dog;
-    World.add(engine.world, body);
-  };
-
-  // 폭발 이펙트 추가 후 제거
-  const addMergeEffect = (x, y) => {
-    const explosion = Bodies.circle(x, y, 50, {
-      render: {
-        fillStyle: 'orange',
-        sprite: {
-          texture: 'images/explosion.png',
-          xScale: 1.5,
-          yScale: 1.5,
-        },
-      },
-      isSensor: true,
-    });
-    World.add(engineRef.current.world, explosion);
-    setTimeout(() => {
-      World.remove(engineRef.current.world, explosion);
-    }, 500);
-  };
+  // 모바일 감지
+  const isMobile = typeof window !== 'undefined' &&
+    ('ontouchstart' in window || navigator.maxTouchPoints > 0);
 
   return (
-    <div className="game-container w-full h-screen bg-secondary flex flex-col">
-      {/* 헤더 */}
-      <header className="w-full bg-primary text-white p-4 flex justify-between items-center">
-        <h1 className="text-xl font-bold">도그 매치 게임</h1>
-        <div className="flex items-center space-x-4">
-          <div className="score text-lg">점수: {score}</div>
-          <div className="rank text-sm">
-            {rankings.map((r, i) => (
-              <span key={i}>{i + 1}. {r.name} ({r.score}점) </span>
-            ))}
+    <div className="w-full min-h-screen bg-secondary dark:bg-dark-surface flex flex-col transition-colors duration-200">
+      {/* 게임 영역 */}
+      <div className="flex-grow flex flex-col items-center justify-center px-2 py-4 md:py-6">
+        {/* 게임 제목 */}
+        <h1 className="text-lg md:text-xl font-bold text-content-primary dark:text-white mb-3
+                       flex items-center gap-2">
+          <span>🐕</span>
+          <span>보리게임</span>
+        </h1>
+
+        {/* 캔버스 컨테이너 */}
+        <div
+          ref={containerRef}
+          className="relative w-full rounded-2xl overflow-hidden shadow-modal"
+          style={{ maxWidth: engine.dimensionsRef.current?.width || 600 }}
+        >
+          {/* 게임 영역 (상대 위치 기준) */}
+          <div ref={gameAreaRef} className="relative">
+            <canvas
+              ref={canvasRef}
+              className="w-full block rounded-2xl"
+              style={{ touchAction: 'none' }}
+            />
+
+            {/* HUD 오버레이 */}
+            <GameHUD
+              score={score}
+              bestScore={bestScore}
+              comboCount={comboCount}
+              nextDogIndex={nextDogIndex}
+            />
+
+            {/* 점수 팝업 */}
+            <ScorePopups
+              popups={scorePopups}
+              canvasRect={canvasRect}
+              dims={engine.dimensionsRef.current}
+            />
+
+            {/* 게임오버 오버레이 */}
+            {gameStatus === GAME_STATUS.GAME_OVER && (
+              <GameOverOverlay
+                score={score}
+                bestScore={bestScore}
+                isNewBest={isNewBest}
+                onRestart={handleRestart}
+                onShare={handleShare}
+              />
+            )}
+
+            {/* 조작 힌트 */}
+            {showHint && gameStatus === GAME_STATUS.PLAYING && (
+              <div className="absolute bottom-4 left-1/2 -translate-x-1/2 z-10
+                              bg-black/60 backdrop-blur-sm text-white text-xs
+                              px-4 py-2 rounded-full whitespace-nowrap
+                              transition-opacity duration-500"
+                   style={{ opacity: showHint ? 1 : 0 }}>
+                {isMobile
+                  ? '👆 드래그하여 이동 · 놓으면 내려'
+                  : '⌨️ A/D 이동 · S/Space 내려'}
+              </div>
+            )}
           </div>
         </div>
-      </header>
-      
-      {/* 게임 플레이 영역 */}
-      <div className="flex-grow flex flex-col items-center justify-center p-4">
-        <div ref={containerRef} className="gameplay-container w-full max-w-lg relative">
-          <canvas ref={canvasRef} className="w-full rounded-lg shadow-lg" />
-        </div>
-      </div>
 
-      {/* 컨트롤 버튼 */}
-      <div className="controls p-4 flex justify-center">
-        <Stack direction="row" spacing={2}>
-          <Button variant="contained" size="large"
-            onTouchStart={() => handleKeyDown({ code: 'KeyA' })}
-            onTouchEnd={() => handleKeyUp({ code: 'KeyA' })}
-            onMouseDown={() => handleKeyDown({ code: 'KeyA' })}
-            onMouseUp={() => handleKeyUp({ code: 'KeyA' })}
-            style={{ backgroundColor: '#8B5E3C' }}
-          >
-            왼쪽
-          </Button>
-          <Button variant="contained" size="large"
-            onTouchStart={() => handleKeyDown({ code: 'KeyS' })}
-            onMouseDown={() => handleKeyDown({ code: 'KeyS' })}
-            style={{ backgroundColor: '#4caf50' }}
-          >
-            내려
-          </Button>
-          <Button variant="contained" size="large"
-            onTouchStart={() => handleKeyDown({ code: 'KeyD' })}
-            onTouchEnd={() => handleKeyUp({ code: 'KeyD' })}
-            onMouseDown={() => handleKeyDown({ code: 'KeyD' })}
-            onMouseUp={() => handleKeyUp({ code: 'KeyD' })}
-            style={{ backgroundColor: '#8B5E3C' }}
-          >
-            오른쪽
-          </Button>
-        </Stack>
+        {/* 강아지 합체 가이드 (하단) */}
+        <div className="mt-4 w-full overflow-x-auto" style={{ maxWidth: engine.dimensionsRef.current?.width || 600 }}>
+          <div className="flex items-center justify-center gap-1 px-2 py-2
+                          bg-surface dark:bg-dark-surface2 rounded-xl">
+            {DOGS.map((dog, i) => {
+              const name = dog.name.split('/').pop();
+              return (
+                <div key={i} className="flex flex-col items-center flex-shrink-0">
+                  <img
+                    src={`${dog.name}.png`}
+                    alt={name}
+                    className="w-5 h-5 md:w-6 md:h-6 object-contain"
+                  />
+                  {i < 11 && (
+                    <span className="text-[8px] text-content-secondary dark:text-gray-500">→</span>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+        </div>
       </div>
     </div>
   );
