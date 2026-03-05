@@ -1,12 +1,8 @@
-import { useQuery } from "react-query";
-import axios from "axios";
+import { useQuery } from 'react-query';
+import axiosInstance from '../../api/axiosInstance';
 
 const fetchMbtiResult = async (result) => {
-  const response = await axios.post(
-    '/mbti',
-    { result: result.toUpperCase() },
-    { withCredentials: true }
-  );
+  const response = await axiosInstance.post('/mbti', { result: result.toUpperCase() });
   return response.data;
 };
 

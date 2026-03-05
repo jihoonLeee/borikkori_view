@@ -1,5 +1,5 @@
-import React, { createContext, useState, useEffect } from 'react';
-import axios from 'axios';
+import React, { createContext, useState, useEffect, useMemo } from 'react';
+import axiosInstance from '../api/axiosInstance';
 import Spinner from '../components/common/Spinner';
 
 export const AuthContext = createContext();
@@ -7,13 +7,11 @@ export const AuthContext = createContext();
 export const AuthProvider = ({ children }) => {
     const [authenticated, setAuthenticated] = useState(null);
     const [userInfo, setUserInfo] = useState(null);
+
     useEffect(() => {
         const checkUserStatus = async () => {
             try {
-                const response = await axios.get(
-                    '/user/userInfo',
-                    { withCredentials: true }  
-                );
+                const response = await axiosInstance.get('/user/userInfo');
                 if (response.status === 200) {
                     setUserInfo(response.data);
                     setAuthenticated(true);
@@ -24,11 +22,18 @@ export const AuthProvider = ({ children }) => {
         };
         checkUserStatus();
     }, []);
+
+    const contextValue = useMemo(
+        () => ({ authenticated, setAuthenticated, userInfo }),
+        [authenticated, userInfo]
+    );
+
     if (authenticated === null) {
         return <Spinner />;
     }
+
     return (
-        <AuthContext.Provider value={{ authenticated, setAuthenticated, userInfo }}>
+        <AuthContext.Provider value={contextValue}>
             {children}
         </AuthContext.Provider>
     );

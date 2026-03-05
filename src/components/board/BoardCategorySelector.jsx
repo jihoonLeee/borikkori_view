@@ -1,47 +1,36 @@
 import React, { useState, useEffect } from 'react';
-import { 
-  FormControl, 
-  FormLabel, 
-  Select, 
-  Option, 
-  Box, 
-  Typography, 
-  Tooltip
-} from '@mui/joy';
-import { 
-  BOARD_CATEGORIES, 
-  getOrderedMainCategories, 
-  getSubCategories 
+import {
+  BOARD_CATEGORIES,
+  getOrderedMainCategories,
+  getSubCategories,
 } from '../../constants/boardCategory';
 
+/**
+ * 카테고리 선택 컴포넌트 (MUI Joy 제거, 순수 Tailwind)
+ * - 메인 카테고리 선택 시 해당 하위 카테고리 드롭다운 표시
+ */
 const BoardCategorySelector = ({ selectedCategory, onCategoryChange }) => {
-  const [mainCategory, setMainCategory] = useState('');
-  const [subCategory, setSubCategory] = useState('');
-  const [availableSubCategories, setAvailableSubCategories] = useState([]);
+  const [mainCategory, setMainCategory]           = useState('');
+  const [subCategory, setSubCategory]             = useState('');
+  const [availableSubs, setAvailableSubs]         = useState([]);
   const mainCategories = getOrderedMainCategories();
 
-  // 선택된 카테고리 값이 외부에서 변경되는 경우 핸들링
+  /* 외부에서 selectedCategory 변경 시 동기화 */
   useEffect(() => {
-    if (selectedCategory) {
-      // 메인 카테고리인 경우
-      if (BOARD_CATEGORIES[selectedCategory]) {
-        setMainCategory(selectedCategory);
-        setSubCategory('');
-        // 해당 메인 카테고리의 하위 카테고리 가져오기
-        setAvailableSubCategories(getSubCategories(selectedCategory));
-      } 
-      // 하위 카테고리인 경우
-      else {
-        // 하위 카테고리에서 부모 카테고리 찾기
-        for (const mainCat of Object.values(BOARD_CATEGORIES)) {
-          if (mainCat.subCategories) {
-            for (const subCat of Object.values(mainCat.subCategories)) {
-              if (subCat.key === selectedCategory) {
-                setMainCategory(mainCat.key);
-                setSubCategory(selectedCategory);
-                setAvailableSubCategories(getSubCategories(mainCat.key));
-                break;
-              }
+    if (!selectedCategory) return;
+    if (BOARD_CATEGORIES[selectedCategory]) {
+      setMainCategory(selectedCategory);
+      setSubCategory('');
+      setAvailableSubs(getSubCategories(selectedCategory));
+    } else {
+      for (const mainCat of Object.values(BOARD_CATEGORIES)) {
+        if (mainCat.subCategories) {
+          for (const subCat of Object.values(mainCat.subCategories)) {
+            if (subCat.key === selectedCategory) {
+              setMainCategory(mainCat.key);
+              setSubCategory(selectedCategory);
+              setAvailableSubs(getSubCategories(mainCat.key));
+              break;
             }
           }
         }
@@ -49,87 +38,65 @@ const BoardCategorySelector = ({ selectedCategory, onCategoryChange }) => {
     }
   }, [selectedCategory]);
 
-  // 메인 카테고리 변경 핸들러
-  const handleMainCategoryChange = (event, newValue) => {
-    setMainCategory(newValue);
-    
-    // 하위 카테고리 목록 업데이트
-    const subCategories = getSubCategories(newValue);
-    setAvailableSubCategories(subCategories);
-    
-    // 하위 카테고리 초기화
+  const handleMainChange = (e) => {
+    const val = e.target.value;
+    setMainCategory(val);
+    const subs = getSubCategories(val);
+    setAvailableSubs(subs);
     setSubCategory('');
-    
-    // 부모 컴포넌트에 변경 알림
-    onCategoryChange(newValue, '');
+    onCategoryChange(val, '');
   };
 
-  // 하위 카테고리 변경 핸들러
-  const handleSubCategoryChange = (event, newValue) => {
-    setSubCategory(newValue);
-    
-    // 부모 컴포넌트에 변경 알림
-    onCategoryChange(mainCategory, newValue);
+  const handleSubChange = (e) => {
+    const val = e.target.value;
+    setSubCategory(val);
+    onCategoryChange(mainCategory, val);
   };
+
+  const selectClass =
+    'w-full px-3 py-2.5 rounded-xl text-sm ' +
+    'bg-surface dark:bg-dark-surface3 ' +
+    'border border-surface-3 dark:border-dark-border ' +
+    'text-content-primary dark:text-white ' +
+    'focus:outline-none focus:ring-2 focus:ring-primary/40 ' +
+    'transition duration-150 cursor-pointer';
 
   return (
-    <Box sx={{ display: 'flex', flexDirection: { xs: 'column', sm: 'row' }, gap: 2, width: '100%' }}>
-      {/* 메인 카테고리 선택 */}
-      <FormControl sx={{ minWidth: { xs: '100%', sm: '50%' } }}>
-        <FormLabel>게시판 카테고리</FormLabel>
-        <Select
-          value={mainCategory}
-          onChange={handleMainCategoryChange}
-          placeholder="카테고리를 선택하세요"
-          required
-        >
-          {mainCategories.map((category) => (
-            <Option 
-              key={category.key} 
-              value={category.key}
-            >
-              <Tooltip title={category.description} placement="right">
-                <Box sx={{ display: 'flex', justifyContent: 'space-between', width: '100%' }}>
-                  <Typography>{category.name}</Typography>
-                </Box>
-              </Tooltip>
-            </Option>
+    <div className="flex flex-col sm:flex-row gap-3 w-full">
+      {/* 메인 카테고리 */}
+      <div className="flex-1 flex flex-col gap-1">
+        <label className="text-sm font-medium text-content-primary dark:text-white">
+          게시판 카테고리 <span className="text-red-500">*</span>
+        </label>
+        <select value={mainCategory} onChange={handleMainChange} className={selectClass} required>
+          <option value="" disabled>카테고리를 선택하세요</option>
+          {mainCategories.map((cat) => (
+            <option key={cat.key} value={cat.key} title={cat.description}>
+              {cat.name}
+            </option>
           ))}
-        </Select>
-      </FormControl>
+        </select>
+      </div>
 
-      {/* 하위 카테고리 선택 (있는 경우에만) */}
-      {availableSubCategories.length > 0 && (
-        <FormControl sx={{ minWidth: { xs: '100%', sm: '50%' } }}>
-          <FormLabel>하위 카테고리</FormLabel>
-          <Select
-            value={subCategory}
-            onChange={handleSubCategoryChange}
-            placeholder="선택 (선택사항)"
-          >
-            <Option value="">선택 안함</Option>
-            {availableSubCategories.map((subCat) => (
-              <Option 
-                key={subCat.key} 
-                value={subCat.key}
-              >
-                <Tooltip title={subCat.description} placement="right">
-                  <Box sx={{ display: 'flex', justifyContent: 'space-between', width: '100%' }}>
-                    <Typography>{subCat.name}</Typography>
-                    {subCat.isNotice && (
-                      <Typography sx={{ fontSize: '0.75rem', color: 'warning.main' }}>
-                        공지
-                      </Typography>
-                    )}
-                  </Box>
-                </Tooltip>
-              </Option>
+      {/* 하위 카테고리 (있을 때만) */}
+      {availableSubs.length > 0 && (
+        <div className="flex-1 flex flex-col gap-1">
+          <label className="text-sm font-medium text-content-primary dark:text-white">
+            하위 카테고리
+            <span className="ml-1 text-xs text-content-disabled dark:text-gray-500">(선택사항)</span>
+          </label>
+          <select value={subCategory} onChange={handleSubChange} className={selectClass}>
+            <option value="">선택 안함</option>
+            {availableSubs.map((sub) => (
+              <option key={sub.key} value={sub.key} title={sub.description}>
+                {sub.name}{sub.isNotice ? ' 📢' : ''}
+              </option>
             ))}
-          </Select>
-        </FormControl>
+          </select>
+        </div>
       )}
-    </Box>
+    </div>
   );
 };
 
-export default BoardCategorySelector; 
+export default BoardCategorySelector;

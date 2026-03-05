@@ -1,13 +1,34 @@
-import React, { useState, useRef } from 'react';
-import { TextField, Button, Grid, Link, Box } from '@mui/material';
-import Fade from '@mui/material/Fade';
+import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
 
+/** 입력 필드 공통 컴포넌트 */
+const Field = ({ id, label, type = 'text', formik, autoComplete }) => (
+  <div className="flex flex-col gap-1.5">
+    <label htmlFor={id} className="text-sm font-medium text-content-primary dark:text-white">
+      {label}
+    </label>
+    <input
+      id={id}
+      name={id}
+      type={type}
+      autoComplete={autoComplete}
+      onChange={formik.handleChange}
+      onBlur={formik.handleBlur}
+      value={formik.values[id]}
+      className="input"
+      placeholder={label}
+    />
+    {formik.touched[id] && formik.errors[id] && (
+      <p className="text-xs text-red-500">{formik.errors[id]}</p>
+    )}
+  </div>
+);
+
 const JoinForm = ({ onSubmit, onVerify }) => {
   const [isVerified, setIsVerified] = useState(false);
-  const [email, setEmail] = useState('');
-  const nodeRef = useRef(null);
+  const [verifyLoading, setVerifyLoading] = useState(false);
 
   const formik = useFormik({
     initialValues: {
@@ -15,19 +36,19 @@ const JoinForm = ({ onSubmit, onVerify }) => {
       email: '',
       verificationNumber: '',
       password: '',
-      passwordCheck: ''
+      passwordCheck: '',
     },
     validationSchema: Yup.object({
-      name: Yup.string().required('필수 항목입니다.'),
-      email: Yup.string().email('이메일 형식이 틀렸습니다.').required('필수 항목입니다.'),
-      password: Yup.string().required('필수 항목입니다.'),
+      name:          Yup.string().required('닉네임을 입력해주세요.'),
+      email:         Yup.string().email('이메일 형식이 올바르지 않습니다.').required('이메일을 입력해주세요.'),
+      password:      Yup.string().min(6, '비밀번호는 6자 이상이어야 합니다.').required('비밀번호를 입력해주세요.'),
       passwordCheck: Yup.string()
         .oneOf([Yup.ref('password'), null], '비밀번호가 일치하지 않습니다.')
-        .required('필수 항목입니다.'),
+        .required('비밀번호 확인을 입력해주세요.'),
     }),
-    onSubmit: values => {
+    onSubmit: (values) => {
       if (!isVerified) {
-        alert("이메일 인증이 필요합니다.");
+        alert('이메일 인증이 필요합니다.');
         return;
       }
       onSubmit({
@@ -40,65 +61,108 @@ const JoinForm = ({ onSubmit, onVerify }) => {
   });
 
   const handleVerify = async () => {
-    const result = await onVerify(email);
-    if (result) {
-      setIsVerified(true);
+    if (!formik.values.email) {
+      formik.setFieldTouched('email', true);
+      return;
+    }
+    setVerifyLoading(true);
+    try {
+      const result = await onVerify(formik.values.email);
+      if (result) setIsVerified(true);
+    } finally {
+      setVerifyLoading(false);
     }
   };
 
   return (
-    <Box component="form" noValidate onSubmit={formik.handleSubmit} sx={{ mt: 3 }}>
-      <Grid container spacing={2}>
-        <Grid item xs={12}>
-          <TextField required fullWidth id="name" label="닉네임" name="name" autoComplete="family-name" onChange={formik.handleChange} value={formik.values.name} />
-          {formik.touched.name && formik.errors.name && <div style={{ color: 'red', textAlign: 'left', fontSize:'12px' }}>{formik.errors.name}</div>}
-        </Grid>
-        <Grid item xs={10}>
-          <TextField
-            required
-            fullWidth
-            id="email"
-            label="이메일"
-            name="email"
-            autoComplete="email"
-            value={formik.values.email}
-            onChange={(event) => {
-              formik.handleChange(event);
-              setEmail(event.target.value);
-            }}
-          />
-          {formik.touched.email && formik.errors.email && <div style={{ color: 'red', textAlign: 'left', fontSize:'12px' }}>{formik.errors.email}</div>}
-        </Grid>
-        <Grid item xs={2}>
-          <Button onClick={handleVerify} type="button" fullWidth variant="contained" sx={{ height: 55, mt: 0, ml: -1, backgroundColor: '#4caf50', '&:hover': { backgroundColor: '#357a38' } }}>
-            인증
-          </Button>
-        </Grid>
-        {isVerified && (
-          <Fade in={isVerified}>
-            <Grid item xs={12} ref={nodeRef}>
-              <TextField required fullWidth id="verificationNumber" label="인증번호" name="verificationNumber" onChange={formik.handleChange} value={formik.values.verificationNumber} />
-            </Grid>
-          </Fade>
-        )}
-        <Grid item xs={12}>
-          <TextField required fullWidth name="password" label="비밀번호" type="password" id="password" autoComplete="new-password" onChange={formik.handleChange} value={formik.values.password} />
-          {formik.touched.password && formik.errors.password && <div style={{ color: 'red', textAlign: 'left', fontSize:'12px' }}>{formik.errors.password}</div>}
-        </Grid>
-        <Grid item xs={12}>
-          <TextField required fullWidth name="passwordCheck" label="비밀번호 확인" type="password" id="passwordCheck" autoComplete="passwordCheck" onChange={formik.handleChange} value={formik.values.passwordCheck} />
-          {formik.touched.passwordCheck && formik.errors.passwordCheck && <div style={{ color: 'red', textAlign: 'left', fontSize:'12px' }}>{formik.errors.passwordCheck}</div>}
-        </Grid>
-      </Grid>
-      <Button type="submit" fullWidth variant="contained" sx={{ mt: 3, mb: 2, backgroundColor: '#4caf50', '&:hover': { backgroundColor: '#357a38' } }}>
-        회원가입
-      </Button>
-      <Grid container justifyContent="flex-end">
-        <Grid item>
-          <Link href="/login" variant="body2">이미 가입하셨나요?</Link>
-        </Grid>
-      </Grid>
-    </Box>
+    <div className="min-h-screen flex items-center justify-center
+                    bg-secondary dark:bg-dark-surface px-4 py-12">
+      <div className="w-full max-w-sm bg-surface dark:bg-dark-surface2
+                      rounded-2xl shadow-modal p-8
+                      border border-surface-3 dark:border-dark-border
+                      animate-fade-in">
+
+        {/* 로고 + 제목 */}
+        <div className="flex flex-col items-center mb-8">
+          <img className="h-16 w-auto mb-4" src="/images/borikkori_brown.svg" alt="보리꼬리" />
+          <h1 className="text-xl font-bold text-content-primary dark:text-white">회원가입</h1>
+          <p className="mt-1 text-sm text-content-secondary dark:text-gray-400">
+            함께 해요, 반려견 친구들! 🐾
+          </p>
+        </div>
+
+        {/* 폼 */}
+        <form noValidate onSubmit={formik.handleSubmit} className="flex flex-col gap-4">
+
+          <Field id="name" label="닉네임" formik={formik} autoComplete="family-name" />
+
+          {/* 이메일 + 인증 버튼 */}
+          <div className="flex flex-col gap-1.5">
+            <label htmlFor="email" className="text-sm font-medium text-content-primary dark:text-white">
+              이메일
+            </label>
+            <div className="flex gap-2">
+              <input
+                id="email"
+                name="email"
+                type="email"
+                autoComplete="email"
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
+                value={formik.values.email}
+                className="input flex-1"
+                placeholder="이메일"
+                disabled={isVerified}
+              />
+              <button
+                type="button"
+                onClick={handleVerify}
+                disabled={isVerified || verifyLoading}
+                className="btn btn-accent shrink-0 text-xs px-3"
+              >
+                {isVerified ? '인증됨 ✓' : verifyLoading ? '전송중...' : '인증'}
+              </button>
+            </div>
+            {formik.touched.email && formik.errors.email && (
+              <p className="text-xs text-red-500">{formik.errors.email}</p>
+            )}
+          </div>
+
+          {/* 인증번호 입력 (이메일 인증 후 노출) */}
+          {isVerified && (
+            <div className="flex flex-col gap-1.5 animate-fade-in">
+              <label htmlFor="verificationNumber" className="text-sm font-medium text-content-primary dark:text-white">
+                인증번호
+              </label>
+              <input
+                id="verificationNumber"
+                name="verificationNumber"
+                type="text"
+                onChange={formik.handleChange}
+                value={formik.values.verificationNumber}
+                className="input"
+                placeholder="인증번호를 입력해주세요"
+              />
+            </div>
+          )}
+
+          <Field id="password"      label="비밀번호"      type="password" formik={formik} autoComplete="new-password" />
+          <Field id="passwordCheck" label="비밀번호 확인"  type="password" formik={formik} autoComplete="new-password" />
+
+          <button type="submit" className="btn btn-accent w-full mt-2">
+            회원가입
+          </button>
+        </form>
+
+        {/* 로그인 링크 */}
+        <p className="mt-6 text-center text-sm text-content-secondary dark:text-gray-400">
+          이미 계정이 있으신가요?{' '}
+          <Link to="/login" className="text-primary dark:text-primary-light font-semibold hover:underline">
+            로그인
+          </Link>
+        </p>
+      </div>
+    </div>
   );
 };
 

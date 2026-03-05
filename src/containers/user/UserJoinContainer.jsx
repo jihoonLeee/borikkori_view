@@ -1,6 +1,6 @@
 import React, { useState, useContext, useEffect } from 'react';
-import { useNavigate } from "react-router-dom";
-import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
+import { joinUser, sendEmailVerification } from '../../api/userApi';
 import JoinForm from '../../components/user/JoinForm';
 import BasicAlert from '../../components/common/BasicAlert';
 import { AuthContext } from '../../contexts/AuthProvider';
@@ -12,53 +12,36 @@ const UserJoinContainer = () => {
 
   useEffect(() => {
     if (authenticated) {
-      alert("접근할 수 없습니다.");
+      alert('접근할 수 없습니다.');
       navigate('/');
     }
   }, [authenticated, navigate]);
 
-  // 회원가입 API 호출
-  const joinUser = async (credentials) => {
+  const handleSubmit = async (formData) => {
     try {
-      const response = await axios.post(
-        `/user/join`,
-        credentials,
-        { withCredentials: true }
-      );
-      alert("회원가입이 완료되었습니다.");
-      navigate("/login");
-      return response.data;
+      await joinUser(formData);
+      alert('회원가입이 완료되었습니다.');
+      navigate('/login');
     } catch (error) {
       alert(`회원가입에 실패했습니다: ${error}`);
-      throw error;
     }
   };
 
-  // 이메일 인증 API 호출
-  const emailVerify = async (email) => {
+  const handleVerify = async (email) => {
     try {
-      const response = await axios.post(
-        `/user/sendEmail`,
-        { email },
-        { headers: { 'Content-Type': 'application/json' } }
-      );
-      if (response.status !== 200) throw new Error('Verification failed');
+      await sendEmailVerification(email);
       setShowAlert(true);
       return true;
     } catch (error) {
-      alert("인증메일 전송에 실패하였습니다.");
+      alert('인증메일 전송에 실패하였습니다.');
       return false;
     }
-  };
-
-  const handleSubmit = (formData) => {
-    joinUser(formData);
   };
 
   return (
     <div>
       {showAlert && <BasicAlert msg="이메일이 전송되었습니다." />}
-      <JoinForm onSubmit={handleSubmit} onVerify={emailVerify} />
+      <JoinForm onSubmit={handleSubmit} onVerify={handleVerify} />
     </div>
   );
 };

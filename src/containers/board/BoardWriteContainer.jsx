@@ -1,12 +1,14 @@
 import React, { useState, useEffect, useContext, useCallback } from 'react';
-import { EditorState, AtomicBlockUtils, RichUtils, ContentState, SelectionState, ContentBlock } from 'draft-js';
+import { EditorState, AtomicBlockUtils, RichUtils, ContentState, SelectionState } from 'draft-js';
 import { useDropzone } from 'react-dropzone';
 import { useNavigate } from 'react-router-dom';
 import BoardWriteForm from '../../components/board/BoardWriteForm';
+import MediaBlock from '../../components/board/MediaBlock';
 import { initializePost, createPost, uploadFile, deletePost } from '../../api/boardApi';
 import { AuthContext } from '../../contexts/AuthProvider';
 import { getCategoryByKey } from '../../constants/boardCategory';
 import axios from 'axios';
+import axiosInstance from '../../api/axiosInstance';
 
 const BoardWriteContainer = () => {
   const [editorState, setEditorState] = useState(EditorState.createEmpty());
@@ -22,13 +24,6 @@ const BoardWriteContainer = () => {
 
   const onEditorChange = (newEditorState) => {
     setEditorState(newEditorState);
-    const contentState = newEditorState.getCurrentContent();
-    const selection = newEditorState.getSelection();
-    
-    // 선택 영역이 있는 경우에만 로그 출력
-    if (!selection.isCollapsed()) {
-      console.log('선택된 텍스트:', contentState.getBlockForKey(selection.getStartKey()).getText());
-    }
   };
 
   const addMediaToEditorState = (editorState, mediaUrl, mediaType) => {
@@ -72,60 +67,13 @@ const BoardWriteContainer = () => {
   const myBlockRenderer = (contentBlock) => {
     if (contentBlock.getType() === 'atomic') {
       return {
-        component: MediaComponent,
+        component: MediaBlock,
         props: { setSelection },
         editable: false,
       };
     }
     return null;
   };
-
-  const MediaComponent = React.memo((props) => {
-    const { block, contentState, setSelection } = props;
-    const entityKey = block.getEntityAt(0);
-    const videoRef = React.useRef(null);
-
-    const handleVideoFocus = useCallback(() => {
-      if (videoRef.current) {
-        videoRef.current.blur();
-      }
-    }, []);
-
-    const handleClick = useCallback((e) => {
-      e.stopPropagation();
-      const selection = SelectionState.create(block.key, 0, block.key, 1);
-      setSelection(selection);
-    }, [block.key, setSelection]);
-
-    const entity = entityKey ? contentState.getEntity(entityKey) : null;
-    const type = entity ? entity.getType() : null;
-
-    if (!entityKey) return null;
-
-    const { src } = entity.getData();
-
-    return (
-      <div
-        data-draft-js-block="true"
-        className="atomic-block"
-        style={{ userSelect: 'none' }}
-        onClick={handleClick}
-      >
-        {type === 'IMAGE' ? (
-          <img src={src} alt="uploaded" style={{ maxWidth: '100%' }} />
-        ) : type === 'VIDEO' ? (
-          <video
-            ref={videoRef}
-            src={src}
-            controls
-            style={{ maxWidth: '100%' }}
-            onFocus={handleVideoFocus}
-            tabIndex="-1"
-          />
-        ) : null}
-      </div>
-    );
-  });
 
   const handleTempSave = async () => {
     const contentStateJSON = JSON.stringify(
@@ -216,22 +164,16 @@ const BoardWriteContainer = () => {
 
   const handleImageUpload = async (file) => {
     if (!file) {
-      console.error('업로드할 파일이 없습니다.');
       return null;
     }
-    
-    console.log('파일 업로드 시작:', file.name);
-    
+
     try {
-      // 초기화된 postId가 없으면 생성
       if (!postId) {
         await initializePostId();
       }
-      
-      // 서버에 파일 업로드
+
       const uploadResult = await uploadFile({ file, postId });
-      console.log('서버 업로드 결과:', uploadResult);
-      
+
       if (uploadResult && uploadResult.fileUrl) {
         return uploadResult.fileUrl;
       } else {
@@ -329,11 +271,11 @@ const BoardWriteContainer = () => {
           } else {
             deletePost(data.postId)
               .then(() => window.location.reload())
-              .catch(console.log);
+              .catch(console.error);
           }
         }
       })
-      .catch(console.log);
+      .catch(console.error);
   }, [authenticated, navigate]);
   
 
